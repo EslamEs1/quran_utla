@@ -1,7 +1,11 @@
 from django.urls import path
+from apps.dashboard import views
 
-app_name = "dashboard"
+
+app_name = "dash"
 
 urlpatterns = [
-    # path("dashboard/", apps.dashboard.urls", name="dashboard"),
+    path("", views.dash, name="dashboard"),
+    path("tax/", views.tax, name="tax"),
+    path("billing-month/", views.billing_month, name="billing_month"),
 ]

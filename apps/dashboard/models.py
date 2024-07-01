@@ -4,14 +4,16 @@ from django.contrib.auth.models import (
     BaseUserManager,
     PermissionsMixin,
 )
+from datetime import date
 
 
 # ------------------------Settings
 class Tax(models.Model):
     number = models.IntegerField(default=1)
+    date = models.DateField(default=date.today)  # Automatically set to the current date
 
     def __str__(self):
-        return self.number
+        return str(self.number)
 
 
 class BillingMonths(models.Model):
@@ -76,18 +78,18 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
 class Manager(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.user.name} - Manager"
 
 
 class Instructor(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     qualification = models.CharField(max_length=250)
     hourly_salary = models.IntegerField(default=0)
     class_link = models.CharField(max_length=1000)
-    manager = models.ForeignKey(Manager, on_delete=models.SET_NULL)
+    manager = models.ForeignKey(Manager, on_delete=models.SET_NULL, null=True, blank=True)
     id_number = models.IntegerField()
 
     def __str__(self):
@@ -95,9 +97,9 @@ class Instructor(models.Model):
 
 
 class Families(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     the_state = models.CharField(max_length=250, null=True, blank=True)
-    manager = models.ForeignKey(Manager, on_delete=models.SET_NULL)
+    manager = models.ForeignKey(Manager, on_delete=models.SET_NULL, null=True, blank=True)
     id_number = models.IntegerField(default="لا يوجد", null=True, blank=True)
     payment_link = models.CharField(max_length=1000)
 
@@ -106,8 +108,8 @@ class Families(models.Model):
 
 
 class Student(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
-    family = models.ForeignKey(Families, on_delete=models.SET_NULL)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    family = models.ForeignKey(Families, on_delete=models.CASCADE)
     hourly_salary = models.IntegerField(default=0)
     payment_link = models.CharField(max_length=1000)
 

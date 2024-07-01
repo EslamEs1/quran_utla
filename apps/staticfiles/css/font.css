@@ -1,0 +1,34 @@
+* {
+    font-family: 'Cairo', sans-serif !important;
+}
+
+
+.main_content_iner{
+    direction: rtl;
+}
+
+form{
+    padding-bottom: 50px !important;
+}
+
+
+.icon{
+    width:30px;
+    transition: .2s;
+
+}
+
+.icon:hover{
+    cursor: pointer;
+    transform: scale(1.1);
+}
+
+button{
+    margin-top: 20px;
+    width: 100% !important;
+}
+
+
+.btn.btn-outline-primary:hover a {
+    color: #fff;
+}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+<h3 class="text-center">الفواتير</h3>
+{% endblock title %}
+{% block content %}
+<button type="button" class="btn btn-outline-primary">
+    <a href="#">اظهار الفواتير</a>
+</button>
+<hr>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">الشهر</th>
+            <th scope="col">السنة</th>
+            <th scope="col">تغيير</th>
+            <th scope="col">حذف</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>4</td>
+            <td>2024</td>
+            <td><a href="#"><img class="icon" src="{% static 'img/edit.png'%}"></a></td>
+            <td><a href="#"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
+        </tr>
+    </tbody>
+</table>
+{% endblock content %}

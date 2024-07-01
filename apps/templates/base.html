@@ -1,5 +1,7 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ar">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -10,7 +12,7 @@
 <body class="crm_body_bg">
     <nav class="sidebar">
         <div class="logo d-flex justify-content-between">
-            <a href="index.html"><img src="img/logo.png" alt="logo"></a>
+            <a href="/"><img src="{% static 'img/logo.png' %}" alt="logo"></a>
             <div class="sidebar_close_icon d-lg-none">
                 <i class="ti-close"></i>
             </div>
@@ -19,17 +21,17 @@
             <li class="mm-active">
                 <a class="has-arrow" href="#" aria-expanded="false">
 
-                    <img src="img/menu-icon/1.svg" alt>
+                    <img src="{% static 'img/menu-icon/1.svg' %}" alt>
                     <span>الاعدادات</span>
                 </a>
                 <ul>
-                    <li><a class="active" href="index.html">الفواتير</a></li>
-                    <li><a href="index_2.html">شهور الفواتير</a></li>
+                    <li><a class="active" href="{% url 'dash:tax'%}">الضريبة</a></li>
+                    <li><a href="{% url 'dash:billing_month'%}">شهور الفواتير</a></li>
                 </ul>
             </li>
             <li class>
                 <a class="has-arrow" href="#" aria-expanded="false">
-                    <img src="img/menu-icon/2.svg" alt>
+                    <img src="{% static 'img/menu-icon/2.svg' %}" alt>
                     <span>الأشخاص</span>
                 </a>
                 <ul>
@@ -43,7 +45,7 @@
             </li>
             <li class>
                 <a class="has-arrow" href="#" aria-expanded="false">
-                    <img src="img/menu-icon/3.svg" alt>
+                    <img src="{% static 'img/menu-icon/3.svg' %}" alt>
                     <span>تسجيل الحصص</span>
                 </a>
                 <ul>
@@ -53,7 +55,7 @@
             </li>
             <li class>
                 <a class="has-arrow" href="#" aria-expanded="false">
-                    <img src="img/menu-icon/4.svg" alt>
+                    <img src="{% static 'img/menu-icon/4.svg' %}" alt>
                     <span>تغيير كلمة المرور</span>
                 </a>
                 <ul>
@@ -62,7 +64,7 @@
             </li>
             <li class>
                 <a class="has-arrow" href="#" aria-expanded="false">
-                    <img src="img/menu-icon/5.svg" alt>
+                    <img src="{% static 'img/menu-icon/5.svg' %}" alt>
                     <span>الفواتير</span>
                 </a>
                 <ul>
@@ -73,7 +75,7 @@
             </li>
             <li class>
                 <a class="has-arrow" href="#" aria-expanded="false">
-                    <img src="img/menu-icon/6.svg" alt>
+                    <img src="{% static 'img/menu-icon/6.svg' %}" alt>
                     <span>السلف والخصومات</span>
                 </a>
                 <ul>
@@ -82,7 +84,7 @@
             </li>
             <li class>
                 <a class="has-arrow" href="#" aria-expanded="false">
-                    <img src="img/menu-icon/7.svg" alt>
+                    <img src="{% static 'img/menu-icon/7.svg' %}" alt>
                     <span>روابط الفواتير</span>
                 </a>
                 <ul>
@@ -92,7 +94,7 @@
             </li>
             <li class>
                 <a class="has-arrow" href="#" aria-expanded="false">
-                    <img src="img/menu-icon/7.svg" alt>
+                    <img src="{% static 'img/menu-icon/7.svg' %}" alt>
                     <span>الأشخاص المحذوفين</span>
                 </a>
                 <ul>
@@ -102,7 +104,7 @@
             </li>
             <li class>
                 <a class="has-arrow" href="#" aria-expanded="false">
-                    <img src="img/menu-icon/7.svg" alt>
+                    <img src="{% static 'img/menu-icon/7.svg' %}" alt>
                     <span>الأعلانات</span>
                 </a>
                 <ul>
@@ -123,14 +125,14 @@
                         <div class="header_right d-flex justify-content-between align-items-center">
                             <div class="header_notification_warp d-flex align-items-center">
                                 <li>
-                                    <a href="#"> <img src="img/icon/bell.svg" alt> </a>
+                                    <a href="#"> <img src="{% static 'img/icon/bell.svg' %}" alt> </a>
                                 </li>
                                 <li>
-                                    <a href="#"> <img src="img/icon/msg.svg" alt> </a>
+                                    <a href="#"> <img src="{% static 'img/icon/msg.svg' %}" alt> </a>
                                 </li>
                             </div>
                             <div class="profile_info">
-                                <img src="img/client_img.png" alt="#">
+                                <img src="{% static 'img/client_img.png" alt="#">
                                 <div class="profile_info_iner">
                                     <p>Welcome Admin!</p>
                                     <h5>Travor James</h5>
@@ -146,9 +148,26 @@
                 </div>
             </div>
         </div>
-        {% block content %}
-           
-        {% endblock content %}
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} text-center" role="alert">
+                <li>
+                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+                    {{ message }}
+                </li>
+            </div>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% block title %}
+        {% endblock title %}
+        <div class="main_content_iner">
+            <div class="container-fluid plr_30 body_white_bg pt_30">
+                {% block content %}
+                {% endblock content %}
+            </div>
+        </div>
         <div class="footer_part">
             <div class="container-fluid">
                 <div class="row">
@@ -164,5 +183,4 @@
 
     {% include 'js.html' %}
 </body>
-
 </html>

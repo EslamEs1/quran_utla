@@ -160,15 +160,15 @@ JAZZMIN_SETTINGS = {
 
 
 MESSAGE_TAGS = {
-    messages.DEBUG: "blue",
-    messages.INFO: "blue",
-    messages.SUCCESS: "green",
-    messages.WARNING: "orange",
-    messages.ERROR: "red",
+    messages.DEBUG: "alert",
+    messages.INFO: "info",
+    messages.SUCCESS: "success",
+    messages.WARNING: "warning",
+    messages.ERROR: "danger",
 }
 
 
-AUTH_USER_MODEL = "apps.dashboard.models.CustomUser"
+AUTH_USER_MODEL = "dashboard.CustomUser"
 
 AUTHENTICATION_BACKENDS = (
     # "django.contrib.auth.backends.ModelBackend",  # Keep the default backend if needed
