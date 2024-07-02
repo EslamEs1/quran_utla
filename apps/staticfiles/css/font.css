@@ -32,3 +32,8 @@ button{
 .btn.btn-outline-primary:hover a {
     color: #fff;
 }
+
+.form-control {
+        margin-bottom: 15px;
+
+}

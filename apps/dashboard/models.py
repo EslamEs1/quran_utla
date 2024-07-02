@@ -5,6 +5,8 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 from datetime import date
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 # ------------------------Settings
@@ -58,7 +60,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=100)
     address = models.CharField(max_length=100, null=True, blank=True)
     type = models.CharField(
-        choices=UserType.choices, default=UserType.STUDENT, max_length=50
+        choices=UserType.choices, default=UserType.MANAGER, max_length=50
     )
     gender = models.CharField(
         choices=Gender.choices, max_length=10, null=True, blank=True
@@ -74,7 +76,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = []
 
     def __str__(self):
-        return self.phone
+        return self.name
 
 
 class Manager(models.Model):
@@ -84,12 +86,20 @@ class Manager(models.Model):
         return f"{self.user.name} - Manager"
 
 
+@receiver(post_save, sender=CustomUser)
+def create_manager_profile(sender, instance, created, **kwargs):
+    if created and instance.type == UserType.MANAGER:
+        Manager.objects.create(user=instance)
+
+
 class Instructor(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     qualification = models.CharField(max_length=250)
     hourly_salary = models.IntegerField(default=0)
     class_link = models.CharField(max_length=1000)
-    manager = models.ForeignKey(Manager, on_delete=models.SET_NULL, null=True, blank=True)
+    manager = models.ForeignKey(
+        Manager, on_delete=models.SET_NULL, null=True, blank=True
+    )
     id_number = models.IntegerField()
 
     def __str__(self):
@@ -99,7 +109,9 @@ class Instructor(models.Model):
 class Families(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     the_state = models.CharField(max_length=250, null=True, blank=True)
-    manager = models.ForeignKey(Manager, on_delete=models.SET_NULL, null=True, blank=True)
+    manager = models.ForeignKey(
+        Manager, on_delete=models.SET_NULL, null=True, blank=True
+    )
     id_number = models.IntegerField(default="لا يوجد", null=True, blank=True)
     payment_link = models.CharField(max_length=1000)
 
@@ -123,6 +135,7 @@ class Instructor_Student(models.Model):
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
+
 # ------------------------Registration of classes
 
 
@@ -139,7 +152,9 @@ class Class(models.Model):
     instructor = models.ForeignKey("Instructor", on_delete=models.CASCADE)
     date = models.DateField()
     number_class_hours = models.IntegerField(default=0)
-    evaluation = models.CharField(choices=Evaluation.choices, default=Evaluation.LOW, max_length=50)
+    evaluation = models.CharField(
+        choices=Evaluation.choices, default=Evaluation.LOW, max_length=50
+    )
     subject_name = models.CharField(max_length=300)
     nb = models.CharField(max_length=500)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -152,6 +167,7 @@ class Class(models.Model):
 
 
 # ------------------------Advances and discounts
+
 
 class Advances_Discounts(models.Model):
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)

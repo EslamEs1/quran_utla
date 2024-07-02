@@ -1,20 +1,127 @@
 {% extends "base.html" %}
+{% block title %}
+<h3 class="text-center">تسجيل مستخدم</h3>
+{% endblock title %}
 {% block content %}
-<h2>Register User</h2>
-<form method="post">
-    {% csrf_token %}
-    <label for="user_type">User Type:</label>
-    <select id="user_type" name="type" onchange="this.form.submit()">
-        <option value="Student" {% if user_type == 'Student' %}selected{% endif %}>Student</option>
-        <option value="Instructor" {% if user_type == 'Instructor' %}selected{% endif %}>Instructor</option>
-        <option value="Manager" {% if user_type == 'Manager' %}selected{% endif %}>Manager</option>
-    </select>
-</form>
+<!-- Button trigger modals -->
+<div class="row">
+    <div class="col-md-3">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdropmanager">
+            تسجيل مشرف
+        </button>
+    </div>
+    <div class="col-md-3">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdropinst">
+            تسجيل معلم
+        </button>
+    </div>
+    <div class="col-md-3">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdropfamily">
+            تسجيل عائلة
+        </button>
+    </div>
+    <div class="col-md-3">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdropstudent">
+            تسجيل طالب
+        </button>
+    </div>
+</div>
 
-<form method="post">
-    {% csrf_token %}
-    {{ base_form.as_p }}
-    {{ form.as_p }}
-    <button type="submit">Register</button>
-</form>
+
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdropmanager" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">تسجيل مشرف</h5>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="manager">
+                    {% csrf_token %}
+                    {{base_form}}
+                    <input type="hidden" name="manager" value="Manager">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button for="manager" type="button" class="btn btn-primary">تسجيل</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdropinst" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">تسجيل معلم</h5>
+            </div>
+            <div class="modal-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{base_form}}
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">تسجيل</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdropfamily" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">تسجيل عائلة</h5>
+            </div>
+            <div class="modal-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{base_form}}
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">تسجيل</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdropstudent" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">تسجيل طالب</h5>
+            </div>
+            <div class="modal-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{base_form}}
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">تسجيل</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}
