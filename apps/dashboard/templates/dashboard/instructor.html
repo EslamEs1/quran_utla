@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+<h3 class="text-center">تسجيل معلم</h3>
+{% endblock title %}
+{% block content %}
+<!-- Button trigger modals -->
+<div class="row">
+    <div class="col-md-3">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdropinst">
+            تسجيل معلم
+        </button>
+    </div>
+</div>
+<hr/>
+
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">الأسم</th>
+            <th scope="col">العائلة</th>
+            <th scope="col">العمر</th>
+            <th scope="col">النوع</th>
+            <th scope="col">تاريخ الانضمام</th>
+            <th scope="col">رابط الدفع</th>
+            <th scope="col">الفاتورة</th>
+            <th scope="col">تعديل</th>
+            <th scope="col">حذف</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>4</td>
+            <td>4</td>
+            <td>4</td>
+            <td>4</td>
+            <td>2024</td>
+            <td>2024</td>
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#invoModal"><img class="icon" src="{% static 'img/validating-ticket.png'%}"></a></td>
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#editModal"><img class="icon" src="{% static 'img/edit.png'%}"></a></td>
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+<!-- Modal for Instructor -->
+<div class="modal fade" id="staticBackdropinst" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">تسجيل معلم</h5>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'dash:register_instructor' %}">
+                    {% csrf_token %}
+                    {{ base_form.as_p }}
+                    {{ instructor_form.as_p }}
+                    <input type="hidden" name="user_type" value="Instructor">
+                    <button type="submit" class="btn btn-primary">تسجيل</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}

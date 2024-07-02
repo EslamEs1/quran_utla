@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+<h3 class="text-center">تسجيل طالب لمعلم</h3>
+{% endblock title %}
+{% block content %}
+<!-- Button trigger modals -->
+<!-- Button trigger modals -->
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdropstudent">
+            التسجيل
+        </button>
+    </div>
+</div>
+<hr/>
+
+
+
+<!-- Modal for Student -->
+<div class="modal fade" id="staticBackdropstudent" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">تسجيل طالب</h5>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'dash:register_student' %}">
+                    {% csrf_token %}
+                    {{ base_form.as_p }}
+                    {{ student_form.as_p }}
+                    <input type="hidden" name="user_type" value="Student">
+                    <button type="submit" class="btn btn-primary">تسجيل</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}

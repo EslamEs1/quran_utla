@@ -34,6 +34,12 @@ button{
 }
 
 .form-control {
-        margin-bottom: 15px;
+        margin-bottom: 5px;
 
+}
+
+
+.btn-primary{
+    background-color: #2bc6ef !important;
+    border-color:#fff;
 }

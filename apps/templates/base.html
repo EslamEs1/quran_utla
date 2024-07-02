@@ -35,9 +35,10 @@
                     <span>الأشخاص</span>
                 </a>
                 <ul>
-                    <li><a href="login.html">المشرفين</a></li>
-                    <li><a href="resister.html">المعلمين</a></li>
-                    <li><a href="forgot_pass.html">الطلاب</a></li>
+                    <li><a href="{% url 'dash:register_manager' %}">المشرفين</a></li>
+                    <li><a href="{% url 'dash:register_instructor' %}">المعلمين</a></li>
+                    <li><a href="{% url 'dash:register_family' %}">العائلة</a></li>
+                    <li><a href="{% url 'dash:register_student' %}">الطلاب</a></li>
                     <li><a href="forgot_pass.html">الطلاب والمعلمين</a></li>
                     <li><a href="forgot_pass.html">المسوقين</a></li>
                     <li><a href="forgot_pass.html">الطلاب ولمسوقين</a></li>

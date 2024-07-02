@@ -27,10 +27,10 @@ class BillingMonths(models.Model):
 
 # ------------------------People
 class UserType(models.TextChoices):
-    STUDENT = "Student", "الطالب"
-    INSTRUCTOR = "Instructor", "المعلم"
-    MANAGER = "Manager", "المشرف"
-    FAMILIES = "Families", "العائلة"
+    STUDENT = "Student", "طالب"
+    INSTRUCTOR = "Instructor", "معلم"
+    MANAGER = "Manager", "مشرف"
+    FAMILIES = "Families", "عائله"
     ADMIN = "Admin", "ادمن"
 
 
@@ -109,10 +109,7 @@ class Instructor(models.Model):
 class Families(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     the_state = models.CharField(max_length=250, null=True, blank=True)
-    manager = models.ForeignKey(
-        Manager, on_delete=models.SET_NULL, null=True, blank=True
-    )
-    id_number = models.IntegerField(default="لا يوجد", null=True, blank=True)
+    manager = models.ForeignKey(Manager, on_delete=models.SET_NULL, null=True, blank=True)
     payment_link = models.CharField(max_length=1000)
 
     def __str__(self):
