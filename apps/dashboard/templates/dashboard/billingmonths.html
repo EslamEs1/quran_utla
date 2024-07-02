@@ -4,9 +4,10 @@
 <h3 class="text-center">الفواتير</h3>
 {% endblock title %}
 {% block content %}
-<button type="button" class="btn btn-outline-primary">
-    <a href="#">اظهار الفواتير</a>
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+    اظهار الفواتير
 </button>
+
 <hr>
 <table class="table table-striped">
     <thead>
@@ -21,9 +22,87 @@
         <tr>
             <td>4</td>
             <td>2024</td>
-            <td><a href="#"><img class="icon" src="{% static 'img/edit.png'%}"></a></td>
-            <td><a href="#"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#editModal"><img class="icon" src="{% static 'img/edit.png'%}"></a></td>
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
         </tr>
     </tbody>
 </table>
+
+<!-- Button trigger modal -->
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">تعديل الفاتورة</h5>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="editMonthInput" class="form-label">الشهر</label>
+                        <input type="number" class="form-control" id="editMonthInput" value="4">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editYearInput" class="form-label">السنة</label>
+                        <input type="number" class="form-control" id="editYearInput" value="2024">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">حفظ التغييرات</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">تأكيد الحذف</h5>
+            </div>
+            <div class="modal-body">
+                هل أنت متأكد أنك تريد حذف هذه الفاتورة؟
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger">حذف</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">أظهار الفواتير للعائلات</h5>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="dateInput" class="form-label">اختر التاريخ</label>
+                        <input type="date" class="form-control" id="dateInput">
+                    </div>
+                    <div class="mb-3">
+                        <label for="selectInput" class="form-label">اختر العائلة</label>
+                        <select class="form-select" id="selectInput">
+                            <option selected>اختر...</option>
+                            <option value="1">عائلة 1</option>
+                            <option value="2">عائلة 2</option>
+                            <option value="3">عائلة 3</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">حفظ التغييرات</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock content %}

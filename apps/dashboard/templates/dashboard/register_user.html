@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Register User</h2>
+<form method="post">
+    {% csrf_token %}
+    <label for="user_type">User Type:</label>
+    <select id="user_type" name="type" onchange="this.form.submit()">
+        <option value="Student" {% if user_type == 'Student' %}selected{% endif %}>Student</option>
+        <option value="Instructor" {% if user_type == 'Instructor' %}selected{% endif %}>Instructor</option>
+        <option value="Manager" {% if user_type == 'Manager' %}selected{% endif %}>Manager</option>
+    </select>
+</form>
+
+<form method="post">
+    {% csrf_token %}
+    {{ base_form.as_p }}
+    {{ form.as_p }}
+    <button type="submit">Register</button>
+</form>
+{% endblock content %}
