@@ -10,6 +10,8 @@
 </head>
 
 <body class="crm_body_bg">
+    
+    {% comment %} {% if request.user.is_authenticated %} {% endcomment %}
     <nav class="sidebar">
         <div class="logo d-flex justify-content-between">
             <a href="/"><img src="{% static 'img/logo.png' %}" alt="logo"></a>
@@ -39,7 +41,7 @@
                     <li><a href="{% url 'dash:register_instructor' %}">المعلمين</a></li>
                     <li><a href="{% url 'dash:register_family' %}">العائلة</a></li>
                     <li><a href="{% url 'dash:register_student' %}">الطلاب</a></li>
-                    <li><a href="forgot_pass.html">الطلاب والمعلمين</a></li>
+                    <li><a href="{% url 'dash:instructor_student' %}">الطلاب والمعلمين</a></li>
                     <li><a href="forgot_pass.html">المسوقين</a></li>
                     <li><a href="forgot_pass.html">الطلاب ولمسوقين</a></li>
                 </ul>
@@ -50,7 +52,7 @@
                     <span>تسجيل الحصص</span>
                 </a>
                 <ul>
-                    <li><a href="mail_box.html">الحصص</a></li>
+                    <li><a href="{% url 'dash:classes' %}">الحصص</a></li>
 
                 </ul>
             </li>
@@ -60,7 +62,7 @@
                     <span>تغيير كلمة المرور</span>
                 </a>
                 <ul>
-                    <li><a href="#">تغيير كلمة السر</a></li>
+                    <li><a href="{% url 'dash:change_password' %}">تغيير كلمة السر</a></li>
                 </ul>
             </li>
             <li class>
@@ -114,8 +116,10 @@
             </li>
         </ul>
     </nav>
+    {% comment %} {% endif %} {% endcomment %}
 
     <section class="main_content dashboard_part">
+        {% if request.user.is_authenticated %}
         <div class="container-fluid g-0">
             <div class="row">
                 <div class="col-lg-12 p-0">
@@ -140,7 +144,7 @@
                                     <div class="profile_info_details">
                                         <a href="#">My Profile <i class="ti-user"></i></a>
                                         <a href="#">Settings <i class="ti-settings"></i></a>
-                                        <a href="#">Log Out <i class="ti-shift-left"></i></a>
+                                        <a href="{% url 'dash:logout' %}">Log Out <i class="ti-shift-left"></i></a>
                                     </div>
                                 </div>
                             </div>
@@ -149,6 +153,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
         {% if messages %}
         <ul class="messages">
             {% for message in messages %}

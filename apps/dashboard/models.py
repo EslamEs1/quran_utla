@@ -113,7 +113,7 @@ class Families(models.Model):
     payment_link = models.CharField(max_length=1000)
 
     def __str__(self):
-        return f"{self.user.name} - Instructor"
+        return f"{self.user.name} - Families"
 
 
 class Student(models.Model):
@@ -123,7 +123,7 @@ class Student(models.Model):
     payment_link = models.CharField(max_length=1000)
 
     def __str__(self):
-        return f"{self.user.name} - Instructor"
+        return f"{self.user.name} - Student"
 
 
 class Instructor_Student(models.Model):
@@ -143,17 +143,24 @@ class Evaluation(models.TextChoices):
     EXCELLENCE = "Excellence", "امتياز"
 
 
-class Class(models.Model):
-    family = models.ForeignKey("Families", on_delete=models.CASCADE)
-    student = models.ForeignKey("Student", on_delete=models.CASCADE)
-    instructor = models.ForeignKey("Instructor", on_delete=models.CASCADE)
+class Duration(models.TextChoices):
+    FORTY = "40", "40 دقيقه"
+    FORTYFIVE = "45", "45 دقيقه"
+    SIXTY = "60", "60 دقيقه"
+    EIGHTY = "80", "80 دقيقه"
+    NINETY = "90", "90 دقيقه"
+    ONE_TWENTY = "120", "120 دقيقه"
+
+
+class Classes(models.Model):
+    family = models.ForeignKey(Families, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, blank=True, null=True)
     date = models.DateField()
-    number_class_hours = models.IntegerField(default=0)
-    evaluation = models.CharField(
-        choices=Evaluation.choices, default=Evaluation.LOW, max_length=50
-    )
+    number_class_hours = models.CharField(choices=Duration.choices, default=Duration.FORTY, max_length=50)
+    evaluation = models.CharField(choices=Evaluation.choices, default=Evaluation.LOW, max_length=50)
     subject_name = models.CharField(max_length=300)
-    nb = models.CharField(max_length=500)
+    notes = models.CharField(max_length=500)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -164,8 +171,6 @@ class Class(models.Model):
 
 
 # ------------------------Advances and discounts
-
-
 class Advances_Discounts(models.Model):
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
     amount = models.IntegerField(default=0)

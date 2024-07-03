@@ -12,4 +12,11 @@ urlpatterns = [
     path("register_instructor/", views.register_instructor, name="register_instructor"),
     path("register_family/", views.register_family, name="register_family"),
     path("register_student/", views.register_student, name="register_student"),
+    path("instructor_student/", views.instructor_student_view, name="instructor_student"),
+    path('get_students_by_family/<int:family_id>/', views.get_students_by_family, name='get_students_by_family'),
+    path('classes/', views.classes, name='classes'),
+    path('change-password/', views.change_password, name='change_password'),
+    path('login/', views.user_login, name='login'),
+    path('logout/', views.logout_view, name='logout'),
+
 ]

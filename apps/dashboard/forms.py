@@ -1,5 +1,15 @@
 from django import forms
-from .models import CustomUser, Instructor, Families, Student, Gender
+from .models import (
+    CustomUser,
+    Instructor,
+    Families,
+    Student,
+    Gender,
+    Instructor_Student,
+    Classes,
+)
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.forms import AuthenticationForm
 
 
 class BaseUserForm(forms.ModelForm):
@@ -30,7 +40,7 @@ class BaseUserForm(forms.ModelForm):
         choices=Gender.choices,
         widget=forms.Select(attrs={"class": "form-control", "placeholder": "الجنس"}),
     )
-    
+
     age = forms.IntegerField(
         label="العمر",  # Arabic label
         widget=forms.NumberInput(
@@ -124,3 +134,151 @@ class StudentForm(forms.ModelForm):
         self.fields["family"].label = "العائلة"
         self.fields["hourly_salary"].label = "الراتب بالساعه"
         self.fields["payment_link"].label = "رابط الدفع"
+
+
+class Instructor_StudentForm(forms.ModelForm):
+    class Meta:
+        model = Instructor_Student
+        fields = ["family", "student", "instructor"]
+        widgets = {
+            "family": forms.Select(attrs={"class": "form-control", "id": "id_family"}),
+            "student": forms.Select(
+                attrs={"class": "form-control", "id": "id_student"}
+            ),
+            "instructor": forms.Select(attrs={"class": "form-control"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(Instructor_StudentForm, self).__init__(*args, **kwargs)
+        self.fields["family"].label = "العائله"
+        self.fields["student"].label = "الطالب"
+        self.fields["instructor"].label = "المعلم"
+
+        if "family" in self.data:
+            try:
+                family_id = int(self.data.get("family"))
+                self.fields["student"].queryset = Student.objects.filter(
+                    family_id=family_id
+                ).order_by("user__name")
+            except (ValueError, TypeError):
+                self.fields["student"].queryset = Student.objects.none()
+        elif self.instance.pk:
+            self.fields["student"].queryset = self.instance.family.student_set.order_by(
+                "user__name"
+            )
+        else:
+            self.fields["student"].queryset = Student.objects.none()
+
+
+class ClassesForm(forms.ModelForm):
+    class Meta:
+        model = Classes
+        fields = [
+            "family",
+            "student",
+            "instructor",
+            "date",
+            "number_class_hours",
+            "evaluation",
+            "subject_name",
+            "notes",
+        ]
+        widgets = {
+            "family": forms.Select(
+                attrs={"class": "form-control", "placeholder": "العائلة"}
+            ),
+            "student": forms.Select(
+                attrs={"class": "form-control", "placeholder": "الطالب"}
+            ),
+            "instructor": forms.HiddenInput(),
+            "date": forms.DateInput(
+                format="%Y-%m-%d",  # Adjust date format if needed
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "تاريخ الحصة",
+                    "type": "date",
+                },
+            ),
+            "number_class_hours": forms.Select(
+                attrs={"class": "form-control", "placeholder": "عدد ساعات الحصة"}
+            ),
+            "evaluation": forms.Select(
+                attrs={"class": "form-control", "placeholder": "التقييم"}
+            ),
+            "subject_name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "أسم الماده"}
+            ),
+            "notes": forms.Textarea(
+                attrs={"class": "form-control", "placeholder": "ملحوظة"}
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(ClassesForm, self).__init__(*args, **kwargs)
+        self.fields["family"].label = "العائلة"
+        self.fields["student"].label = "الطالب"
+        self.fields["date"].label = "تاريخ الحصة"
+        self.fields["number_class_hours"].label = "عدد ساعات الحصة"
+        self.fields["evaluation"].label = "التقييم"
+        self.fields["subject_name"].label = "أسم الماده"
+        self.fields["notes"].label = "ملحوظة"
+
+        if "family" in self.data:
+            try:
+                family_id = int(self.data.get("family"))
+                self.fields["student"].queryset = Student.objects.filter(
+                    family_id=family_id
+                ).order_by("user__name")
+            except (ValueError, TypeError):
+                self.fields["student"].queryset = Student.objects.none()
+        elif self.instance.pk:
+            self.fields["student"].queryset = self.instance.family.student_set.order_by(
+                "user__name"
+            )
+        else:
+            self.fields["student"].queryset = Student.objects.none()
+
+    def save(self, commit=True):
+        instance = super(ClassesForm, self).save(commit=False)
+
+        # Retrieve the instructor for the selected student
+        student_id = self.cleaned_data.get("student")
+        instructor = Instructor_Student.objects.filter(student_id=student_id).first()
+
+        if instructor:
+            instance.instructor = instructor.instructor
+
+        if commit:
+            instance.save()
+
+        return instance
+
+
+class BootstrapPasswordChangeForm(PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["old_password"].widget.attrs.update(
+            {"class": "form-control", "placeholder": "كلمة المرور القديمة"}
+        )
+        self.fields["new_password1"].widget.attrs.update(
+            {"class": "form-control", "placeholder": "كلمة المرور الجديدة"}
+        )
+        self.fields["new_password2"].widget.attrs.update(
+            {"class": "form-control", "placeholder": "تأكيد كلمة المرور"}
+        )
+
+
+class CustomAuthenticationForm(AuthenticationForm):
+    username = forms.CharField(
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "رقم الهاتف"})
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "كلمة المرور"}
+        )
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(CustomAuthenticationForm, self).__init__(*args, **kwargs)
+        self.fields["username"].label = "رقم الهاتف"
+        self.fields["password"].label = "كلمة المرور"

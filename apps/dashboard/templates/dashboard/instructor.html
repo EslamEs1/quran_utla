@@ -21,33 +21,33 @@
     <thead>
         <tr>
             <th scope="col">الأسم</th>
-            <th scope="col">العائلة</th>
-            <th scope="col">العمر</th>
-            <th scope="col">النوع</th>
-            <th scope="col">تاريخ الانضمام</th>
-            <th scope="col">رابط الدفع</th>
-            <th scope="col">الفاتورة</th>
+            <th scope="col">رقم التلفون</th>
+            <th scope="col">المحافظه</th>
+            <th scope="col">المؤهل</th>
+            <th scope="col">الراتب بالساعه</th>
+            <th scope="col">رابط الحصه</th>
+            <th scope="col">الفاتوره</th>
             <th scope="col">تعديل</th>
             <th scope="col">حذف</th>
+            
         </tr>
     </thead>
     <tbody>
+        {% for instructor in instructor %}
         <tr>
-            <td>4</td>
-            <td>4</td>
-            <td>4</td>
-            <td>4</td>
-            <td>2024</td>
-            <td>2024</td>
-            <td><a href="#" data-bs-toggle="modal" data-bs-target="#invoModal"><img class="icon" src="{% static 'img/validating-ticket.png'%}"></a></td>
+            <td>{{instructor.user.name}}</td>
+            <td>{{instructor.user.phone}}</td>
+            <td>{{instructor.user.address}}</td>     
+            <td>{{instructor.qualification}}</td>     
+            <td>{{instructor.hourly_salary}}</td>     
+            <td>{{instructor.class_link}}</td>     
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#invoModal"><img class="icon" src="{% static 'img/validating-ticket.png'%}"></a></td>       
             <td><a href="#" data-bs-toggle="modal" data-bs-target="#editModal"><img class="icon" src="{% static 'img/edit.png'%}"></a></td>
             <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
         </tr>
+        {% endfor %}
     </tbody>
 </table>
-
-
-
 <!-- Modal for Instructor -->
 <div class="modal fade" id="staticBackdropinst" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">

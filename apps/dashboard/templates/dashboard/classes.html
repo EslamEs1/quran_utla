@@ -2,15 +2,15 @@
 {% load static %}
 
 {% block title %}
-<h3 class="text-center">تسجيل طالب لمعلم</h3>
+<h3 class="text-center">أضافة الحصص</h3>
 {% endblock title %}
 {% block content %}
 <!-- Button trigger modals -->
 <!-- Button trigger modals -->
 <div class="row">
     <div class="col-md-3">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdropinststudent">
-            التسجيل
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdropclasses">
+            أضافة حصة 
         </button>
     </div>
 </div>
@@ -20,34 +20,51 @@
     <thead>
         <tr>
             <th scope="col">المعلم</th>
+            <th scope="col">ولى الأمر</th>
             <th scope="col">الطالب</th>
+            <th scope="col">موعد الحصة</th>
+            <th scope="col">موعد تسجيل الحصة</th>
+            <th scope="col">عدد الساعات</th>
+            <th scope="col">التقيم</th>
+            <th scope="col">أسم الماده</th>
+            <th scope="col">ملحوظة</th>
+            <th scope="col">تعديل</th>
             <th scope="col">حذف</th>
+            
         </tr>
     </thead>
     <tbody>
-        {% for user in inst_student %}
-            <tr>
-                <td>{{user.instructor}}</td>
-                <td>{{user.student}}</td>
-                <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
-            </tr>
+        {% for class in classes %}
+        <tr>
+            <td>{{class.instructor}}</td>
+            <td>{{class.family}}</td>
+            <td>{{class.student}}</td>     
+            <td>{{class.date}}</td>     
+            <td>{{class.created_at}}</td>     
+            <td>{{class.number_class_hours}}</td>     
+            <td>{{class.evaluation}}</td>     
+            <td>{{class.subject_name}}</td>     
+            <td>{{class.notes}}</td>     
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#editModal"><img class="icon" src="{% static 'img/edit.png'%}"></a></td>
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
+        </tr>
         {% endfor %}
     </tbody>
 </table>
 
 
-
 <!-- Modal for Student -->
-<div class="modal fade" id="staticBackdropinststudent" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="staticBackdropclasses" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">تسجيل طالب لمعلم</h5>
+                <h5 class="modal-title" id="staticBackdropLabel">تسجيل الحصه</h5>
             </div>
             <div class="modal-body">
                 <form method="post">
                     {% csrf_token %}
                     {{ form.as_p }}
+                    <input type="hidden" name="user_type" value="Student">
                     <button type="submit" class="btn btn-primary">تسجيل</button>
                 </form>
             </div>
@@ -57,6 +74,7 @@
         </div>
     </div>
 </div>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
