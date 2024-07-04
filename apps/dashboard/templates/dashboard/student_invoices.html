@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+<h3 class="text-center">فواتير الطلاب</h3>
+{% endblock title %}
+{% block content %}
+<!-- Button trigger modals -->
+
+
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">الأسم</th>
+            <th scope="col">رقم التلفون</th>
+            <th scope="col">المحافظه</th>
+            <th scope="col">المؤهل</th>
+            <th scope="col">الراتب بالساعه</th>
+            <th scope="col">رابط الحصه</th>
+            <th scope="col">الفاتوره</th>
+            <th scope="col">تعديل</th>
+            <th scope="col">حذف</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        {% for instructor in instructor %}
+        <tr>
+            <td>{{instructor.user.name}}</td>
+            <td>{{instructor.user.phone}}</td>
+            <td>{{instructor.user.address}}</td>     
+            <td>{{instructor.qualification}}</td>     
+            <td>{{instructor.hourly_salary}}</td>     
+            <td>{{instructor.class_link}}</td>     
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#invoModal"><img class="icon" src="{% static 'img/validating-ticket.png'%}"></a></td>       
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#editModal"><img class="icon" src="{% static 'img/edit.png'%}"></a></td>
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+{% endblock content %}

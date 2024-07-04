@@ -18,5 +18,11 @@ urlpatterns = [
     path('change-password/', views.change_password, name='change_password'),
     path('login/', views.user_login, name='login'),
     path('logout/', views.logout_view, name='logout'),
+    path("admin_password_change/", views.admin_password_change, name="admin_password_change"),
+    path("invoices/", views.invoices, name="invoices"),
+    path("instructor_invoices/", views.instructor_invoices, name="instructor_invoices"),
+    path('family_invoice_details/<int:family_id>/', views.family_invoice_details, name='family_invoice_details'),
+
+
 
 ]

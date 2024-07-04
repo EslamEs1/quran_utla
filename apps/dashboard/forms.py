@@ -1,6 +1,6 @@
 from django import forms
+from django.contrib.auth import get_user_model
 from .models import (
-    CustomUser,
     Instructor,
     Families,
     Student,
@@ -10,6 +10,9 @@ from .models import (
 )
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.forms import AuthenticationForm
+
+
+CustomUser = get_user_model()
 
 
 class BaseUserForm(forms.ModelForm):
@@ -270,15 +273,63 @@ class BootstrapPasswordChangeForm(PasswordChangeForm):
 
 class CustomAuthenticationForm(AuthenticationForm):
     username = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "رقم الهاتف"})
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "رقم الهاتف"}
+        ),
+        label="رقم الهاتف",
     )
     password = forms.CharField(
         widget=forms.PasswordInput(
             attrs={"class": "form-control", "placeholder": "كلمة المرور"}
-        )
+        ),
+        label="كلمة المرور",
     )
 
     def __init__(self, *args, **kwargs):
         super(CustomAuthenticationForm, self).__init__(*args, **kwargs)
         self.fields["username"].label = "رقم الهاتف"
         self.fields["password"].label = "كلمة المرور"
+
+
+class AdminPasswordChangeForm(forms.Form):
+    phone = forms.CharField(
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "رقم الهاتف"}
+        ),
+        label="رقم الهاتف",
+    )
+    new_password1 = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "كلمة المرور الجديدة"}
+        ),
+        label="كلمة المرور الجديدة",
+    )
+    new_password2 = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "تأكيد كلمة المرور الجديدة"}
+        ),
+        label="تأكيد كلمة المرور الجديدة",
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        new_password1 = cleaned_data.get("new_password1")
+        new_password2 = cleaned_data.get("new_password2")
+
+        if new_password1 and new_password2 and new_password1 != new_password2:
+            raise forms.ValidationError("كلمتا المرور غير متطابقتين.")
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        phone = self.cleaned_data["phone"]
+        new_password = self.cleaned_data["new_password1"]
+
+        try:
+            user = CustomUser.objects.get(phone=phone)
+            user.set_password(new_password)
+            if commit:
+                user.save()
+            return user
+        except CustomUser.DoesNotExist:
+            raise forms.ValidationError("المستخدم بهذا الرقم غير موجود.")

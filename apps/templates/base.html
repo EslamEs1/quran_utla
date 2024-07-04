@@ -11,7 +11,7 @@
 
 <body class="crm_body_bg">
     
-    {% comment %} {% if request.user.is_authenticated %} {% endcomment %}
+    {% if request.user.is_authenticated %}
     <nav class="sidebar">
         <div class="logo d-flex justify-content-between">
             <a href="/"><img src="{% static 'img/logo.png' %}" alt="logo"></a>
@@ -71,9 +71,9 @@
                     <span>الفواتير</span>
                 </a>
                 <ul>
-                    <li><a href="chart_box_1.html">الطلاب</a></li>
-                    <li><a href="profilebox.html">العائلات</a></li>
-                    <li><a href="profilebox.html">المعلمين</a></li>
+                    <li><a href="">الطلاب</a></li>
+                    <li><a href="{% url 'dash:invoices' %}">العائلات</a></li>
+                    <li><a href="{% url 'dash:instructor_invoices' %}">المعلمين</a></li>
                 </ul>
             </li>
             <li class>
@@ -116,7 +116,7 @@
             </li>
         </ul>
     </nav>
-    {% comment %} {% endif %} {% endcomment %}
+    {% endif %}
 
     <section class="main_content dashboard_part">
         {% if request.user.is_authenticated %}

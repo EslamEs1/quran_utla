@@ -4,22 +4,22 @@ from django.contrib.auth.models import (
     BaseUserManager,
     PermissionsMixin,
 )
-from datetime import date
+from django.utils.timezone import now
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.db.models import Sum, F
+from django.db.models.functions import Cast
 
 
 # ------------------------Settings
 class Tax(models.Model):
-    number = models.IntegerField(default=1)
-    date = models.DateField(default=date.today)  # Automatically set to the current date
-
-    def __str__(self):
-        return str(self.number)
+    percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
+    date = models.DateField(default=now)
 
 
 class BillingMonths(models.Model):
     date = models.DateField()
+    family = models.ForeignKey("Families", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.date
@@ -95,7 +95,7 @@ def create_manager_profile(sender, instance, created, **kwargs):
 class Instructor(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     qualification = models.CharField(max_length=250)
-    hourly_salary = models.IntegerField(default=0)
+    hourly_salary = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     class_link = models.CharField(max_length=1000)
     manager = models.ForeignKey(
         Manager, on_delete=models.SET_NULL, null=True, blank=True
@@ -109,7 +109,9 @@ class Instructor(models.Model):
 class Families(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     the_state = models.CharField(max_length=250, null=True, blank=True)
-    manager = models.ForeignKey(Manager, on_delete=models.SET_NULL, null=True, blank=True)
+    manager = models.ForeignKey(
+        Manager, on_delete=models.SET_NULL, null=True, blank=True
+    )
     payment_link = models.CharField(max_length=1000)
 
     def __str__(self):
@@ -119,7 +121,7 @@ class Families(models.Model):
 class Student(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     family = models.ForeignKey(Families, on_delete=models.CASCADE)
-    hourly_salary = models.IntegerField(default=0)
+    hourly_salary = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     payment_link = models.CharField(max_length=1000)
 
     def __str__(self):
@@ -144,30 +146,118 @@ class Evaluation(models.TextChoices):
 
 
 class Duration(models.TextChoices):
-    FORTY = "40", "40 دقيقه"
-    FORTYFIVE = "45", "45 دقيقه"
-    SIXTY = "60", "60 دقيقه"
-    EIGHTY = "80", "80 دقيقه"
-    NINETY = "90", "90 دقيقه"
-    ONE_TWENTY = "120", "120 دقيقه"
+    FORTY = "1", "1 ساعه"
+    FORTYFIVE = "2", "2 ساعه"
+    SIXTY = "3", "3 ساعه"
+    EIGHTY = "4", "4 ساعه"
+    NINETY = "5", "6 ساعه"
 
 
 class Classes(models.Model):
     family = models.ForeignKey(Families, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, blank=True, null=True)
+    instructor = models.ForeignKey(
+        Instructor, on_delete=models.CASCADE, blank=True, null=True
+    )
     date = models.DateField()
-    number_class_hours = models.CharField(choices=Duration.choices, default=Duration.FORTY, max_length=50)
-    evaluation = models.CharField(choices=Evaluation.choices, default=Evaluation.LOW, max_length=50)
+    number_class_hours = models.CharField(
+        choices=Duration.choices, default=Duration.FORTY, max_length=50
+    )
+    evaluation = models.CharField(
+        choices=Evaluation.choices, default=Evaluation.LOW, max_length=50
+    )
     subject_name = models.CharField(max_length=300)
     notes = models.CharField(max_length=500)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Class on {self.date} by {self.instructor.user.name} for {self.student.user.name}"
+        if self.instructor:
+            return f"Class on {self.date} by {self.instructor.user.name} for {self.student.user.name}"
+        else:
+            return f"Class on {self.date} for {self.family.user.name}'s family"
 
+    @staticmethod
+    def get_overall_totals(start_date=None, end_date=None):
+        queryset = Classes.objects.all()
+        if start_date and end_date:
+            queryset = queryset.filter(date__range=[start_date, end_date])
 
-# ------------------------Invoices
+        total_sections = queryset.count()
+
+        total_hours = queryset.aggregate(
+            total_hours=Sum(Cast("number_class_hours", models.IntegerField()))
+        )
+
+        total_salary = (
+            queryset.values("student")
+            .annotate(
+                total_salary=Sum(Cast("number_class_hours", models.DecimalField()))
+                * F("student__hourly_salary")
+            )
+            .aggregate(total_salary_sum=Sum("total_salary"))
+        )
+
+        return {
+            "total_sections": total_sections,
+            "total_hours": total_hours["total_hours"] or 0,
+            "total_salary": total_salary["total_salary_sum"] or 0,
+        }
+
+    @staticmethod
+    def get_family_totals(family, start_date=None, end_date=None):
+        queryset = Classes.objects.filter(family=family)
+        if start_date and end_date:
+            queryset = queryset.filter(date__range=[start_date, end_date])
+
+        total_sections = queryset.count()
+
+        total_hours = queryset.aggregate(
+            total_hours=Sum(Cast("number_class_hours", models.IntegerField()))
+        )
+
+        total_salary = (
+            queryset.values("student")
+            .annotate(
+                total_salary=Sum(Cast("number_class_hours", models.DecimalField()))
+                * F("student__hourly_salary")
+            )
+            .aggregate(total_salary_sum=Sum("total_salary"))
+        )
+
+        return {
+            "family": family,
+            "total_sections": total_sections,
+            "total_hours": total_hours["total_hours"] or 0,
+            "total_salary": total_salary["total_salary_sum"] or 0,
+        }
+
+    @staticmethod
+    def get_instructor_totals(instructor, start_date=None, end_date=None):
+        queryset = Classes.objects.filter(instructor=instructor)
+        if start_date and end_date:
+            queryset = queryset.filter(date__range=[start_date, end_date])
+
+        total_sections = queryset.count()
+
+        total_hours = queryset.aggregate(
+            total_hours=Sum(Cast("number_class_hours", models.IntegerField()))
+        )
+
+        total_salary = (
+            queryset.values("instructor")
+            .annotate(
+                total_salary=Sum(Cast("number_class_hours", models.DecimalField()))
+                * F("instructor__hourly_salary")
+            )
+            .aggregate(total_salary_sum=Sum("total_salary"))
+        )
+
+        return {
+            "instructor": instructor,
+            "total_sections": total_sections,
+            "total_hours": total_hours["total_hours"] or 0,
+            "total_salary": total_salary["total_salary_sum"] or 0,
+        }
 
 
 # ------------------------Advances and discounts

@@ -3,9 +3,11 @@ from .models import CustomUser
 
 
 class PhoneBackend(ModelBackend):
+
     def authenticate(self, request, username=None, password=None, **kwargs):
+        phone = username  # Use username to pass phone
         try:
-            user = CustomUser.objects.get(phone=username)
+            user = CustomUser.objects.get(phone=phone)
             if user.check_password(password):
                 return user
         except CustomUser.DoesNotExist:

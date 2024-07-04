@@ -43,3 +43,19 @@ button{
     background-color: #2bc6ef !important;
     border-color:#fff;
 }
+
+
+.total{
+    padding:50px 0;
+}
+
+.total p{
+    margin:10px 0;
+    color:#555;
+    font-size: 20px;
+}
+
+.total span{
+    color:black;
+    margin-right:10px;
+}

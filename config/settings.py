@@ -171,6 +171,6 @@ MESSAGE_TAGS = {
 AUTH_USER_MODEL = "dashboard.CustomUser"
 
 AUTHENTICATION_BACKENDS = (
-    # "django.contrib.auth.backends.ModelBackend",  # Keep the default backend if needed
     "apps.dashboard.backends.PhoneBackend",  # Add your custom backend
+    "django.contrib.auth.backends.ModelBackend",  # Keep the default backend if needed
 )

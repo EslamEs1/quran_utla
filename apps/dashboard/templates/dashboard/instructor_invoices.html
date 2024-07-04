@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+<h3 class="text-center">فواتير المعلمين</h3>
+{% endblock title %}
+
+{% block content %}
+<form method="GET" action="{% url 'dash:instructor_invoices' %}">
+    <div class="mb-2">
+        <label for="dateInput" class="form-label">اختر التاريخ</label>
+        <input type="month" class="form-control" id="dateInput" name="filter_month"
+            value="{% if request.GET.filter_month %}{{ request.GET.filter_month }}{% else %}{{ current_date|date:'Y-m' }}{% endif %}"
+            onchange="this.form.submit()">
+    </div>
+</form>
+
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">اسم المعلم</th>
+            <th scope="col">إجمالي الحصص</th>
+            <th scope="col">إجمالي ساعات</th>
+            <th scope="col">إجمالي الراتب</th>
+            <th scope="col">الهاتف</th>
+            <th scope="col">رابط الدفع</th>
+            <th scope="col">الفواتير</th>
+            <th scope="col">واتساب</th>
+        </tr>
+    </thead>
+    {% if invoices|length > 0 %}
+    <tbody>
+        {% for instructor_id, total in instructor_totals.items %}
+        <tr>
+            <td>{{ total.instructor.user.name }}</td>
+            <td>{{ total.total_sections }}</td>
+            <td>{{ total.total_hours }}</td>
+            <td>{{ total.total_salary|floatformat:"2" }} $</td>
+            <td>{{ total.instructor.user.phone }}</td>
+            <td>{{ total.instructor.payment_link }}</td>
+            <td><a href="#"><img class="icon" src="{% static 'img/validating-ticket.png' %}"></a></td>
+            <td><a href="#"><img class="icon" src="{% static 'img/whatsapp.png' %}"></a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    {% else %}
+        <p class="text-danger">لا توجد فواتير للشهر المحدد.</p>
+    {% endif %}
+</table>
+
+
+
+<div class="total">
+    <hr>
+    <h3>مجموع الفواتير</h3>
+    <hr>
+    <div class="list">
+        <div class="col">
+            <p>إجمالي الحصص: <span>( {{ overall_totals.total_sections }} )</span></p>
+        </div>
+        <div class="col">
+            <p>إجمالي ساعات:  <span>( {{ overall_totals.total_hours }} )</span></p>
+        </div>
+        <div class="col">
+            <p>إجمالي مبلغ المعلمين: <span>( ${{ overall_totals.total_salary|floatformat:"2" }} )</span></p>
+        </div>
+    </div>
+</div>
+{% endblock content %}

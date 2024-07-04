@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}
+    <h3 class="text-center">تفاصيل فاتورة العائلة</h3>
+{% endblock title %}
+
+{% block content %}
+    <h4>{{ family.name }}</h4>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Student Name</th>
+                <th>Total Hours</th>
+                <th>Total Before Tax</th>
+                <th>Total After Tax</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td>{{ student.user.name }}</td>
+                <td>{{ student.total_hours }}</td>
+                <td>${{ student.total_before_tax|floatformat:"2" }}</td>
+                <td>${{ student.total_after_tax|floatformat:"2" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h4>Tax Information</h4>
+    <p>Current Tax Percentage: {{ tax_percentage }}%</p>
+{% endblock content %}

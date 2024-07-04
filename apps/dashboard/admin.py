@@ -1,5 +1,5 @@
 from django.contrib import admin
-from apps.dashboard.models import CustomUser, Manager
+from apps.dashboard.models import CustomUser, Manager, Student, Families, Instructor, Classes, Tax
 # Register your models here.
 
 
@@ -10,4 +10,29 @@ class CustomUserAdmin(admin.ModelAdmin):
 
 @admin.register(Manager)
 class ManagerAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Student)
+class StudentAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Families)
+class FamiliesAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Instructor)
+class InstructorAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Classes)
+class ClassesAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Tax)
+class TaxAdmin(admin.ModelAdmin):
     pass

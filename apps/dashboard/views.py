@@ -1,11 +1,13 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
 from .forms import CustomAuthenticationForm
+from datetime import datetime, timedelta
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.contrib import messages
 from django.http import HttpResponseRedirect
+from django.db.models import Sum
 from .forms import (
     BaseUserForm,
     InstructorForm,
@@ -14,6 +16,7 @@ from .forms import (
     Instructor_StudentForm,
     ClassesForm,
     BootstrapPasswordChangeForm,
+    AdminPasswordChangeForm,
 )
 from .models import (
     UserType,
@@ -24,13 +27,16 @@ from .models import (
     Instructor,
     Families,
     Classes,
+    # Invoice,
 )
 
 
+@login_required
 def dash(request):
     return render(request, "dashboard/dashboard.html")
 
 
+@login_required
 def tax(request):
     if request.method == "POST":
         tax_number = request.POST.get("tax")
@@ -44,10 +50,12 @@ def tax(request):
     return render(request, "dashboard/tax.html")
 
 
+@login_required
 def billing_month(request):
     return render(request, "dashboard/billingmonths.html")
 
 
+@login_required
 def register_manager(request):
     managers = CustomUser.objects.filter(type=UserType.MANAGER)
     if request.method == "POST":
@@ -72,6 +80,7 @@ def register_manager(request):
     return render(request, "dashboard/manager.html", context)
 
 
+@login_required
 def register_instructor(request):
     instructor = Instructor.objects.all()
     if request.method == "POST":
@@ -97,7 +106,7 @@ def register_instructor(request):
 
     else:
         base_form = BaseUserForm()
-        instructor_form = FamiliesForm()
+        instructor_form = InstructorForm()
 
     context = {
         "base_form": base_form,
@@ -107,6 +116,7 @@ def register_instructor(request):
     return render(request, "dashboard/instructor.html", context)
 
 
+@login_required
 def register_family(request):
     families = Families.objects.all()
     if request.method == "POST":
@@ -135,11 +145,13 @@ def register_family(request):
 
     context = {
         "base_form": base_form,
+        "families_form": families_form,
         "families": families,
     }
     return render(request, "dashboard/families.html", context)
 
 
+@login_required
 def register_student(request):
     students = Student.objects.all()
     if request.method == "POST":
@@ -169,10 +181,12 @@ def register_student(request):
     context = {
         "base_form": base_form,
         "students": students,
+        "student_form": student_form,
     }
     return render(request, "dashboard/student.html", context)
 
 
+@login_required
 def instructor_student_view(request):
     inst_student = Instructor_Student.objects.all()
     if request.method == "POST":
@@ -196,6 +210,7 @@ def instructor_student_view(request):
 
 @login_required
 def change_password(request):
+    admin_change = AdminPasswordChangeForm()
     if request.method == "POST":
         form = BootstrapPasswordChangeForm(request.user, request.POST)
         if form.is_valid():
@@ -209,7 +224,26 @@ def change_password(request):
             messages.error(request, "يرجى تصحيح الأخطاء الموجودة في النموذج.")
     else:
         form = BootstrapPasswordChangeForm(request.user)
-    return render(request, "dashboard/change_password.html", {"form": form})
+    return render(
+        request,
+        "dashboard/change_password.html",
+        {"form": form, "admin_change": admin_change},
+    )
+
+
+def admin_password_change(request):
+    if request.method == "POST":
+        form = AdminPasswordChangeForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "تم تغيير كلمة المرور بنجاح!")
+            return redirect(
+                "dash:dashboard"
+            )  # Redirect to a desired view after successful password change
+        else:
+            messages.error(request, "يرجى تصحيح الأخطاء الموجودة في النموذج.")
+            return redirect("dash:dashboard")
+    return redirect("dash:dashboard")
 
 
 def user_login(request):
@@ -218,7 +252,9 @@ def user_login(request):
         if form.is_valid():
             phone = form.cleaned_data["username"]
             password = form.cleaned_data["password"]
-            user = authenticate(request, phone=phone, password=password)
+            user = authenticate(
+                request, username=phone, password=password
+            )  # use username to pass phone
             if user is not None:
                 login(request, user)
                 messages.success(request, "تم تسجيل الدخول بنجاح!")
@@ -242,6 +278,7 @@ def get_students_by_family(request, family_id):
     return JsonResponse({"students": list(students)})
 
 
+@login_required
 def classes(request):
     classes_list = Classes.objects.all()
     if request.method == "POST":
@@ -254,7 +291,9 @@ def classes(request):
             except Instructor_Student.DoesNotExist:
                 messages.error(request, "لا يوجد معلم مرتبط بهذا الطالب")
         else:
-            messages.error(request, "ربما هناك حقول فارغة او لا يوجد معلم مرتبط بهذا الطالب")
+            messages.error(
+                request, "ربما هناك حقول فارغة او لا يوجد معلم مرتبط بهذا الطالب"
+            )
     else:
         form = ClassesForm()
 
@@ -263,3 +302,129 @@ def classes(request):
         "classes": classes_list,
     }
     return render(request, "dashboard/classes.html", context)
+
+
+def invoices(request):
+    families = Families.objects.all()
+
+    # Default to current month if not specified in GET parameters
+    current_date = datetime.now()
+    start_date = current_date.replace(day=1).date()  # First day of the current month
+    end_date = start_date.replace(day=1, month=start_date.month + 1) - timedelta(
+        days=1
+    )  # Last day of the current month
+
+    # Handle form submission for month filter
+    if request.method == "GET" and "filter_month" in request.GET:
+        selected_month = request.GET.get("filter_month")
+        year, month = selected_month.split("-")
+        start_date = datetime(
+            int(year), int(month), 1
+        ).date()  # First day of selected month
+        end_date = start_date.replace(day=1, month=int(month) + 1) - timedelta(
+            days=1
+        )  # Last day of selected month
+
+    # Query invoices for the selected month
+    invoices = Classes.objects.filter(date__range=[start_date, end_date])
+
+    # Calculate overall totals for the selected month
+    overall_totals = Classes.get_overall_totals(start_date, end_date)
+
+    # Calculate family totals for the selected month
+    family_totals = {
+        family.id: Classes.get_family_totals(family, start_date, end_date)
+        for family in families
+    }
+
+    return render(
+        request,
+        "dashboard/family_invoices.html",
+        {
+            "families": families,
+            "family_totals": family_totals,
+            "current_date": current_date,
+            "overall_totals": overall_totals,
+            "invoices": invoices,
+        },
+    )
+
+
+def family_invoice_details(request, family_id):
+    family = get_object_or_404(Families, pk=family_id)
+    students = Student.objects.filter(family=family)
+
+    # Get the latest tax percentage
+    latest_tax = Tax.objects.latest("date")
+    tax_percentage = latest_tax.percentage if latest_tax else 0.0
+
+    for student in students:
+        # Calculate totals for each student
+        classes = Classes.objects.filter(student=student)
+        total_hours = (
+            classes.aggregate(total_hours=Sum("number_class_hours"))["total_hours"] or 0
+        )
+
+        total_before_tax = total_hours * student.hourly_salary
+        total_after_tax = total_before_tax * (1 - tax_percentage / 100)
+
+        # Assign totals to student objects
+        student.total_hours = total_hours
+        student.total_before_tax = total_before_tax
+        student.total_after_tax = total_after_tax
+
+    return render(
+        request,
+        "dashboard/family_invoice_detail.html",
+        {
+            "family": family,
+            "students": students,
+            "tax_percentage": tax_percentage,
+        },
+    )
+
+
+def instructor_invoices(request):
+    instructors = Instructor.objects.all()
+
+    # Default to current month if not specified in GET parameters
+    current_date = datetime.now()
+    start_date = current_date.replace(day=1).date()  # First day of the current month
+    end_date = start_date.replace(day=1, month=start_date.month + 1) - timedelta(
+        days=1
+    )  # Last day of the current month
+
+    # Handle form submission for month filter
+    if request.method == "GET" and "filter_month" in request.GET:
+        selected_month = request.GET.get("filter_month")
+        year, month = selected_month.split("-")
+        start_date = datetime(
+            int(year), int(month), 1
+        ).date()  # First day of selected month
+        end_date = start_date.replace(day=1, month=int(month) + 1) - timedelta(
+            days=1
+        )  # Last day of selected month
+
+    # Query invoices for the selected month
+    invoices = Classes.objects.filter(date__range=[start_date, end_date])
+
+    # Calculate overall totals for the selected month
+    overall_totals = Classes.get_overall_totals(start_date, end_date)
+
+    # Calculate instructor totals for the selected month
+    instructor_totals = {
+        instructor.id: Classes.get_instructor_totals(instructor, start_date, end_date)
+        for instructor in instructors
+    }
+
+    return render(
+        request,
+        "dashboard/instructor_invoices.html",
+        {
+            "instructors": instructors,
+            "instructor_totals": instructor_totals,
+            "current_date": current_date,
+            "overall_totals": overall_totals,
+            "invoices": invoices,
+        },
+    )
