@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}
+    <h3 class="text-center">تفاصيل فاتورة الطالب</h3>
+    <h4>{{ student.name }}</h4>
+{% endblock title %}
+
+{% block content %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>التاريخ</th>
+                <th>عدد ساعات الدرس</th>
+                <th>اسم الموضوع</th>
+                <th>التقييم</th>
+                <th>ملاحظات</th>
+                <th>المعلم</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for class in classes %}
+            <tr>
+                <td>{{ class.date }}</td>
+                <td>{{ class.number_class_hours }}</td>
+                <td>{{ class.subject_name }}</td>
+                <td>{{ class.evaluation }}</td>
+                <td>{{ class.notes }}</td>
+                <td>
+                    {% if class.instructor %}
+                        {{ class.instructor.user.name }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h4>إجمالي الفاتورة</h4>
+    <p>إجمالي الساعات: {{ total_hours }}</p>
+    <p>إجمالي الحصص: {{ total_classes }}</p>
+    <p>الإجمالي قبل الضريبة: ${{ total_before_tax|floatformat:"2" }}</p>
+    <p>الإجمالي بعد الضريبة: ${{ total_after_tax|floatformat:"2" }}</p>
+    <p>نسبة الضريبة: {{ tax_percentage }}%</p>
+{% endblock content %}

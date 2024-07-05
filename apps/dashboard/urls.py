@@ -22,6 +22,8 @@ urlpatterns = [
     path("invoices/", views.invoices, name="invoices"),
     path("instructor_invoices/", views.instructor_invoices, name="instructor_invoices"),
     path('family_invoice_details/<int:family_id>/', views.family_invoice_details, name='family_invoice_details'),
+    path('invoices/student/<int:student_id>/', views.student_invoice_details, name='student_invoice_details'),
+
 
 
 

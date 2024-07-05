@@ -115,7 +115,7 @@ class Families(models.Model):
     payment_link = models.CharField(max_length=1000)
 
     def __str__(self):
-        return f"{self.user.name} - Families"
+        return self.user.name
 
 
 class Student(models.Model):
@@ -125,7 +125,7 @@ class Student(models.Model):
     payment_link = models.CharField(max_length=1000)
 
     def __str__(self):
-        return f"{self.user.name} - Student"
+        return self.user.name
 
 
 class Instructor_Student(models.Model):

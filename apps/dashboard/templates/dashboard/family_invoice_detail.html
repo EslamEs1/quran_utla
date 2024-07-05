@@ -1,31 +1,57 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}
-    <h3 class="text-center">تفاصيل فاتورة العائلة</h3>
+<div class="title-invoices">
+    <h3 class="text-center">فاتورة العائلة</h3>
+    <p class="text-center">فاتورة شهر 7/2024</p>
+</div>
 {% endblock title %}
 
 {% block content %}
-    <h4>{{ family.name }}</h4>
+    <div class="list-family">
+        <ul>
+            <li>أسم العائلة : {{ family.user.name }}</li>
+            <li>رقم الهاتف : {{ family.user.phone }}</li>
+            <li>العنوان : {{ family.user.address }}</li>
+        </ul>
+
+        <ul>
+            <li>أكاديمية قرأن يتلى</li>
+            <li>رقم الهاتف : 01158268124</li>
+            <li>البريد الألكترونى : admin@quran.com</li>
+            <li>العنوان مصر - القاهرة</li>
+        </ul>
+
+        <img src="{% static 'img/logo.png' %}" alt="logo">
+    </div>
+    <hr>
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Student Name</th>
-                <th>Total Hours</th>
-                <th>Total Before Tax</th>
-                <th>Total After Tax</th>
+                <th>اسم الطالب</th>
+                <th>إجمالي الساعات</th>
+                <th>إجمالي الحصص</th>
+                <th>الإجمالي قبل الضريبة</th>
+                <th>الإجمالي بعد الضريبة</th>
+                <th>فاتورة الطالب</th>
             </tr>
         </thead>
         <tbody>
             {% for student in students %}
             <tr>
-                <td>{{ student.user.name }}</td>
+                <td>{{ student }}</td>
                 <td>{{ student.total_hours }}</td>
+                <td>{{ student.total_classes }}</td>
                 <td>${{ student.total_before_tax|floatformat:"2" }}</td>
                 <td>${{ student.total_after_tax|floatformat:"2" }}</td>
+                <td><a href="{% url 'dash:student_invoice_details' student.id %}"><img class="icon" src="{% static 'img/validating-ticket.png' %}"></a></td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-
-    <h4>Tax Information</h4>
-    <p>Current Tax Percentage: {{ tax_percentage }}%</p>
+    <br>
+    <hr>
+    <h4>معلومات الضريبة</h4>
+    <p>نسبة الضريبة الحالية: {{ tax_percentage }}%</p>
+    <br>
 {% endblock content %}

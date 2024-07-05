@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.db.models import Sum
+from django.db.models import Sum, Count
 from .forms import (
     BaseUserForm,
     InstructorForm,
@@ -364,12 +364,16 @@ def family_invoice_details(request, family_id):
         total_hours = (
             classes.aggregate(total_hours=Sum("number_class_hours"))["total_hours"] or 0
         )
+        total_classes = (
+            classes.aggregate(total_classes=Count("id"))["total_classes"] or 0
+        )
 
         total_before_tax = total_hours * student.hourly_salary
         total_after_tax = total_before_tax * (1 - tax_percentage / 100)
 
         # Assign totals to student objects
         student.total_hours = total_hours
+        student.total_classes = total_classes
         student.total_before_tax = total_before_tax
         student.total_after_tax = total_after_tax
 
@@ -379,6 +383,37 @@ def family_invoice_details(request, family_id):
         {
             "family": family,
             "students": students,
+            "tax_percentage": tax_percentage,
+        },
+    )
+
+
+def student_invoice_details(request, student_id):
+    student = get_object_or_404(Student, pk=student_id)
+    classes = Classes.objects.filter(student=student)
+
+    # Get the latest tax percentage
+    latest_tax = Tax.objects.latest("date")
+    tax_percentage = latest_tax.percentage if latest_tax else 0.0
+
+    # Calculate totals for the student
+    total_hours = (
+        classes.aggregate(total_hours=Sum("number_class_hours"))["total_hours"] or 0
+    )
+    total_classes = classes.count()
+    total_before_tax = total_hours * student.hourly_salary
+    total_after_tax = total_before_tax * (1 - tax_percentage / 100)
+
+    return render(
+        request,
+        "dashboard/student_invoice_detail.html",
+        {
+            "student": student,
+            "classes": classes,
+            "total_hours": total_hours,
+            "total_classes": total_classes,
+            "total_before_tax": total_before_tax,
+            "total_after_tax": total_after_tax,
             "tax_percentage": tax_percentage,
         },
     )
