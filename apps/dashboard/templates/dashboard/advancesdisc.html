@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+<h3 class="text-center">السلف والخصومات</h3>
+{% endblock title %}
+{% block content %}
+<!-- Button trigger modals -->
+<div class="row">
+    <div class="col-md-3">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdropdeiscound">
+            إضافة سلفة
+        </button>
+    </div>
+</div>
+<hr/>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">إسم المعلم</th>
+            <th scope="col">مبلغ السلفة</th>
+            <th scope="col">تعليق</th>            
+            <th scope="col">التاريخ</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+        {% for disc in disc %}
+        <tr>
+            <td>{{disc.instructor.user.name}}</td>
+            <td>{{disc.amount}}</td>
+            <td>{{disc.comment}}</td>     
+            <td>{{disc.created_at}}</td>     
+        </tr>         
+        {% endfor %}
+            
+    </tbody>
+</table>
+
+<!-- Modal for Family -->
+<div class="modal fade" id="staticBackdropdeiscound" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">إضافة سلفه</h5>
+            </div>
+            <div class="modal-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">إضافة</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

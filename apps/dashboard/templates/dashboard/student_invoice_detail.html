@@ -1,45 +1,64 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}
-    <h3 class="text-center">تفاصيل فاتورة الطالب</h3>
-    <h4>{{ student.name }}</h4>
+<div class="title-invoices">
+    <h3 class="text-center">فاتورة الطالب</h3>
+    <p class="text-center">فاتورة شهر 7/2024</p>
+</div>
 {% endblock title %}
 
 {% block content %}
+<div class="list-family">
+        <ul>
+            <li>أسم العائلة : {{ student.family.user.name }}</li>
+            <li>رقم الهاتف : {{ student.family.user.phone }}</li>
+            <li>العنوان : {{ student.family.user.address }}</li>
+        </ul>
+
+        <ul>
+            <li>أكاديمية قرأن يتلى</li>
+            <li>رقم الهاتف : 01158268124</li>
+            <li>البريد الألكترونى : admin@quran.com</li>
+            <li>العنوان مصر - القاهرة</li>
+        </ul>
+
+        <img src="{% static 'img/logo.png' %}" alt="logo">
+    </div>
+    <hr>
     <table class="table table-striped">
         <thead>
             <tr>
+                <th>أسم الطالب</th>
+                <th>المعلم</th>
                 <th>التاريخ</th>
                 <th>عدد ساعات الدرس</th>
                 <th>اسم الموضوع</th>
                 <th>التقييم</th>
                 <th>ملاحظات</th>
-                <th>المعلم</th>
             </tr>
         </thead>
         <tbody>
             {% for class in classes %}
             <tr>
+                <td>{{ class.student.user.name }}</td>
+                <td>{{ class.instructor.user.name }}</td>
                 <td>{{ class.date }}</td>
                 <td>{{ class.number_class_hours }}</td>
                 <td>{{ class.subject_name }}</td>
                 <td>{{ class.evaluation }}</td>
                 <td>{{ class.notes }}</td>
-                <td>
-                    {% if class.instructor %}
-                        {{ class.instructor.user.name }}
-                    {% else %}
-                        N/A
-                    {% endif %}
-                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <h4>إجمالي الفاتورة</h4>
-    <p>إجمالي الساعات: {{ total_hours }}</p>
-    <p>إجمالي الحصص: {{ total_classes }}</p>
-    <p>الإجمالي قبل الضريبة: ${{ total_before_tax|floatformat:"2" }}</p>
-    <p>الإجمالي بعد الضريبة: ${{ total_after_tax|floatformat:"2" }}</p>
-    <p>نسبة الضريبة: {{ tax_percentage }}%</p>
+    <div class="total">
+        <h4>إجمالي الفاتورة</h4>
+        <p>إجمالي الساعات: <span>{{ total_hours }}</span></p>
+        <p>إجمالي الحصص: <span>{{ total_classes }}</span></p>
+        <p>الإجمالي قبل الضريبة: <span>${{ total_before_tax|floatformat:"2" }}</span></p>
+        <p>الإجمالي بعد الضريبة: <span>${{ total_after_tax|floatformat:"2" }}</span></p>
+        <p>نسبة الضريبة: <span>{{ tax_percentage }}%</span></p>
+
+    </div>
 {% endblock content %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+<h3 class="text-center">روابط الفواتير</h3>
+{% endblock title %}
+{% block content %}
+<!-- Button trigger modals -->
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">إسم العائلة</th>
+            <th scope="col">الرابط</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+        {% for family in families %}
+        <tr>
+            <td>{{family.user.name}}</td>
+            <td>http://127.0.0.1:8000/dashboard/family_inv_de/{{family.id}}</td>
+        </tr>         
+        {% endfor %}
+            
+    </tbody>
+</table>
+
+{% endblock content %}

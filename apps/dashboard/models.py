@@ -9,6 +9,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db.models import Sum, F
 from django.db.models.functions import Cast
+import uuid
 
 
 # ------------------------Settings
@@ -107,6 +108,7 @@ class Instructor(models.Model):
 
 
 class Families(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     the_state = models.CharField(max_length=250, null=True, blank=True)
     manager = models.ForeignKey(
@@ -261,9 +263,8 @@ class Classes(models.Model):
 
 
 # ------------------------Advances and discounts
-class Advances_Discounts(models.Model):
+class Discounts(models.Model):
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
     amount = models.IntegerField(default=0)
     comment = models.CharField(max_length=250)
-    date = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)

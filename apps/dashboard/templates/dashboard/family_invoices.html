@@ -36,8 +36,8 @@
             <td>{{ total.total_hours }}</td>
             <td>{{ total.total_salary|floatformat:"2" }} $</td>
             <td>{{ total.family.user.phone }}</td>
-            <td>{{ total.family.payment_link }}</td>
-            <td><a href="{% url 'dash:family_invoice_details' total.family.id %}"><img class="icon" src="{% static 'img/validating-ticket.png' %}"></a></td>
+            <td>http://127.0.0.1:8000/dashboard/family_inv_de/{{ family_id }}</td>
+            <td><a href="{% url 'dash:family_invoice_details' family_id %}"><img class="icon" src="{% static 'img/validating-ticket.png' %}"></a></td>
             <td><a href="#"><img class="icon" src="{% static 'img/whatsapp.png' %}"></a></td>
         </tr>
         {% endfor %}

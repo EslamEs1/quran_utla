@@ -7,6 +7,7 @@ from .models import (
     Gender,
     Instructor_Student,
     Classes,
+    Discounts
 )
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.forms import AuthenticationForm
@@ -159,7 +160,7 @@ class Instructor_StudentForm(forms.ModelForm):
 
         if "family" in self.data:
             try:
-                family_id = int(self.data.get("family"))
+                family_id = str(self.data.get("family"))
                 self.fields["student"].queryset = Student.objects.filter(
                     family_id=family_id
                 ).order_by("user__name")
@@ -228,7 +229,7 @@ class ClassesForm(forms.ModelForm):
 
         if "family" in self.data:
             try:
-                family_id = int(self.data.get("family"))
+                family_id = str(self.data.get("family"))
                 self.fields["student"].queryset = Student.objects.filter(
                     family_id=family_id
                 ).order_by("user__name")
@@ -333,3 +334,26 @@ class AdminPasswordChangeForm(forms.Form):
             return user
         except CustomUser.DoesNotExist:
             raise forms.ValidationError("المستخدم بهذا الرقم غير موجود.")
+
+
+class DiscountsForm(forms.ModelForm):
+    class Meta:
+        model = Discounts
+        fields = "__all__"
+        widgets = {
+            "instructor": forms.Select(
+                attrs={"class": "form-control", "placeholder": "المعلم"}
+            ),
+            "amount": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "المبلغ"}
+            ),
+            "comment": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "تعليق"}
+            ),  
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(DiscountsForm, self).__init__(*args, **kwargs)
+        self.fields["instructor"].label = "المعلم"
+        self.fields["amount"].label = "المبلغ"
+        self.fields["comment"].label = "تعليق"

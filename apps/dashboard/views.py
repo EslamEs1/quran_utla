@@ -17,6 +17,7 @@ from .forms import (
     ClassesForm,
     BootstrapPasswordChangeForm,
     AdminPasswordChangeForm,
+    DiscountsForm,
 )
 from .models import (
     UserType,
@@ -27,7 +28,7 @@ from .models import (
     Instructor,
     Families,
     Classes,
-    # Invoice,
+    Discounts,
 )
 
 
@@ -333,7 +334,7 @@ def invoices(request):
 
     # Calculate family totals for the selected month
     family_totals = {
-        family.id: Classes.get_family_totals(family, start_date, end_date)
+        str(family.id): Classes.get_family_totals(family, start_date, end_date)
         for family in families
     }
 
@@ -463,3 +464,26 @@ def instructor_invoices(request):
             "invoices": invoices,
         },
     )
+
+
+def advancesdisc(request):
+    disc = Discounts.objects.all()
+    if request.method == "POST":
+        form = DiscountsForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "تم تسجيل السلفه بنجاح!")
+            return redirect("dash:advancesdisc")   
+        else:
+            messages.error(request, "لم يتم تسجيل السلفة")
+    else:
+        form = DiscountsForm()
+    return render(request, "dashboard/advancesdisc.html", {"form": form, "disc":disc,})
+
+
+def invoices_link(request):
+    families = Families.objects.all()
+    return render(request, "dashboard/invoices_link.html", {"families": families})
+
+
+
