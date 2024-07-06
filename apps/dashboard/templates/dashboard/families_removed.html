@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+<h3 class="text-center">العائلات المحذوفة</h3>
+{% endblock title %}
+{% block content %}
+<!-- Button trigger modals -->
+
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">أسم العائلة</th>
+            <th scope="col">رقم الهاتف</th>
+            <th scope="col">العنوان</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in families %}
+            <tr>
+                <td>{{user.user.name}}</td>
+                <td>{{user.user.phone}}</td>
+                <td>{{user.user.address}}</td>
+                <td><a href="{% url 'dash:activate_user' user.user.id %}"><img class="icon" src="{% static 'img/returning-visitor.png' %}"></a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+{% endblock content %}

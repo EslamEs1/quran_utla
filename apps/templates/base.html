@@ -101,17 +101,17 @@
                     <span>الأشخاص المحذوفين</span>
                 </a>
                 <ul>
-                    <li><a href="apex_chart.html">العائلات</a></li>
-                    <li><a href="chartjs.html">المعلمين</a></li>
+                    <li><a href="{% url 'dash:families_removed' %}">العائلات</a></li>
+                    <li><a href="{% url 'dash:instructor_removed' %}">المعلمين</a></li>
                 </ul>
             </li>
             <li class>
                 <a class="has-arrow" href="#" aria-expanded="false">
                     <img src="{% static 'img/menu-icon/7.svg' %}" alt>
-                    <span>الأعلانات</span>
+                    <span>طلبات تواصل</span>
                 </a>
                 <ul>
-                    <li><a href="apex_chart.html">اولياء الأمور الجدد</a></li>
+                    <li><a href="{% url 'dash:contact' %}">الطلبات</a></li>
                 </ul>
             </li>
         </ul>

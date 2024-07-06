@@ -43,4 +43,9 @@ urlpatterns = [
     ),
     path("invoices/instructor/advancesdisc/", views.advancesdisc, name="advancesdisc"),
     path("invoices/families/invoices-link/", views.invoices_link, name="invoices_link"),
+    path("families/removed/", views.families_removed, name="families_removed"),
+    path("instructor/removed/", views.instructor_removed, name="instructor_removed"),
+    path("users/active-user/<str:user_id>/", views.activate_user, name="activate_user"),
+    path("users/active-user/<int:user_id>/", views.activate_user, name="activate_user_inst"),
+    path("contact/", views.contact, name="contact"),
 ]

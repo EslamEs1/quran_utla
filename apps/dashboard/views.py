@@ -29,6 +29,7 @@ from .models import (
     Families,
     Classes,
     Discounts,
+    Contact,
 )
 
 
@@ -306,7 +307,7 @@ def classes(request):
 
 
 def invoices(request):
-    families = Families.objects.all()
+    families = Families.objects.filter(user__is_active=True)
 
     # Default to current month if not specified in GET parameters
     current_date = datetime.now()
@@ -352,7 +353,7 @@ def invoices(request):
 
 
 def family_invoice_details(request, family_id):
-    family = get_object_or_404(Families, pk=family_id)
+    family = get_object_or_404(Families, pk=family_id, user__is_active=True)
     students = Student.objects.filter(family=family)
 
     # Get the latest tax percentage
@@ -390,7 +391,7 @@ def family_invoice_details(request, family_id):
 
 
 def student_invoice_details(request, student_id):
-    student = get_object_or_404(Student, pk=student_id)
+    student = get_object_or_404(Student, pk=student_id, user__is_active=True)
     classes = Classes.objects.filter(student=student)
 
     # Get the latest tax percentage
@@ -421,7 +422,7 @@ def student_invoice_details(request, student_id):
 
 
 def instructor_invoices(request):
-    instructors = Instructor.objects.all()
+    instructors = Instructor.objects.filter(user__is_active=True)
 
     # Default to current month if not specified in GET parameters
     current_date = datetime.now()
@@ -482,8 +483,28 @@ def advancesdisc(request):
 
 
 def invoices_link(request):
-    families = Families.objects.all()
+    families = Families.objects.filter(user__is_active=True)
     return render(request, "dashboard/invoices_link.html", {"families": families})
 
 
+def families_removed(request):
+    families = Families.objects.filter(user__is_active=False)
+    return render(request, "dashboard/families_removed.html", {"families": families})
 
+
+def instructor_removed(request):
+    instructor = Instructor.objects.filter(user__is_active=False)
+    return render(request, "dashboard/instructor_removed.html", {"instructor": instructor})
+
+
+def activate_user(request, user_id):
+    user = get_object_or_404(CustomUser, id=user_id)
+    user.is_active = True
+    user.save()
+    messages.success(request, f"تم تفعيل المستخدم {user.name} بنجاح")
+    return HttpResponseRedirect(request.headers.get("referer"))
+
+
+def contact(request):
+    contact = Contact.objects.all()
+    return render(request, "dashboard/contact.html", {"contact": contact})

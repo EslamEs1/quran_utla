@@ -268,3 +268,13 @@ class Discounts(models.Model):
     amount = models.IntegerField(default=0)
     comment = models.CharField(max_length=250)
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class Contact(models.Model):
+    name = models.CharField(max_length=100)
+    whatsapp = models.CharField(max_length=100)
+    phone = models.IntegerField()
+    create_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
