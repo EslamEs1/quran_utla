@@ -7,7 +7,9 @@ from .models import (
     Gender,
     Instructor_Student,
     Classes,
-    Discounts
+    Discounts,
+    Marketer_Student,
+    UserType,
 )
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.forms import AuthenticationForm
@@ -157,12 +159,12 @@ class Instructor_StudentForm(forms.ModelForm):
         self.fields["family"].label = "العائله"
         self.fields["student"].label = "الطالب"
         self.fields["instructor"].label = "المعلم"
-
+        
         if "family" in self.data:
             try:
                 family_id = str(self.data.get("family"))
                 self.fields["student"].queryset = Student.objects.filter(
-                    family_id=family_id
+                    family_id=family_id, user__is_active=True
                 ).order_by("user__name")
             except (ValueError, TypeError):
                 self.fields["student"].queryset = Student.objects.none()
@@ -357,3 +359,40 @@ class DiscountsForm(forms.ModelForm):
         self.fields["instructor"].label = "المعلم"
         self.fields["amount"].label = "المبلغ"
         self.fields["comment"].label = "تعليق"
+
+
+class Marketer_StudentForm(forms.ModelForm):
+    class Meta:
+        model = Marketer_Student
+        fields = ["family", "student", "marketer"]
+        widgets = {
+            "family": forms.Select(attrs={"class": "form-control", "id": "id_family"}),
+            "student": forms.Select(
+                attrs={"class": "form-control", "id": "id_student"}
+            ),
+            "marketer": forms.Select(attrs={"class": "form-control"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(Marketer_StudentForm, self).__init__(*args, **kwargs)
+        self.fields["family"].label = "العائله"
+        self.fields["student"].label = "الطالب"
+        self.fields["marketer"].label = "المسوق"
+
+        # Set the queryset for the marketer field
+        self.fields["marketer"].queryset = CustomUser.objects.filter(type=UserType.MARKETER, is_active=True)
+
+        if "family" in self.data:
+            try:
+                family_id = str(self.data.get("family"))
+                self.fields["student"].queryset = Student.objects.filter(
+                    family_id=family_id, user__is_active=True
+                ).order_by("user__name")
+            except (ValueError, TypeError):
+                self.fields["student"].queryset = Student.objects.none()
+        elif self.instance.pk:
+            self.fields["student"].queryset = self.instance.family.student_set.order_by(
+                "user__name"
+            )
+        else:
+            self.fields["student"].queryset = Student.objects.none()

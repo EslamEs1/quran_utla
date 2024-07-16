@@ -42,8 +42,8 @@
                     <li><a href="{% url 'dash:register_family' %}">العائلة</a></li>
                     <li><a href="{% url 'dash:register_student' %}">الطلاب</a></li>
                     <li><a href="{% url 'dash:instructor_student' %}">الطلاب والمعلمين</a></li>
-                    <li><a href="forgot_pass.html">المسوقين</a></li>
-                    <li><a href="forgot_pass.html">الطلاب ولمسوقين</a></li>
+                    <li><a href="{% url 'dash:register_marketer' %}">المسوقين</a></li>
+                    <li><a href="{% url 'dash:marketer_student_view' %}">الطلاب ولمسوقين</a></li>
                 </ul>
             </li>
             <li class>

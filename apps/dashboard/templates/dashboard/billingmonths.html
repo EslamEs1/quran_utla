@@ -12,51 +12,56 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th scope="col">الشهر</th>
-            <th scope="col">السنة</th>
+            <th scope="col">عائلة</th>
+            <th scope="col">التاريخ</th>
             <th scope="col">تغيير</th>
             <th scope="col">حذف</th>
         </tr>
     </thead>
     <tbody>
+        
+        {% for billing in billing %}
         <tr>
-            <td>4</td>
-            <td>2024</td>
-            <td><a href="#" data-bs-toggle="modal" data-bs-target="#editModal"><img class="icon" src="{% static 'img/edit.png'%}"></a></td>
-            <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
+            <td>{{billing.family}}</td>
+            <td>{{billing.date}}</td>
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#editModal-{{billing.id}}"><img class="icon" src="{% static 'img/edit.png'%}"></a></td>
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal-{{billing.id}}"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
         </tr>
+        {% endfor %}
     </tbody>
 </table>
 
 <!-- Button trigger modal -->
-<!-- Edit Modal -->
-<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+{% for billing in billing %}
+<div class="modal fade" id="editModal-{{ billing.id }}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editModalLabel">تعديل الفاتورة</h5>
             </div>
             <div class="modal-body">
-                <form>
+                <form method="POST" id="editForm" action="{% url 'dash:edit_billing_month' %}">
+                    {% csrf_token %}
                     <div class="mb-3">
-                        <label for="editMonthInput" class="form-label">الشهر</label>
-                        <input type="number" class="form-control" id="editMonthInput" value="4">
+                        <label for="dateInput" class="form-label">اختر التاريخ</label>
+                        <input type="date" class="form-control" name="date" value="{{billing.date|date:'Y-m-d' }}">
+                        <input type="hidden" class="form-control" name="family" value="{{billing.family.id}}">
                     </div>
-                    <div class="mb-3">
-                        <label for="editYearInput" class="form-label">السنة</label>
-                        <input type="number" class="form-control" id="editYearInput" value="2024">
-                    </div>
+                    <button type="submit" style="display: none;" id="hiddenSubmitBtn{{billing.id}}"></button>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary">حفظ التغييرات</button>
+                <button type="button" class="btn btn-primary" id="saveChangesBtn" onclick="document.getElementById('hiddenSubmitBtn{{billing.id}}').click();">حفظ التغييرات</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
             </div>
         </div>
     </div>
 </div>
+{% endfor %}
+
+{% for billing in billing %}
 <!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteModal-{{ billing.id }}" tabindex="-1" aria-labelledby="deleteModalLabel-{{ billing.id }}" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -66,12 +71,14 @@
                 هل أنت متأكد أنك تريد حذف هذه الفاتورة؟
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger">حذف</button>
+                <a style="width:100%;" class="btn btn-danger" href="{% url 'dash:delete_billing_month' billing.id %}">حذف</a>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
             </div>
         </div>
     </div>
 </div>
+{% endfor %}
+
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -81,28 +88,40 @@
                 <h5 class="modal-title" id="staticBackdropLabel">أظهار الفواتير للعائلات</h5>
             </div>
             <div class="modal-body">
-                <form>
+                <form id="billingForm" method="POST">
+                    {% csrf_token %}
                     <div class="mb-3">
                         <label for="dateInput" class="form-label">اختر التاريخ</label>
-                        <input type="date" class="form-control" id="dateInput">
+                        <input type="date" class="form-control" id="dateInput" name="date">
                     </div>
                     <div class="mb-3">
                         <label for="selectInput" class="form-label">اختر العائلة</label>
-                        <select class="form-select" id="selectInput">
+                        <select class="form-select" id="selectInput" name="family">
                             <option selected>اختر...</option>
-                            <option value="1">عائلة 1</option>
-                            <option value="2">عائلة 2</option>
-                            <option value="3">عائلة 3</option>
+                            {% for family in family %}
+                            <option value="{{family.id}}">{{family}}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary">حفظ التغييرات</button>
+                <button type="button" class="btn btn-primary" id="saveAddBtn">حفظ التغييرات</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
             </div>
         </div>
     </div>
 </div>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    const saveChangesBtn = document.getElementById("saveAddBtn");
+    const myForm = document.getElementById("billingForm");
+
+    saveChangesBtn.addEventListener("click", function() {
+        // Submit the form when the button is clicked
+        myForm.submit();
+    });
+});
+</script>
 {% endblock content %}

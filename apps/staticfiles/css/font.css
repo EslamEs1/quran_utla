@@ -83,3 +83,7 @@ button{
     color: #2bc6ef !important;;
 }
 
+
+.hidden{
+    display: none;
+}

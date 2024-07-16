@@ -6,6 +6,13 @@
 {% endblock title %}
 {% block content %}
 <!-- Button trigger modals -->
+<div class="search">
+    <form method="get" role="search">
+        <input class="form-control" type="search" placeholder="بحث..." aria-label="Search" name="search" value="{{ search_query }}">
+        <button class="btn btn-outline-success" type="submit">بحث...</button>
+    </form>
+</div>
+<hr />
 <div class="row">
     <div class="col-md-3">
         <!-- Button trigger modal -->
@@ -41,13 +48,15 @@
             <td>{{instructor.qualification}}</td>     
             <td>{{instructor.hourly_salary}}</td>     
             <td>{{instructor.class_link}}</td>     
-            <td><a href="#" data-bs-toggle="modal" data-bs-target="#invoModal"><img class="icon" src="{% static 'img/validating-ticket.png'%}"></a></td>       
-            <td><a href="#" data-bs-toggle="modal" data-bs-target="#editModal"><img class="icon" src="{% static 'img/edit.png'%}"></a></td>
-            <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
+            <td><a href="{% url 'dash:instructor_invoices' %}"><img class="icon" src="{% static 'img/validating-ticket.png'%}"></a></td>       
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#editModalinstructor{{instructor.user.id}}"><img class="icon" src="{% static 'img/edit.png'%}"></a></td>
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModalinstructor{{instructor.user.id}}"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+
+
 <!-- Modal for Instructor -->
 <div class="modal fade" id="staticBackdropinst" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -61,15 +70,112 @@
                     {{ base_form.as_p }}
                     {{ instructor_form.as_p }}
                     <input type="hidden" name="user_type" value="Instructor">
-                    <button type="submit" class="btn btn-primary">تسجيل</button>
+                    <input type="submit" class="hidden" id="hiddenSubmitBtn-{{instructor.id}}">
                 </form>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-primary"
+                    onclick="document.getElementById('hiddenSubmitBtn-{{instructor.id}}').click();">تسجيل المعلم</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
             </div>
         </div>
     </div>
 </div>
 
+{% for instructor in instructor %}
+<div class="modal fade" id="editModalinstructor{{instructor.user.id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">تعديل عائلة</h5>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'dash:edit_instructor' instructor.user.id %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">الأسم</label>
+                        <input type="text" class="form-control" name="name" value="{{ instructor.user.name }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">رقم الهاتف</label>
+                        <input type="text" class="form-control" name="phone" value="{{ instructor.user.phone }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">العنوان</label>
+                        <input type="text" class="form-control" name="address" value="{{ instructor.user.address }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">الجنس</label>
+                        <select class="form-select" name="gender">
+                            <option value="Male" {% if instructor.gender == "Male" %}selected{% endif %}>ذكر</option>
+                            <option value="Female" {% if instructor.gender == "Female" %}selected{% endif %}>أنثى</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">العمر</label>
+                        <input type="number" class="form-control" name="age" value="{{ instructor.user.age }}">
+                    </div>
 
+                    <div class="mb-3">
+                        <label class="form-label">المشرف</label>
+                        <select class="form-select" name="manager">
+                            {% for manager in managers %}
+                            <option value="{{manager.id}}">{{manager.name}}</option>                      
+                            {% endfor %}                          
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">المؤهل</label>
+                        <input type="text" class="form-control" name="qualification" value="{{ instructor.qualification }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">الراتب بالساعه</label>
+                        <input type="number" class="form-control" name="hourly_salary" value="{{ instructor.hourly_salary }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">رابط الحصة</label>
+                        <input type="text" class="form-control" name="class_link" value="{{ instructor.class_link }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">رقم الهوية</label>
+                        <input type="number" class="form-control" name="id_number" value="{{ instructor.id_number }}">
+                    </div>
+
+                    <input type="submit" class="hidden" id="hiddenSubmitBtn-{{instructor.id}}">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary"
+                    onclick="document.getElementById('hiddenSubmitBtn-{{instructor.id}}').click();">حفظ التغييرات</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% for instructor in instructor %}
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModalinstructor{{instructor.user.id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">تأكيد الحذف</h5>
+            </div>
+            <div class="modal-body">
+                هل أنت متأكد أنك تريد حذف هذه الشخص؟
+            </div>
+            <div class="modal-footer">
+                <a style="width:100%;" class="btn btn-danger" href="{% url 'dash:delete_instructor' instructor.user.id %}">حذف</a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
 {% endblock content %}

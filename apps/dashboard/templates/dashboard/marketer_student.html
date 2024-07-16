@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-<h3 class="text-center">تسجيل طالب لمعلم</h3>
+<h3 class="text-center">تسجيل طالب لمسوق</h3>
 {% endblock title %}
 {% block content %}
 <!-- Button trigger modals -->
@@ -19,19 +19,25 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th scope="col">المعلم</th>
+            <th scope="col">المسوق</th>
             <th scope="col">الطالب</th>
             <th scope="col">حذف</th>
         </tr>
     </thead>
     <tbody>
-        {% for user in inst_student %}
+        {% for user in mar_student %}
             <tr>
-                <td>{{user.instructor}}</td>
+                <td>{{user.marketer}}</td>
                 <td>{{user.student}}</td>
                 <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModalstudent_insta{{user.id}}"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
             </tr>
         {% endfor %}
+
+        
+        {% for marketer in marketer %}
+            {{marketer.name}}
+        {% endfor %}
+            
     </tbody>
 </table>
 
@@ -42,7 +48,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">تسجيل طالب لمعلم</h5>
+                <h5 class="modal-title" id="staticBackdropLabel">تسجيل طالب لمسوق</h5>
             </div>
             <div class="modal-body">
                 <form method="post">
@@ -60,7 +66,7 @@
     </div>
 </div>
 
-{% for student in inst_student %}
+{% for student in mar_student %}
 <!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deleteModalstudent_insta{{student.id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog">
@@ -69,10 +75,10 @@
                 <h5 class="modal-title" id="deleteModalLabel">تأكيد الحذف</h5>
             </div>
             <div class="modal-body">
-                هل أنت متأكد أنك تريد حذف الطالب من ذلك المعلم؟
+                هل أنت متأكد أنك تريد حذف الطالب من ذلك المسوق؟
             </div>
             <div class="modal-footer">
-                <a style="width:100%;" class="btn btn-danger" href="{% url 'dash:del_student_instructor' student.id %}">حذف</a>
+                <a style="width:100%;" class="btn btn-danger" href="{% url 'dash:del_student_marketer' student.id %}">حذف</a>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
             </div>
         </div>

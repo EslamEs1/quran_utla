@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}
-<h3 class="text-center">تسجيل مشرف</h3>
+<h3 class="text-center">تسجيل مسوق</h3>
 {% endblock title %}
 {% block content %}
 <!-- Button trigger modals -->
@@ -15,8 +15,8 @@
 <hr />
 <div class="row">
     <div class="col-md-3">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdropmanager">
-            تسجيل مشرف
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdropmarketer">
+            تسجيل مسوق
         </button>
     </div>
 </div>
@@ -34,50 +34,50 @@
         </tr>
     </thead>
     <tbody>
-        {% for manager in managers %}
+        {% for marketer in marketer %}
         <tr>
-            <td>{{manager.name}}</td>
-            <td>{{manager.phone}}</td>
-            <td>{{manager.address}}</td>
-            <td><a href="#" data-bs-toggle="modal" data-bs-target="#editModal{{manager.id}}"><img class="icon"
+            <td>{{marketer.name}}</td>
+            <td>{{marketer.phone}}</td>
+            <td>{{marketer.address}}</td>
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#editModalmarkter{{marketer.id}}"><img class="icon"
                         src="{% static 'img/edit.png'%}"></a></td>
-            <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal{{ manager.id }}"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModalmarkter{{marketer.id}}"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
         </tr>            
         {% empty %}
-        <h6 class="text-center">لا يوجد مشرفين الأن</h6>
+        <h6 class="text-center">لا يوجد مسوقين الأن</h6>
         <hr>
         {% endfor %}
     </tbody>
 </table>
 
 
-<!-- Modal for Manager -->
-<div class="modal fade" id="staticBackdropmanager" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+<!-- Modal for marketer -->
+<div class="modal fade" id="staticBackdropmarketer" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">تسجيل مشرف</h5>
+                <h5 class="modal-title" id="staticBackdropLabel">تسجيل مسوق</h5>
             </div>
             <div class="modal-body">
-                <form method="post" action="{% url 'dash:register_manager' %}">
+                <form method="post" action="{% url 'dash:register_marketer' %}">
                     {% csrf_token %}
                     {{ base_form.as_p }}
-                    <input type="hidden" name="user_type" value="Manager">
-                    <input type="submit" id="create-manager" class="hidden">
+                    <input type="hidden" name="user_type" value="Marketer">
+                    <input type="submit" id="create-marketer" class="hidden">
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary"
-                    onclick="document.getElementById('create-manager').click();">حفظ التغييرات</button>
+                    onclick="document.getElementById('create-marketer').click();">حفظ التغييرات</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
             </div>
         </div>
     </div>
 </div>
 
-{% for manager in managers %}
-<div class="modal fade" id="editModal{{manager.id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+{% for marketer in marketer %}
+<div class="modal fade" id="editModalmarkter{{marketer.id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -85,37 +85,37 @@
                 <h5 class="modal-title" id="staticBackdropLabel">تعديل مشرف</h5>
             </div>
             <div class="modal-body">
-                <form method="post" action="{% url 'dash:edit_manager' manager.id %}">
+                <form method="post" action="{% url 'dash:edit_markter' marketer.id %}">
                     {% csrf_token %}
                     <div class="mb-3">
                         <label class="form-label">الأسم</label>
-                        <input type="text" class="form-control" name="name" value="{{ manager.name }}">
+                        <input type="text" class="form-control" name="name" value="{{ marketer.name }}">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">رقم الهاتف</label>
-                        <input type="text" class="form-control" name="phone" value="{{ manager.phone }}">
+                        <input type="text" class="form-control" name="phone" value="{{ marketer.phone }}">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">العنوان</label>
-                        <input type="text" class="form-control" name="address" value="{{ manager.address }}">
+                        <input type="text" class="form-control" name="address" value="{{ marketer.address }}">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">الجنس</label>
                         <select class="form-select" name="gender">
-                            <option value="Male" {% if manager.gender == "Male" %}selected{% endif %}>ذكر</option>
-                            <option value="Female" {% if manager.gender == "Female" %}selected{% endif %}>أنثى</option>
+                            <option value="Male" {% if marketer.gender == "Male" %}selected{% endif %}>ذكر</option>
+                            <option value="Female" {% if marketer.gender == "Female" %}selected{% endif %}>أنثى</option>
                         </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">العمر</label>
-                        <input type="number" class="form-control" name="age" value="{{ manager.age }}">
+                        <input type="number" class="form-control" name="age" value="{{ marketer.age }}">
                     </div>
-                    <input type="submit" class="hidden" id="hiddenSubmitBtn-{{manager.id}}">
+                    <input type="submit" class="hidden" id="hiddenSubmitBtn-{{marketer.id}}">
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary"
-                    onclick="document.getElementById('hiddenSubmitBtn-{{manager.id}}').click();">حفظ التغييرات</button>
+                    onclick="document.getElementById('hiddenSubmitBtn-{{marketer.id}}').click();">حفظ التغييرات</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
             </div>
         </div>
@@ -123,9 +123,9 @@
 </div>
 {% endfor %}
 
-{% for manager in managers %}
+{% for marketer in marketer %}
 <!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal{{ manager.id }}" tabindex="-1" aria-labelledby="deleteModal{{ manager.id }}" aria-hidden="true">
+<div class="modal fade" id="deleteModalmarkter{{ marketer.id }}" tabindex="-1" aria-labelledby="deleteModal{{ marketer.id }}" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -135,7 +135,7 @@
                 هل أنت متأكد أنك تريد حذف هذه الشخص؟
             </div>
             <div class="modal-footer">
-                <a style="width:100%;" class="btn btn-danger" href="{% url 'dash:delete_manager' manager.id %}">حذف</a>
+                <a style="width:100%;" class="btn btn-danger" href="{% url 'dash:delete_markter' marketer.id %}">حذف</a>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
             </div>
         </div>

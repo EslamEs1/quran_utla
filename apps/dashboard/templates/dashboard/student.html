@@ -5,7 +5,13 @@
 <h3 class="text-center">تسجيل طالب</h3>
 {% endblock title %}
 {% block content %}
-<!-- Button trigger modals -->
+<div class="search">
+    <form method="get" role="search">
+        <input class="form-control" type="search" placeholder="بحث..." aria-label="Search" name="search" value="{{ search_query }}">
+        <button class="btn btn-outline-success" type="submit">بحث...</button>
+    </form>
+</div>
+<hr />
 <!-- Button trigger modals -->
 <div class="row">
     <div class="col-md-3">
@@ -40,9 +46,9 @@
             <td>{{student.user.gender}}</td>     
             <td>{{student.user.created_at}}</td>     
             <td>{{student.payment_link}}</td>     
-            <td><a href="#" data-bs-toggle="modal" data-bs-target="#invoModal"><img class="icon" src="{% static 'img/validating-ticket.png'%}"></a></td>       
-            <td><a href="#" data-bs-toggle="modal" data-bs-target="#editModal"><img class="icon" src="{% static 'img/edit.png'%}"></a></td>
-            <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
+            <td><a href="{% url 'dash:student_invoice_details' student.id %}"><img class="icon" src="{% static 'img/validating-ticket.png'%}"></a></td>       
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#editModalstudent{{student.user.id}}"><img class="icon" src="{% static 'img/edit.png'%}"></a></td>
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModalstudent{{student.user.id}}"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
         </tr>
         {% endfor %}
     </tbody>
@@ -62,13 +68,104 @@
                     {{ base_form.as_p }}
                     {{ student_form.as_p }}
                     <input type="hidden" name="user_type" value="Student">
-                    <button type="submit" class="btn btn-primary">تسجيل</button>
+                    <input type="submit" class="hidden" id="hiddenSubmitBtn">
                 </form>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-primary"
+                    onclick="document.getElementById('hiddenSubmitBtn').click();">تسجيل طالب</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
             </div>
         </div>
     </div>
 </div>
+
+
+{% for student in students %}
+<div class="modal fade" id="editModalstudent{{student.user.id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">تعديل عائلة</h5>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'dash:edit_student' student.user.id %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">الأسم</label>
+                        <input type="text" class="form-control" name="name" value="{{ student.user.name }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">رقم الهاتف</label>
+                        <input type="text" class="form-control" name="phone" value="{{ student.user.phone }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">العنوان</label>
+                        <input type="text" class="form-control" name="address" value="{{ student.user.address }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">الجنس</label>
+                        <select class="form-select" name="gender">
+                            <option value="Male" {% if student.gender == "Male" %}selected{% endif %}>ذكر</option>
+                            <option value="Female" {% if student.gender == "Female" %}selected{% endif %}>أنثى</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">العمر</label>
+                        <input type="number" class="form-control" name="age" value="{{ student.user.age }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">العائلة</label>
+                        <select class="form-select" name="family">
+                            {% for family in families %}
+                            <option value="{{family.id}}">{{family.name}}</option>                      
+                            {% endfor %}                          
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">الراتب بالساعه</label>
+                        <input type="number" class="form-control" name="hourly_salary" value="{{ student.hourly_salary }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">رابط الدفع</label>
+                        <input type="text" class="form-control" name="payment_link" value="{{ student.payment_link }}">
+                    </div>
+
+
+                    <input type="submit" class="hidden" id="hiddenSubmitBtn-{{student.id}}">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary"
+                    onclick="document.getElementById('hiddenSubmitBtn-{{student.id}}').click();">حفظ التغييرات</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% for student in students %}
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModalstudent{{student.user.id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">تأكيد الحذف</h5>
+            </div>
+            <div class="modal-body">
+                هل أنت متأكد أنك تريد حذف هذه الشخص؟
+            </div>
+            <div class="modal-footer">
+                <a style="width:100%;" class="btn btn-danger" href="{% url 'dash:delete_student' student.user.id %}">حذف</a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
 {% endblock content %}

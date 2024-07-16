@@ -45,8 +45,8 @@
             <td>{{class.evaluation}}</td>     
             <td>{{class.subject_name}}</td>     
             <td>{{class.notes}}</td>     
-            <td><a href="#" data-bs-toggle="modal" data-bs-target="#editModal"><img class="icon" src="{% static 'img/edit.png'%}"></a></td>
-            <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#editModalclasses-{{ class.id }}"><img class="icon" src="{% static 'img/edit.png'%}"></a></td>
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModalclasses-{{ class.id }}"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
         </tr>
         {% endfor %}
     </tbody>
@@ -74,6 +74,85 @@
         </div>
     </div>
 </div>
+
+{% for class in classes %}
+<div class="modal fade" id="editModalclasses-{{ class.id }}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">تعديل الحصة</h5>
+            </div>
+            <div class="modal-body">
+                <form method="POST" id="editForm" action="{% url 'dash:edit_classes' class.id %}">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="dateInput" class="form-label">تاريخ الحصة</label>
+                        <input type="date" class="form-control" name="date" value="{{ class.date|date:'Y-m-d' }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">عدد ساعات الحصة</label>
+                        <select class="form-select" name="number_class_hours">
+                            <option value="1" {% if family.number_class_hours == "1" %}selected{% endif %}>1 ساعه</option>
+                            <option value="2" {% if family.number_class_hours == "2" %}selected{% endif %}>2 ساعه</option>
+                            <option value="3" {% if family.number_class_hours == "3" %}selected{% endif %}>3 ساعه</option>
+                            <option value="4" {% if family.number_class_hours == "4" %}selected{% endif %}>4 ساعه</option>
+                            <option value="5" {% if family.number_class_hours == "5" %}selected{% endif %}>5 ساعه</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">التقييم</label>
+                        <select class="form-select" name="evaluation">
+                            <option value="Low" {% if family.evaluation == "Low" %}selected{% endif %}>ضعيف</option>
+                            <option value="Good" {% if family.evaluation == "Good" %}selected{% endif %}>مقبول</option>
+                            <option value="Vgood" {% if family.evaluation == "Vgood" %}selected{% endif %}>جيد</option>
+                            <option value="Excellence" {% if family.evaluation == "Excellence" %}selected{% endif %}>امتياز</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="subject_name" class="form-label">إسم المادة</label>
+                        <input type="text" class="form-control" name="subject_name" value="{{class.subject_name}}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">ملحوظة</label>
+                        <textarea class="form-control" type="text" name="notes" id="notes">{{class.notes}}</textarea>
+                    </div>
+
+                    <button type="submit" class="hidden" id="hiddenSubmitBtnclass{{class.id}}"></button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="saveChangesBtn" onclick="document.getElementById('hiddenSubmitBtnclass{{class.id}}').click();">حفظ التغييرات</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% for class in classes %}
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModalclasses-{{ class.id }}" tabindex="-1" aria-labelledby="deleteModalLabel-{{ class.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">تأكيد الحذف</h5>
+            </div>
+            <div class="modal-body">
+                هل أنت متأكد أنك تريد حذف هذه الحصة؟
+            </div>
+            <div class="modal-footer">
+                <a style="width:100%;" class="btn btn-danger" href="{% url 'dash:delete_classes' class.id %}">حذف</a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
 
 
 <script>
@@ -103,6 +182,4 @@
         });
     });
 </script>
-
-
 {% endblock content %}

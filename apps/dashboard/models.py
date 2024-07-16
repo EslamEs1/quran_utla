@@ -23,11 +23,12 @@ class BillingMonths(models.Model):
     family = models.ForeignKey("Families", on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.date
+        return f"{str(self.date)} - {self.family}"
 
 
 # ------------------------People
 class UserType(models.TextChoices):
+    MARKETER = "Marketer", "مسوق"
     STUDENT = "Student", "طالب"
     INSTRUCTOR = "Instructor", "معلم"
     MANAGER = "Manager", "مشرف"
@@ -84,7 +85,7 @@ class Manager(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.user.name} - Manager"
+        return f"{self.user.name}"
 
 
 @receiver(post_save, sender=CustomUser)
@@ -104,7 +105,7 @@ class Instructor(models.Model):
     id_number = models.IntegerField()
 
     def __str__(self):
-        return f"{self.user.name} - Instructor"
+        return self.user.name
 
 
 class Families(models.Model):
@@ -136,6 +137,18 @@ class Instructor_Student(models.Model):
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
+
+class Marketer_Student(models.Model):
+    family = models.ForeignKey(Families, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    marketer = models.ForeignKey(
+        CustomUser,
+        limit_choices_to={
+            "type": UserType.MARKETER
+        },  # Adjust UserType based on your definition
+        on_delete=models.CASCADE,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
 # ------------------------Registration of classes
 
