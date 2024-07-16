@@ -14,15 +14,15 @@
     {% if request.user.is_authenticated %}
     <nav class="sidebar">
         <div class="logo d-flex justify-content-between">
-            <a href="/"><img src="{% static 'img/logo.png' %}" alt="logo"></a>
+            <a href="{% url 'dash:dashboard' %}"><img src="{% static 'img/logo.png' %}" alt="logo"></a>
             <div class="sidebar_close_icon d-lg-none">
                 <i class="ti-close"></i>
             </div>
         </div>
         <ul id="sidebar_menu">
+            {% if request.user.type == "Admin" %}
             <li class="mm-active">
                 <a class="has-arrow" href="#" aria-expanded="false">
-
                     <img src="{% static 'img/menu-icon/1.svg' %}" alt>
                     <span>الاعدادات</span>
                 </a>
@@ -31,21 +31,29 @@
                     <li><a href="{% url 'dash:billing_month'%}">شهور الفواتير</a></li>
                 </ul>
             </li>
+            {% endif %}
+            {% if request.user.type == "Admin" or request.user.type == "Manager" %}
             <li class>
                 <a class="has-arrow" href="#" aria-expanded="false">
                     <img src="{% static 'img/menu-icon/2.svg' %}" alt>
                     <span>الأشخاص</span>
                 </a>
                 <ul>
+                    {% if request.user.type == "Admin" %}
                     <li><a href="{% url 'dash:register_manager' %}">المشرفين</a></li>
+                    {% endif %}
                     <li><a href="{% url 'dash:register_instructor' %}">المعلمين</a></li>
                     <li><a href="{% url 'dash:register_family' %}">العائلة</a></li>
                     <li><a href="{% url 'dash:register_student' %}">الطلاب</a></li>
                     <li><a href="{% url 'dash:instructor_student' %}">الطلاب والمعلمين</a></li>
+                    {% if request.user.type == "Admin" %}
                     <li><a href="{% url 'dash:register_marketer' %}">المسوقين</a></li>
+                    {% endif %}
                     <li><a href="{% url 'dash:marketer_student_view' %}">الطلاب ولمسوقين</a></li>
                 </ul>
             </li>
+            {% endif %}
+
             <li class>
                 <a class="has-arrow" href="#" aria-expanded="false">
                     <img src="{% static 'img/menu-icon/3.svg' %}" alt>
@@ -53,9 +61,10 @@
                 </a>
                 <ul>
                     <li><a href="{% url 'dash:classes' %}">الحصص</a></li>
-
                 </ul>
             </li>
+            {% if request.user.type == "Admin" or request.user.type == "Instructor" %}
+            {% if request.user.type == "Admin" %}
             <li class>
                 <a class="has-arrow" href="#" aria-expanded="false">
                     <img src="{% static 'img/menu-icon/4.svg' %}" alt>
@@ -65,17 +74,21 @@
                     <li><a href="{% url 'dash:change_password' %}">تغيير كلمة السر</a></li>
                 </ul>
             </li>
+            {% endif %}
             <li class>
                 <a class="has-arrow" href="#" aria-expanded="false">
                     <img src="{% static 'img/menu-icon/5.svg' %}" alt>
                     <span>الفواتير</span>
                 </a>
                 <ul>
-                    <li><a href="">الطلاب</a></li>
+                    {% if request.user.type == "Admin" %}
                     <li><a href="{% url 'dash:invoices' %}">العائلات</a></li>
+                    {% endif %}
                     <li><a href="{% url 'dash:instructor_invoices' %}">المعلمين</a></li>
                 </ul>
             </li>
+            {% endif %}
+            {% if request.user.type == "Admin" or request.user.type == "Manager" %}
             <li class>
                 <a class="has-arrow" href="#" aria-expanded="false">
                     <img src="{% static 'img/menu-icon/6.svg' %}" alt>
@@ -85,16 +98,19 @@
                     <li><a href="{% url 'dash:advancesdisc' %}">الخصومات</a></li>
                 </ul>
             </li>
+            {% endif %}
+            {% if request.user.type == "Admin" %}
             <li class>
                 <a class="has-arrow" href="#" aria-expanded="false">
                     <img src="{% static 'img/menu-icon/7.svg' %}" alt>
                     <span>روابط الفواتير</span>
                 </a>
                 <ul>
-                    <li><a href="chartjs.html">الطلاب</a></li>
                     <li><a href="{% url 'dash:invoices_link' %}">العائلات</a></li>
                 </ul>
             </li>
+            {% endif %}
+            {% if request.user.type == "Admin" or request.user.type == "Manager" %}
             <li class>
                 <a class="has-arrow" href="#" aria-expanded="false">
                     <img src="{% static 'img/menu-icon/7.svg' %}" alt>
@@ -105,6 +121,8 @@
                     <li><a href="{% url 'dash:instructor_removed' %}">المعلمين</a></li>
                 </ul>
             </li>
+            {% endif %}
+            {% if request.user.type == "Admin" %}
             <li class>
                 <a class="has-arrow" href="#" aria-expanded="false">
                     <img src="{% static 'img/menu-icon/7.svg' %}" alt>
@@ -114,6 +132,7 @@
                     <li><a href="{% url 'dash:contact' %}">الطلبات</a></li>
                 </ul>
             </li>
+            {% endif %}
         </ul>
     </nav>
     {% endif %}
@@ -128,22 +147,12 @@
                             <i class="ti-menu"></i>
                         </div>
                         <div class="header_right d-flex justify-content-between align-items-center">
-                            <div class="header_notification_warp d-flex align-items-center">
-                                <li>
-                                    <a href="#"> <img src="{% static 'img/icon/bell.svg' %}" alt> </a>
-                                </li>
-                                <li>
-                                    <a href="#"> <img src="{% static 'img/icon/msg.svg' %}" alt> </a>
-                                </li>
-                            </div>
                             <div class="profile_info">
-                                <img src="{% static 'img/client_img.png" alt="#">
+                                <img src="{% static 'img/client_img.png' %}" alt="#">
                                 <div class="profile_info_iner">
-                                    <p>Welcome Admin!</p>
-                                    <h5>Travor James</h5>
+                                    <p>Welcome {{request.user.type}}!</p>
+                                    <h5>{{request.user.name}}</h5>
                                     <div class="profile_info_details">
-                                        <a href="#">My Profile <i class="ti-user"></i></a>
-                                        <a href="#">Settings <i class="ti-settings"></i></a>
                                         <a href="{% url 'dash:logout' %}">Log Out <i class="ti-shift-left"></i></a>
                                     </div>
                                 </div>

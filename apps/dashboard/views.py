@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
 from django.contrib.auth import update_session_auth_hash
 from .forms import CustomAuthenticationForm
 from datetime import datetime, timedelta
@@ -26,7 +27,6 @@ from .models import (
     Tax,
     Instructor_Student,
     Student,
-    CustomUser,
     Instructor,
     Families,
     Classes,
@@ -36,6 +36,8 @@ from .models import (
     Manager,
     Marketer_Student,
 )
+
+CustomUser = get_user_model()
 
 
 @login_required
@@ -60,10 +62,7 @@ def tax(request):
 
 @login_required
 def billing_month(request):
-    current_date = datetime.now()
-    billing = BillingMonths.objects.filter(
-        date__month=current_date.month, date__year=current_date.year
-    )
+    billing = BillingMonths.objects.filter()
     family = Families.objects.all()
 
     if request.method == "POST":
@@ -130,7 +129,8 @@ def register_manager(request):
                 | Q(phone__icontains=search_query)
                 | Q(address__icontains=search_query)
             )
-            & Q(is_active=True) & Q(type=UserType.MARKETER)
+            & Q(is_active=True)
+            & Q(type=UserType.MARKETER)
         )
     else:
         managers = CustomUser.objects.filter(type=UserType.MANAGER, is_active=True)
@@ -142,6 +142,9 @@ def register_manager(request):
             if base_form.is_valid():
                 user = base_form.save(commit=False)
                 user.type = UserType.MANAGER
+                user.set_password(
+                    base_form.cleaned_data["password"]
+                )  # Ensure password is hashed
                 user.save()
                 messages.success(request, "تم اضافة مشرف جديد بنجاح")
                 return HttpResponseRedirect(request.headers.get("referer"))
@@ -226,6 +229,7 @@ def register_instructor(request):
             user.save()
             instructor = instructor_form.save(commit=False)
             instructor.user = user
+            user.set_password(base_form.cleaned_data["password"])
             instructor.save()
             messages.success(request, "تم اضافة معلم جديد بنجاح")
             return HttpResponseRedirect(request.headers.get("referer"))
@@ -339,6 +343,7 @@ def register_family(request):
             user.save()
             family = families_form.save(commit=False)
             family.user = user
+            user.set_password(base_form.cleaned_data["password"])
             family.save()
             messages.success(request, "تم اضافة عائلة جديدة بنجاح")
             return HttpResponseRedirect(request.headers.get("referer"))
@@ -444,6 +449,7 @@ def register_student(request):
             user.save()
             student = student_form.save(commit=False)
             student.user = user
+            user.set_password(base_form.cleaned_data["password"])
             student.save()
             messages.success(request, "تم اضافة طالب جديد بنجاح")
             return HttpResponseRedirect(request.headers.get("referer"))
@@ -599,14 +605,15 @@ def admin_password_change(request):
 
 # ------------------------------------------------ Login
 def user_login(request):
+    if request.user.is_authenticated:
+        return redirect("dash:dashboard")
+
     if request.method == "POST":
         form = CustomAuthenticationForm(request, request.POST)
         if form.is_valid():
             phone = form.cleaned_data["username"]
             password = form.cleaned_data["password"]
-            user = authenticate(
-                request, username=phone, password=password
-            )  # use username to pass phone
+            user = authenticate(request, username=phone, password=password)
             if user is not None:
                 login(request, user)
                 messages.success(request, "تم تسجيل الدخول بنجاح!")
@@ -622,7 +629,7 @@ def user_login(request):
 
 def logout_view(request):
     logout(request)
-    return redirect("dash:dashboard")
+    return redirect("dash:login")
 
 
 # ------------------------------------------------ Student By Family
@@ -655,6 +662,7 @@ def register_marketer(request):
             if base_form.is_valid():
                 user = base_form.save(commit=False)
                 user.type = UserType.MARKETER
+                user.set_password(base_form.cleaned_data["password"])
                 user.save()
                 messages.success(request, "تم اضافة مسوق جديد بنجاح")
                 return HttpResponseRedirect(request.headers.get("referer"))
@@ -830,6 +838,10 @@ def invoices(request):
             days=1
         )  # Last day of selected month
 
+    families_with_classes = Families.objects.filter(
+        user__is_active=True, student__classes__date__range=[start_date, end_date]
+    ).distinct()
+
     # Query invoices for the selected month
     invoices = Classes.objects.filter(date__range=[start_date, end_date])
 
@@ -839,7 +851,7 @@ def invoices(request):
     # Calculate family totals for the selected month
     family_totals = {
         str(family.id): Classes.get_family_totals(family, start_date, end_date)
-        for family in families
+        for family in families_with_classes
     }
 
     return render(
@@ -859,22 +871,44 @@ def family_invoice_details(request, family_id):
     family = get_object_or_404(Families, pk=family_id, user__is_active=True)
     students = Student.objects.filter(family=family)
 
+    try:
+        billing_month = BillingMonths.objects.get(family=family)
+        selected_date = billing_month.date
+    except BillingMonths.DoesNotExist:
+        selected_date = None
+
+    # Default to the current month if no specific month is selected
+    if not selected_date:
+        current_date = datetime.now().date()
+        selected_date = current_date.replace(day=1)  # First day of the current month
+
     # Get the latest tax percentage
     latest_tax = Tax.objects.latest("date")
     tax_percentage = latest_tax.percentage if latest_tax else 0.0
 
     for student in students:
-        # Calculate totals for each student
-        classes = Classes.objects.filter(student=student)
-        total_hours = (
-            classes.aggregate(total_hours=Sum("number_class_hours"))["total_hours"] or 0
-        )
-        total_classes = (
-            classes.aggregate(total_classes=Count("id"))["total_classes"] or 0
+        # Calculate totals for each student based on selected or current month
+        classes = Classes.objects.filter(
+            student=student,
+            date__month=selected_date.month,
+            date__year=selected_date.year,
         )
 
-        total_before_tax = total_hours * student.hourly_salary
-        total_after_tax = total_before_tax * (1 - tax_percentage / 100)
+        if classes.exists():
+            total_hours = (
+                classes.aggregate(total_hours=Sum("number_class_hours"))["total_hours"]
+                or 0
+            )
+            total_classes = (
+                classes.aggregate(total_classes=Count("id"))["total_classes"] or 0
+            )
+            total_before_tax = total_hours * student.hourly_salary
+            total_after_tax = total_before_tax * (1 - tax_percentage / 100)
+        else:
+            total_hours = 0
+            total_classes = 0
+            total_before_tax = 0.0
+            total_after_tax = 0.0
 
         # Assign totals to student objects
         student.total_hours = total_hours
@@ -889,6 +923,7 @@ def family_invoice_details(request, family_id):
             "family": family,
             "students": students,
             "tax_percentage": tax_percentage,
+            "selected_month": selected_date,
         },
     )
 
@@ -897,15 +932,23 @@ def student_invoice_details(request, student_id):
     student = get_object_or_404(Student, pk=student_id, user__is_active=True)
     classes = Classes.objects.filter(student=student)
 
+    # Determine the current month
+    current_date = datetime.now().date()
+
     # Get the latest tax percentage
     latest_tax = Tax.objects.latest("date")
     tax_percentage = latest_tax.percentage if latest_tax else 0.0
 
-    # Calculate totals for the student
+    # Calculate totals for the student for the current month
     total_hours = (
-        classes.aggregate(total_hours=Sum("number_class_hours"))["total_hours"] or 0
+        classes.filter(
+            date__month=current_date.month, date__year=current_date.year
+        ).aggregate(total_hours=Sum("number_class_hours"))["total_hours"]
+        or 0
     )
-    total_classes = classes.count()
+    total_classes = classes.filter(
+        date__month=current_date.month, date__year=current_date.year
+    ).count()
     total_before_tax = total_hours * student.hourly_salary
     total_after_tax = total_before_tax * (1 - tax_percentage / 100)
 
@@ -924,8 +967,9 @@ def student_invoice_details(request, student_id):
     )
 
 
+@login_required
 def instructor_invoices(request):
-    instructors = Instructor.objects.filter(user__is_active=True)
+    user = request.user
 
     # Default to current month if not specified in GET parameters
     current_date = datetime.now()
@@ -946,10 +990,20 @@ def instructor_invoices(request):
         )  # Last day of selected month
 
     # Query invoices for the selected month
-    invoices = Classes.objects.filter(date__range=[start_date, end_date])
+    if user.is_staff:  # Assuming 'is_staff' indicates admin user
+        invoices = Classes.objects.filter(date__range=[start_date, end_date])
+    else:
+        # Filter invoices for the logged-in instructor
+        invoices = Classes.objects.filter(
+            instructor__user=user, date__range=[start_date, end_date]
+        )
 
-    # Calculate overall totals for the selected month
-    overall_totals = Classes.get_overall_totals(start_date, end_date)
+    instructors = Instructor.objects.filter(user__is_active=True)
+
+    # Calculate overall totals for the selected month (for admins only)
+    overall_totals = (
+        Classes.get_overall_totals(start_date, end_date) if user.is_staff else None
+    )
 
     # Calculate instructor totals for the selected month
     instructor_totals = {

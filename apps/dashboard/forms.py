@@ -13,50 +13,94 @@ from .models import (
 )
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.forms import AuthenticationForm
-
+from django.core.validators import RegexValidator
+from django.contrib.auth.password_validation import validate_password
 
 CustomUser = get_user_model()
 
 
 class BaseUserForm(forms.ModelForm):
     password = forms.CharField(
-        label="كلمة المرور",  # Arabic label
+        label="كلمة المرور",
         widget=forms.PasswordInput(
             attrs={"class": "form-control", "placeholder": "كلمة المرور"}
         ),
     )
     phone = forms.CharField(
-        label="رقم الهاتف",  # Arabic label
+        label="رقم الهاتف",
         widget=forms.TextInput(
             attrs={"class": "form-control", "placeholder": "رقم الهاتف"}
         ),
+        validators=[
+            RegexValidator(
+                regex=r"^\d{10,}$",
+                message="يجب أن يحتوي رقم الهاتف على 10 أرقام على الأقل",
+                code="invalid_phone",
+            )
+        ],
     )
     name = forms.CharField(
-        label="الاسم",  # Arabic label
+        label="الاسم",
         widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "الاسم"}),
     )
     address = forms.CharField(
-        label="العنوان",  # Arabic label
+        label="العنوان",
         widget=forms.TextInput(
             attrs={"class": "form-control", "placeholder": "العنوان"}
         ),
     )
     gender = forms.ChoiceField(
-        label="الجنس",  # Arabic label
-        choices=Gender.choices,
+        label="الجنس",
+        choices=[
+            ("Male", "ذكر"),
+            ("Female", "انثي"),
+        ],  # Update with your actual choices
         widget=forms.Select(attrs={"class": "form-control", "placeholder": "الجنس"}),
     )
-
     age = forms.IntegerField(
-        label="العمر",  # Arabic label
+        label="العمر",
         widget=forms.NumberInput(
             attrs={"class": "form-control", "placeholder": "العمر"}
         ),
+        validators=[
+            RegexValidator(
+                regex=r"^\d{1,2}$",
+                message="يجب أن يكون العمر رقمًا من خانة أو خانتين",
+                code="invalid_age",
+            )
+        ],
     )
 
     class Meta:
         model = CustomUser
-        fields = ["name", "phone", "address", "gender", "age", "password"]
+        fields = ["phone", "password", "name", "address", "gender", "age"]
+
+    def clean_password(self):
+        password = self.cleaned_data.get("password")
+        validate_password(password)
+        return password
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data["password"])  # Ensure password is hashed
+        if commit:
+            user.save()
+        return user
+
+
+class CustomAuthenticationForm(AuthenticationForm):
+    username = forms.CharField(
+        label="رقم الهاتف",
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "رقم الهاتف"}
+        ),
+    )
+    password = forms.CharField(
+        label="كلمة المرور",
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "كلمة المرور"}
+        ),
+    )
 
 
 class InstructorForm(forms.ModelForm):
@@ -196,7 +240,9 @@ class ClassesForm(forms.ModelForm):
             "student": forms.Select(
                 attrs={"class": "form-control", "placeholder": "الطالب"}
             ),
-            "instructor": forms.HiddenInput(),
+            "instructor": forms.Select(
+                attrs={"class": "form-control", "placeholder": "المعلم"}
+            ),
             "date": forms.DateInput(
                 format="%Y-%m-%d",  # Adjust date format if needed
                 attrs={

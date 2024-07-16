@@ -1,13 +1,14 @@
 from django.contrib.auth.backends import ModelBackend
-from .models import CustomUser
+from django.contrib.auth import get_user_model
+
+CustomUser = get_user_model()
 
 
 class PhoneBackend(ModelBackend):
 
-    def authenticate(self, request, username=None, password=None, **kwargs):
-        phone = username  # Use username to pass phone
+    def authenticate(self, request, username, password, **kwargs):
         try:
-            user = CustomUser.objects.get(phone=phone)
+            user = CustomUser.objects.get(phone=username)
             if user.check_password(password):
                 return user
         except CustomUser.DoesNotExist:

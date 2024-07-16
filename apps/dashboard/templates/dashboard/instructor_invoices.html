@@ -14,7 +14,6 @@
     </div>
 </form>
 
-
 <table class="table table-striped">
     <thead>
         <tr>
@@ -24,7 +23,6 @@
             <th scope="col">إجمالي الراتب</th>
             <th scope="col">الهاتف</th>
             <th scope="col">رابط الدفع</th>
-            <th scope="col">الفواتير</th>
             <th scope="col">واتساب</th>
         </tr>
     </thead>
@@ -38,7 +36,6 @@
             <td>{{ total.total_salary|floatformat:"2" }} $</td>
             <td>{{ total.instructor.user.phone }}</td>
             <td>{{ total.instructor.payment_link }}</td>
-            <td><a href="#"><img class="icon" src="{% static 'img/validating-ticket.png' %}"></a></td>
             <td><a href="#"><img class="icon" src="{% static 'img/whatsapp.png' %}"></a></td>
         </tr>
         {% endfor %}
@@ -47,8 +44,6 @@
         <p class="text-danger">لا توجد فواتير للشهر المحدد.</p>
     {% endif %}
 </table>
-
-
 
 <div class="total">
     <hr>

@@ -171,6 +171,27 @@ MESSAGE_TAGS = {
 AUTH_USER_MODEL = "dashboard.CustomUser"
 
 AUTHENTICATION_BACKENDS = (
-    "apps.dashboard.backends.PhoneBackend",  # Add your custom backend
     "django.contrib.auth.backends.ModelBackend",  # Keep the default backend if needed
+    "apps.dashboard.backends.PhoneBackend",  # Add your custom backend
 )
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+        "file": {
+            "class": "logging.FileHandler",
+            "filename": "debug.log",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console", "file"],
+            "level": "DEBUG",
+        },
+    },
+}

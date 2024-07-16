@@ -3,7 +3,7 @@
 {% block title %}
 <div class="title-invoices">
     <h3 class="text-center">فاتورة العائلة</h3>
-    <p class="text-center">فاتورة شهر 7/2024</p>
+    <p class="text-center">فاتورة شهر {{ selected_month|date:"m/Y" }}</p>
 </div>
 {% endblock title %}
 
@@ -44,7 +44,15 @@
                 <td>{{ student.total_classes }}</td>
                 <td>${{ student.total_before_tax|floatformat:"2" }}</td>
                 <td>${{ student.total_after_tax|floatformat:"2" }}</td>
-                <td><a href="{% url 'dash:student_invoice_details' student.id %}"><img class="icon" src="{% static 'img/validating-ticket.png' %}"></a></td>
+                <td>
+                    {% if student.total_hours == 0 %}
+                        لا توجد حصص في هذا الشهر
+                    {% else %}
+                        <a href="{% url 'dash:student_invoice_details' student.id %}">
+                            <img class="icon" src="{% static 'img/validating-ticket.png' %}">
+                        </a>
+                    {% endif %}
+                </td>
             </tr>
             {% endfor %}
         </tbody>

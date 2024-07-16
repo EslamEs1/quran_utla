@@ -42,7 +42,7 @@ class Gender(models.TextChoices):
 
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, phone, password=None, **extra_fields):
+    def create_user(self, phone, password, **extra_fields):
         if not phone:
             raise ValueError("The Phone field must be set")
         phone = self.normalize_email(phone)
@@ -51,7 +51,7 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, phone, password=None, **extra_fields):
+    def create_superuser(self, phone, password, **extra_fields):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         return self.create_user(phone, password, **extra_fields)
@@ -74,8 +74,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     objects = CustomUserManager()
     created_at = models.DateTimeField(auto_now_add=True)
 
+    objects = CustomUserManager()
+    
     USERNAME_FIELD = "phone"
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ["name"]
 
     def __str__(self):
         return self.name
@@ -248,16 +250,18 @@ class Classes(models.Model):
 
     @staticmethod
     def get_instructor_totals(instructor, start_date=None, end_date=None):
+        # Filter classes for the instructor within the date range
         queryset = Classes.objects.filter(instructor=instructor)
         if start_date and end_date:
             queryset = queryset.filter(date__range=[start_date, end_date])
 
+        # Calculate the total number of sections and hours
         total_sections = queryset.count()
-
         total_hours = queryset.aggregate(
             total_hours=Sum(Cast("number_class_hours", models.IntegerField()))
         )
 
+        # Calculate the total salary for the instructor
         total_salary = (
             queryset.values("instructor")
             .annotate(
@@ -267,11 +271,26 @@ class Classes(models.Model):
             .aggregate(total_salary_sum=Sum("total_salary"))
         )
 
+        # Calculate the total discounts for the instructor within the date range
+        discount_queryset = Discounts.objects.filter(instructor=instructor)
+        if start_date and end_date:
+            discount_queryset = discount_queryset.filter(
+                created_at__date__range=[start_date, end_date]
+            )
+
+        total_discounts = discount_queryset.aggregate(total_discounts=Sum("amount"))
+
+        # Subtract discounts from the total salary
+        total_salary_after_discounts = (total_salary["total_salary_sum"] or 0) - (
+            total_discounts["total_discounts"] or 0
+        )
+
         return {
             "instructor": instructor,
             "total_sections": total_sections,
             "total_hours": total_hours["total_hours"] or 0,
-            "total_salary": total_salary["total_salary_sum"] or 0,
+            "total_salary": total_salary_after_discounts,
+            "total_discounts": total_discounts["total_discounts"] or 0,
         }
 
 
