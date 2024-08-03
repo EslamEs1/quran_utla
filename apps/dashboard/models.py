@@ -302,11 +302,3 @@ class Discounts(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
-class Contact(models.Model):
-    name = models.CharField(max_length=100)
-    whatsapp = models.CharField(max_length=100)
-    phone = models.IntegerField()
-    create_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name

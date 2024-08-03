@@ -1,6 +1,15 @@
 from django.db import models
 
 
+class Slider(models.Model):
+    img = models.ImageField(upload_to="slider/img/")
+    title = models.CharField(max_length=100)
+    content = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.title
+
+
 class Settings(models.Model):
     facebook = models.URLField(blank=True, null=True)
     instagram = models.URLField(blank=True, null=True)
@@ -68,5 +77,14 @@ class TeacherContact(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.full_name
+
+
+class Tutors(models.Model):
+    full_name = models.CharField(max_length=200)
+    image = models.ImageField(upload_to="tutors/img/")
+    qualifications = models.TextField()
+    
     def __str__(self):
         return self.full_name

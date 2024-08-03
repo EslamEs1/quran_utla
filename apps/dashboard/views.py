@@ -22,6 +22,7 @@ from .forms import (
     DiscountsForm,
     Marketer_StudentForm,
 )
+from apps.main.models import ContactUs
 from .models import (
     UserType,
     Tax,
@@ -31,7 +32,6 @@ from .models import (
     Families,
     Classes,
     Discounts,
-    Contact,
     BillingMonths,
     Manager,
     Marketer_Student,
@@ -1082,5 +1082,5 @@ def activate_user(request, user_id):
 
 @login_required
 def contact(request):
-    contact = Contact.objects.all()
+    contact = ContactUs.objects.all()
     return render(request, "dashboard/contact.html", {"contact": contact})

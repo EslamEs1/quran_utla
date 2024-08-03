@@ -13,9 +13,11 @@ def methodology(request):
     steps = Steps_Methodology.objects.all()
 
     return render(
-        request, "curriculum.html", {"steps": steps, "methodology": methodology}
+        request,
+        "teaching-mthodology.html",
+        {"steps": steps, "methodology": methodology},
     )
 
 
 def testimonial(request):
-    return render(request, "curriculum.html", {})
+    return render(request, "testimonials.html", {})

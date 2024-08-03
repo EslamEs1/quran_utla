@@ -1,7 +1,44 @@
 from django.shortcuts import render
-from apps.main.models import ContactUs, Pricing, Fees, Pricing_Content, TeacherContact
+from apps.main.models import (
+    ContactUs,
+    Pricing,
+    Fees,
+    Pricing_Content,
+    TeacherContact,
+    Slider,
+    Tutors,
+)
+from django.contrib.auth import get_user_model
+from apps.course.models import Course
+from apps.blog.models import Post
 from django.contrib import messages
 from django.http import HttpResponseRedirect
+from apps.dashboard.models import UserType
+
+User = get_user_model()
+
+def index(request):
+    sliders = Slider.objects.all()
+    courses = Course.objects.all()
+    student = User.objects.filter(type=UserType.STUDENT, is_active=True).count()
+    family = User.objects.filter(type=UserType.FAMILIES, is_active=True).count()
+    teacher = User.objects.filter(type=UserType.INSTRUCTOR, is_active=True).count()
+    tutors = Tutors.objects.all()
+    posts = Post.objects.all()
+
+    return render(
+        request,
+        "index.html",
+        {
+            "sliders": sliders,
+            "courses": courses,
+            "student": student,
+            "family": family,
+            "teacher": teacher,
+            "tutors": tutors,
+            "posts": posts,
+        },
+    )
 
 
 def pricing(request):

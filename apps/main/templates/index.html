@@ -1,4 +1,5 @@
 {% extends 'index/base.html' %}
+{% load static %}
 {% block content %}
 
     <!-- slider  -->
@@ -13,27 +14,16 @@
                     aria-label="Slide 3"></button>
             </div>
             <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <img src="img/slider/general-hero-slide-desktop.svg" class="d-block w-100" alt="...">
+                {% for slider in sliders %}
+                <div class="carousel-item {% if forloop.first %} active {% endif %}">
+                    <img src="{{slider.img.url}}" class="d-block w-100" alt="{{slider.title}}">
                     <div class="carousel-caption  d-md-block">
-                        <h5>Online Quran, Arabic & Islamic Studies Courses</h5>
-                        <p>Your Quran, Tajweed, Arabic & Islamic Studies Journey starts here with Quran Utla.</p>
+                        <h5>{{slider.title}}</h5>
+                        <p>{{slider.content}}</p>
                     </div>
                 </div>
-                <div class="carousel-item">
-                    <img src="img/slider/Islamic-studies-desktop-slider.svg" class="d-block w-100" alt="...">
-                    <div class="carousel-caption  d-md-block">
-                        <h5>Online Quran, Arabic & Islamic Studies Courses</h5>
-                        <p>Your Quran, Tajweed, Arabic & Islamic Studies Journey starts here with Quran Utla.</p>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <img src="img/slider/Arabic-language-desktop-slider.svg" class="d-block w-100" alt="...">
-                    <div class="carousel-caption  d-md-block">
-                        <h5>Online Quran, Arabic & Islamic Studies Courses</h5>
-                        <p>Your Quran, Tajweed, Arabic & Islamic Studies Journey starts here with Quran Utla.</p>
-                    </div>
-                </div>
+                {% endfor %}
+                    
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions"
                 data-bs-slide="prev">
@@ -57,13 +47,10 @@
                 </div>
                 <div class="item">
                     <h2>Learn Quran Online | Online Quran Classes</h2>
-                    <p>Quran Utla is very blessed and proud to be serving thousands of Muslim families around the
-                        World i.e. USA, UK, Canada, Australia, Europe, Asia & Africa.
-                        Join thousands of Muslim families who love learning Quran, Tajweed, Arabic & Islamic Studies
-                        Online from the comfort of their Homes with 100% Satisfaction gauranteed.
-                        Quran Utla has become one of the leading Online Islamic Schools due to its good reputation
-                        for many years in Online Quran, Arabic & Islamic Learning Classes.</p>
-                    <a href="#">See All Courses</a>
+                    <p>{{about.content}}</p>
+                    <a href="{% url 'course:quran' %}">Quran Course</a>
+                    <a href="{% url 'course:arabic' %}">Arabic Course</a>
+                    <a href="{% url 'course:islamic' %}">Islamic Course</a>
                 </div>
             </div>
         </div>
@@ -73,49 +60,15 @@
         <div class="container">
             <h2 class="main-title">Why Choose Us?</h2>
             <div class="row">
+                {% for why in whyus_content %}
                 <div class="col-md-4">
                     <div class="why-us-item">
-                        <img src="img/whyus/global-network.png" alt="Reason 1">
-                        <h3>Worldwide Recognized</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                        <img src="{{why.img.url}}" alt={{why.name}}">
+                        <h3>{{why.name}}</h3>
+                        <p>{{why.content}}</p>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="why-us-item">
-                        <img src="img/whyus/resume.png" alt="Reason 2">
-                        <h3>Curriculum & Study Plans</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="why-us-item">
-                        <img src="img/whyus/teaching.png" alt="Reason 3">
-                        <h3>Hand-Picked Tutors</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="why-us-item">
-                        <img src="img/whyus/quality.png" alt="Reason 1">
-                        <h3>Reports & Certificates/h3>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="why-us-item">
-                        <img src="img/whyus/trade.png" alt="Reason 2">
-                        <h3>Affordable Payments</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="why-us-item">
-                        <img src="img/whyus/support-ticket.png">
-                        <h3>24/7 Support & Schedule</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </section>
@@ -124,22 +77,19 @@
         <div class="container">
             <div class="list">
                 <div class="item">
-                    <img src="img/steps/steps.svg" alt="">
+                    <img src="{% static 'index/img/steps/steps.svg' %}" alt="Simple" />
                 </div>
                 <div class="item">
                     <div class="main-title">
                         <h2>3 Simple Steps To Start</h2>
                     </div>
                     <div class="number">
-                        <div class="one"><i class="fas fa-1"></i>
-                            <h5>Fill in the Trial Form below.</h5>
+                        {% for steps in steps_to_start %}
+                        <div class="one">
+                            <i class="fas fa-1"></i>
+                            <h5>{{steps.title}}</h5>
                         </div>
-                        <div class="one"><i class="fas fa-2"></i>
-                            <h5>Book your Free Trial Class.</h5>
-                        </div>
-                        <div class="one"><i class="fas fa-3"></i>
-                            <h5>Choose Your Study Plan.</h5>
-                        </div>
+                        {% endfor %}
                     </div>
                     <div class="link">
                         <a href="#">Book a Free Trial Now</a>
@@ -153,25 +103,19 @@
         <div class="container">
             <div class="list">
                 <div class="item">
-                    <img src="img/steps/study-plan.svg" alt="">
+                    <img src="{% static 'index/img/steps/study-plan.svg' %}" alt="" />
                 </div>
                 <div class="item">
                     <div class="main-title">
                         <h2>Choose Your Study Plan</h2>
                     </div>
                     <div class="number">
-                        <div class="one"><i class="fas fa-check"></i>
-                            <h5>High Quality & Low Fees</h5>
+                        {% for plan in title %}
+                        <div class="one">
+                            <i class="fas fa-check"></i>
+                            <h5>{{plan.title}}</h5>
                         </div>
-                        <div class="one"><i class="fas fa-check"></i>
-                            <h5>Up To 20% Discount Now</h5>
-                        </div>
-                        <div class="one"><i class="fas fa-check"></i>
-                            <h5>$8 Instead Of $10 Per Hour</h5>
-                        </div>
-                        <div class="one"><i class="fas fa-check"></i>
-                            <h5>Starting From $40 Monthly</h5>
-                        </div>
+                        {% endfor %}
                     </div>
                     <div class="link">
                         <a href="#">See All Pricing Plans</a>
@@ -181,40 +125,20 @@
         </div>
     </div>
 
+
     <div class="courses">
         <div class="container">
             <div class="main-title">
                 <h2>Our Courses</h2>
             </div>
             <div class="owl-carousel">
+                
+                {% for course in courses %}
                 <div>
-                    <img src="img/courses/Online-Arabic-Classes-For-Kids-768x432.jpg" alt="Course">
-                    <a href="#"> Enroll Now!</a>
+                    <img src="{{course.image.url}}" alt="{{course.title}}">
+                    <a href="{% url 'course:course_detail' course.slug %}"> Enroll Now!</a>
                 </div>
-                <div>
-                    <img src="img/courses/Online-Arabic-Classes-For-Kids.jpg" alt="Course">
-                    <a href="#"> Enroll Now!</a>
-                </div>
-                <div>
-                    <img src="img/courses/Online-Arabic-Conversation-Course-768x432.jpg" alt="Course">
-                    <a href="#"> Enroll Now!</a>
-                </div>
-                <div>
-                    <img src="img/courses/Online-Islamic-Studies-Course-For-Adults-768x432.jpg" alt="Course">
-                    <a href="#"> Enroll Now!</a>
-                </div>
-                <div>
-                    <img src="img/courses/Online-Islamic-Studies-Course-For-Kids-768x432.jpg" alt="Course">
-                    <a href="#"> Enroll Now!</a>
-                </div>
-                <div>
-                    <img src="img/courses/Online-Noorani-Qaida-Course-768x432.jpg" alt="Course">
-                    <a href="#"> Enroll Now!</a>
-                </div>
-                <div>
-                    <img src="img/courses/Online-Quran-Classes-For-Kids-768x432.jpg" alt="Course">
-                    <a href="#"> Enroll Now!</a>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -222,31 +146,24 @@
     <section class="why-us some-details">
         <div class="container">
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="why-us-item">
                         <i class="fas fa-user-graduate"></i>
-                        <h3>+2,000</h3>
+                        <h3>+{{student}}</h3>
                         <p>Students</p>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="why-us-item">
                         <i class="fas fa-house"></i>
-                        <h3>+1,000</h3>
+                        <h3>+{{family}}</h3>
                         <p>Families</p>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="why-us-item">
-                        <i class="fas fa-earth-africa"></i>
-                        <h3>+25</h3>
-                        <p>Countries</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="why-us-item">
                         <i class="fas fa-user"></i>
-                        <h3>+100</h3>
+                        <h3>+{{teacher}}</h3>
                         <p>Teachers</p>
                     </div>
                 </div>
@@ -261,51 +178,13 @@
                 <h2>Testimonials</h2>
             </div>
             <div class="owl-carousel">
+                {% for testimonial in testimonials %}
                 <div class="items">
-                    <p>Quran Utla is very blessed and proud to be serving thousands of Muslim families around the
-                        World i.e. USA, UK, Canada, Australia, Europe, Asia & Africa. Join thousands of Muslim families
-                        who love learning Quran, Tajweed, Arabic & Islamic Studies Online from the comfort of their
-                        Homes with 100% Satisfaction gauranteed.</p>
-                    <span>Eslam Essam</span>
-                    <span>Web developer</span>
+                    <p>{{testimonial.content}}</p>
+                    <span>{{testimonial.name}}</span>
+                    <span>{{testimonial.position}}</span>
                 </div>
-                <div class="items">
-                    <p>Quran Utla is very blessed and proud to be serving thousands of Muslim families around the
-                        World i.e. USA, UK, Canada, Australia, Europe, Asia & Africa. Join thousands of Muslim families
-                        who love learning Quran, Tajweed, Arabic & Islamic Studies Online from the comfort of their
-                        Homes with 100% Satisfaction gauranteed.</p>
-                    <span>Eslam Essam</span>
-                    <span>Web developer</span>
-                </div>
-
-                <div class="items">
-                    <p>Quran Utla is very blessed and proud to be serving thousands of Muslim families around the
-                        World i.e. USA, UK, Canada, Australia, Europe, Asia & Africa. Join thousands of Muslim families
-                        who love learning Quran, Tajweed, Arabic & Islamic Studies Online from the comfort of their
-                        Homes with 100% Satisfaction gauranteed.</p>
-                    <span>Eslam Essam</span>
-                    <span>Web developer</span>
-                </div>
-
-                <div class="items">
-                    <p>Quran Utla is very blessed and proud to be serving thousands of Muslim families around the
-                        World i.e. USA, UK, Canada, Australia, Europe, Asia & Africa. Join thousands of Muslim families
-                        who love learning Quran, Tajweed, Arabic & Islamic Studies Online from the comfort of their
-                        Homes with 100% Satisfaction gauranteed.</p>
-                    <span>Eslam Essam</span>
-                    <span>Web developer</span>
-                </div>
-
-                <div class="items">
-                    <p>Quran Utla is very blessed and proud to be serving thousands of Muslim families around the
-                        World i.e. USA, UK, Canada, Australia, Europe, Asia & Africa. Join thousands of Muslim families
-                        who love learning Quran, Tajweed, Arabic & Islamic Studies Online from the comfort of their
-                        Homes with 100% Satisfaction gauranteed.</p>
-                    <span>Eslam Essam</span>
-                    <span>Web developer</span>
-                </div>
-
-
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -316,36 +195,15 @@
                 <h2>Our Tutors</h2>
             </div>
             <div class="owl-carousel">
+                
+                {% for tutor in tutors %}
                 <div class="items">
-                    <img src="img/tutors/Muhammad-Abdelmordy.jpg" alt="Course">
-                    <h3>SH Ahmed Helmey</h3>
-                    <p>Quran Utla is very blessed and proud to be serving thousands of Muslim</p>
-                    <a href="#">Read More</a>
+                    <img src="{{tutor.image.url}}" alt="{{tutor.full_name}}">
+                    <h3>{{tutor.full_name}}</h3>
+                    <p>{{tutor.qualifications}}</p>
                 </div>
-                <div class="items">
-                    <img src="img/tutors/Sh-Ahmed-Said.jpg" alt="Course">
-                    <h3>SH Ahmed Helmey</h3>
-                    <p>Quran Utla is very blessed and proud to be serving thousands of Muslim</p>
-                    <a href="#">Read More</a>
-                </div>
-                <div class="items">
-                    <img src="img/tutors/Sh-Mahmoud-Said.jpg" alt="Course">
-                    <h3>SH Ahmed Helmey</h3>
-                    <p>Quran Utla is very blessed and proud to be serving thousands of Muslim</p>
-                    <a href="#">Read More</a>
-                </div>
-                <div class="items">
-                    <img src="img/tutors/Sh-Muhammad-Shalaby-1.jpg" alt="Course">
-                    <h3>SH Ahmed Helmey</h3>
-                    <p>Quran Utla is very blessed and proud to be serving thousands of Muslim</p>
-                    <a href="#">Read More</a>
-                </div>
-                <div class="items">
-                    <img src="img/tutors/Muhammad-Abdelmordy.jpg" alt="Course">
-                    <h3>SH Ahmed Helmey</h3>
-                    <p>Quran Utla is very blessed and proud to be serving thousands of Muslim</p>
-                    <a href="#">Read More</a>
-                </div>
+                {% endfor %}
+                    
             </div>
         </div>
     </div>
@@ -356,55 +214,14 @@
                 <h2>Featured Articles</h2>
             </div>
             <div class="owl-carousel">
+                {% for post in posts %}
                 <div class="items">
-                    <img src="img/courses/Online-Arabic-Classes-For-Kids-768x432.jpg" alt="Course">
-                    <h6>What Is The Day Of Arafah | What To Do On Day Of Arafah</h6>
-                    <p>The Day of Arafah (Yawm Al-Arafah) falls on the 9th day of Dhu’l-Hijjah in the Islamic calendar.
-                        This date comes during the Hajj pilgrimage to Makkah.</p>
-                    <a href="#">Read More</a>
+                    <img src="{{post.image.url}}" alt="{{post.title}}">
+                    <h6>{{post.title}}</h6>
+                    <p>{{post.content}}</p>
+                    <a href="{% url 'blog:blog_detail' post.slug %}">Read More</a>
                 </div>
-                <div class="items">
-                    <img src="img/courses/Online-Arabic-Classes-For-Kids-768x432.jpg" alt="Course">
-                    <h6>What Is The Day Of Arafah | What To Do On Day Of Arafah</h6>
-                    <p>The Day of Arafah (Yawm Al-Arafah) falls on the 9th day of Dhu’l-Hijjah in the Islamic calendar.
-                        This date comes during the Hajj pilgrimage to Makkah.</p>
-                    <a href="#">Read More</a>
-                </div>
-                <div class="items">
-                    <img src="img/courses/Online-Arabic-Classes-For-Kids-768x432.jpg" alt="Course">
-                    <h6>What Is The Day Of Arafah | What To Do On Day Of Arafah</h6>
-                    <p>The Day of Arafah (Yawm Al-Arafah) falls on the 9th day of Dhu’l-Hijjah in the Islamic calendar.
-                        This date comes during the Hajj pilgrimage to Makkah.</p>
-                    <a href="#">Read More</a>
-                </div>
-                <div class="items">
-                    <img src="img/courses/Online-Arabic-Classes-For-Kids-768x432.jpg" alt="Course">
-                    <h6>What Is The Day Of Arafah | What To Do On Day Of Arafah</h6>
-                    <p>The Day of Arafah (Yawm Al-Arafah) falls on the 9th day of Dhu’l-Hijjah in the Islamic calendar.
-                        This date comes during the Hajj pilgrimage to Makkah.</p>
-                    <a href="#">Read More</a>
-                </div>
-                <div class="items">
-                    <img src="img/courses/Online-Arabic-Classes-For-Kids-768x432.jpg" alt="Course">
-                    <h6>What Is The Day Of Arafah | What To Do On Day Of Arafah</h6>
-                    <p>The Day of Arafah (Yawm Al-Arafah) falls on the 9th day of Dhu’l-Hijjah in the Islamic calendar.
-                        This date comes during the Hajj pilgrimage to Makkah.</p>
-                    <a href="#">Read More</a>
-                </div>
-                <div class="items">
-                    <img src="img/courses/Online-Arabic-Classes-For-Kids-768x432.jpg" alt="Course">
-                    <h6>What Is The Day Of Arafah | What To Do On Day Of Arafah</h6>
-                    <p>The Day of Arafah (Yawm Al-Arafah) falls on the 9th day of Dhu’l-Hijjah in the Islamic calendar.
-                        This date comes during the Hajj pilgrimage to Makkah.</p>
-                    <a href="#">Read More</a>
-                </div>
-                <div class="items">
-                    <img src="img/courses/Online-Arabic-Classes-For-Kids-768x432.jpg" alt="Course">
-                    <h6>What Is The Day Of Arafah | What To Do On Day Of Arafah</h6>
-                    <p>The Day of Arafah (Yawm Al-Arafah) falls on the 9th day of Dhu’l-Hijjah in the Islamic calendar.
-                        This date comes during the Hajj pilgrimage to Makkah.</p>
-                    <a href="#">Read More</a>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -721,7 +538,7 @@
                             <div class="elementor-widget-container">
                                 <div class="elementor-button-wrapper">
                                     <a class="elementor-button elementor-button-link elementor-size-sm"
-                                        href="quran-and-tajweed-courses/index.html">
+                                        href="{% url 'course:quran' %}">
                                         <span class="elementor-button-content-wrapper">
                                             <span class="elementor-button-text">See All
                                                 Courses</span>
@@ -1325,7 +1142,7 @@
                             <div class="elementor-widget-container">
                                 <div class="elementor-button-wrapper">
                                     <a class="elementor-button elementor-button-link elementor-size-sm"
-                                        href="arabic-courses/index.html">
+                                        href="{% url 'course:arabic' %}">
                                         <span class="elementor-button-content-wrapper">
                                             <span class="elementor-button-text">See All
                                                 Courses</span>
@@ -1716,7 +1533,7 @@
                             <div class="elementor-widget-container">
                                 <div class="elementor-button-wrapper">
                                     <a class="elementor-button elementor-button-link elementor-size-sm"
-                                        href="islamic-studies-courses/index.html">
+                                        href="{% url 'course:islamic' %}">
                                         <span class="elementor-button-content-wrapper">
                                             <span class="elementor-button-text">See All
                                                 Courses</span>
@@ -1735,21 +1552,14 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-4">
-                    <img src="img/logo.png" alt="logo">
+                    <img src="{{settings.logo.url}}" alt="logo">
                 </div>
                 <div class="col-md-8">
                     <div class="main-title">
                         <h2>About us</h2>
                     </div>
-                    <p>Quran Academy has become one of the leading online Islamic schools in the World due to its good
-                        reputation for many years in teaching Quran, Arabic & Islamic Studies.
-                        Our mission is to enrich the lives of Muslims by offering an affordable methods to learn
-                        conveniently at home by developing effective methods to help students learn with interactive
-                        online options that make learning accessible.
-                        We offer different ways that can be adapted to the amount of time you have available, your area
-                        of interest, and the type of teacher you prefer. We offer a wide range of Courses that can fit
-                        into even the busiest schedules that are the best fit for your learning needs and interests.</p>
-                    <a href="#">Book Your Free Trial</a>
+                    <p>{{about.content}}</p>
+                    <a href="{% url 'main:contact' %}">Contact us</a>
                 </div>
             </div>
         </div>

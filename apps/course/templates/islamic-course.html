@@ -387,7 +387,7 @@
                 <a href="#"><img src="{{course.image.url}}" alt="{{course.title}}" /></a>
                 <span>{{course.title}}</span>
                 <h6>{{course.title}}</h6>
-                <a class="enroll-now" href="#">Enroll Now!</a>
+                <a class="enroll-now" href="{% url 'course:course_detail' course.slug %}">Enroll Now!</a>
             </div>
             {% empty %}
             <h6>There Is No Course Now !</h6>

@@ -14,7 +14,7 @@
     {% if request.user.is_authenticated %}
     <nav class="sidebar">
         <div class="logo d-flex justify-content-between">
-            <a href="{% url 'dash:dashboard' %}"><img src="{% static 'img/logo.png' %}" alt="logo"></a>
+            <a href="{% url 'dash:dashboard' %}"><img src="{{settings.logo.url}}" alt="logo"></a>
             <div class="sidebar_close_icon d-lg-none">
                 <i class="ti-close"></i>
             </div>

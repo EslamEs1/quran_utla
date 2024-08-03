@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from apps.about.models import About, How_it_works, Terms, WhyUs, Testimonials
+from apps.about.models import About, How_it_works, Terms, WhyUs
+
 
 
 # Create your views here.
