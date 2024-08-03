@@ -1,0 +1,116 @@
+{% extends 'index/base.html' %}
+{% load static %}
+{% block content %}
+
+    <div class="join-thousands-of-students about-our-mission">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="Layer_1" x="0px" y="0px" viewBox="0 0 600 600" xml:space="preserve"><path id="user--experience-design_1_" d="M300,569.25c-48.844,0-95.494-13.35-134.888-38.588l7.294-11.344 c37.219,23.831,81.337,36.412,127.612,36.412c45.075,0,90.413-12.938,127.65-36.45l7.219,11.419 C395.494,555.563,347.606,569.25,300,569.25z M525,494.25c-34.744,0-63-28.275-63-63s28.275-63,63-63s63,28.275,63,63 S559.744,494.25,525,494.25z M525,381.75c-27.3,0-49.5,22.2-49.5,49.5s22.2,49.5,49.5,49.5s49.5-22.2,49.5-49.5 S552.3,381.75,525,381.75z M150,494.25H18.75c-2.419,0-4.65-1.294-5.85-3.394c-1.2-2.1-1.2-4.688,0.019-6.769l65.625-112.5 c2.419-4.144,9.244-4.144,11.662,0l65.625,112.5c1.219,2.081,1.219,4.669,0.019,6.769C154.65,492.956,152.419,494.25,150,494.25z  M30.506,480.75h107.737l-53.869-92.344L30.506,480.75z M400.5,431.25H387v-31.556c0-40.5-27.487-75.3-66.844-84.619 c-2.812-0.656-4.894-3.056-5.156-5.925c-0.263-2.888,1.331-5.625,3.975-6.806c16.856-7.5,27.731-24.244,27.731-42.656 c0-25.744-20.944-46.688-46.688-46.688c-25.744,0-46.687,20.944-46.687,46.688c0,18.413,10.894,35.156,27.75,42.656 c2.644,1.181,4.237,3.919,3.975,6.787c-0.263,2.888-2.344,5.288-5.156,5.944c-39.375,9.337-66.863,44.119-66.863,84.619v31.556 h-13.5v-31.556c0-41.644,25.163-78.038,62.756-93.15c-13.969-11.269-22.444-28.406-22.444-46.856c0-33.188,27-60.188,60.188-60.188 c33.206,0,60.206,27,60.206,60.188c0,18.45-8.475,35.587-22.444,46.856c37.594,15.112,62.756,51.525,62.756,93.15v31.556H400.5z  M549.769,338.006l-13.481-1.031c0.469-6.019,0.694-12.112,0.694-18.244c0-88.275-48.881-168.619-127.613-209.644l6.225-11.981 C498.825,140.494,550.5,225.413,550.5,318.75C550.5,325.256,550.256,331.65,549.769,338.006z M50.231,338.006 c-0.487-6.356-0.731-12.75-0.731-19.256c0-93.75,51.675-178.912,134.869-222.281l6.244,11.981C111.9,149.475,63,230.063,63,318.75 c0,6.131,0.244,12.206,0.694,18.244L50.231,338.006z M356.25,138h-112.5c-3.731,0-6.75-3.019-6.75-6.75V18.75 c0-3.731,3.019-6.75,6.75-6.75h112.5c3.731,0,6.75,3.019,6.75,6.75v112.5C363,134.981,359.981,138,356.25,138z M250.5,124.5h99v-99 h-99C250.5,25.5,250.5,124.5,250.5,124.5z"></path><rect id="_Transparent_Rectangle" fill="none" width="600" height="600"></rect></svg>
+                </div>
+                <div class="col-md-8">
+                    <div class="main-title">
+                        <h2>How it works</h2>
+                    </div>
+                    <p>3 EASY STEPS TO LEARN With the click of your mouse and a few brief questions! Your family’s valuable learning journey can begin with just 3 easy steps. Before joining Mishkah Academy. If you have any inquiries, please: Email Support@mishkahacademy.com or Text the WhatsApp Chat Icon</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="steps">
+        <div class="container">
+            <div class="list">
+                <div class="item">
+                    <img src="{% static 'index/img/steps/steps.svg' %}" alt="Simple" />
+                </div>
+                <div class="item">
+                    <div class="main-title">
+                        <h2>3 Simple Steps To Start</h2>
+                    </div>
+                    <div class="number">
+                        {% for steps in steps_to_start %}
+                        <div class="one">
+                            <i class="fas fa-1"></i>
+                            <h5>{{steps.title}}</h5>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="link">
+                        <a href="#">Book a Free Trial Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="steps steps-tow">
+        <div class="container">
+            <div class="list">
+                <div class="item">
+                    <img src="{% static 'index/img/steps/study-plan.svg' %}" alt="" />
+                </div>
+                <div class="item">
+                    <div class="main-title">
+                        <h2>Choose Your Study Plan</h2>
+                    </div>
+                    <div class="number">
+                        {% for plan in title %}
+                        <div class="one">
+                            <i class="fas fa-check"></i>
+                            <h5>{{plan.title}}</h5>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="link">
+                        <a href="#">See All Pricing Plans</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="testimonials">
+        <div class="container">
+            <div class="main-title">
+                <h2>Testimonials</h2>
+            </div>
+            <div class="owl-carousel">
+                {% for testimonial in testimonials %}
+                <div class="items">
+                    <p>{{testimonial.content}}</p>
+                    <span>{{testimonial.name}}</span>
+                    <span>{{testimonial.position}}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="about">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <img src="{{settings.logo.url}}" alt="logo">
+                </div>
+                <div class="col-md-8">
+                    <div class="main-title">
+                        <h2>About us</h2>
+                    </div>
+                    <p>Quran Academy has become one of the leading online Islamic schools in the World due to its good
+                        reputation for many years in teaching Quran, Arabic & Islamic Studies.
+                        Our mission is to enrich the lives of Muslims by offering an affordable methods to learn
+                        conveniently at home by developing effective methods to help students learn with interactive
+                        online options that make learning accessible.
+                        We offer different ways that can be adapted to the amount of time you have available, your area
+                        of interest, and the type of teacher you prefer. We offer a wide range of Courses that can fit
+                        into even the busiest schedules that are the best fit for your learning needs and interests.</p>
+                    <a href="#">Book Your Free Trial</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+

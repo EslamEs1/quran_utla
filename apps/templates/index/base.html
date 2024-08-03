@@ -1,0 +1,272 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% include 'index/css.html' %}
+        {% block title %}
+        <title>Quran Utla - Learn Quran, Arabic, and Islamic Studies</title>
+        {% endblock title %}
+    </head>
+
+    <body>
+        <div class="first-nav">
+            <div class="container">
+                <div class="social">
+                    <div class="item">
+                        <a href="#" class="book-free"
+                            >Book a Free Trial Class</a
+                        >
+                    </div>
+                    <div class="item">
+                        <a href="#" class="whatsapp"
+                            ><i class="fab fa-facebook"> </i
+                        ></a>
+                        <a href="#" class="twitter"
+                            ><i class="fab fa-twitter"></i
+                        ></a>
+                        <a href="#" class="whatsapp"
+                            ><i class="fab fa-whatsapp"></i
+                        ></a>
+                        <a href="#" class="telegram"
+                            ><i class="fab fa-telegram"></i
+                        ></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container">
+                <a class="navbar-brand" href="index.html"
+                    ><img src="{% static 'index/img/logo.png' %}" alt="logo"
+                /></a>
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNavDropdown"
+                    aria-controls="navbarNavDropdown"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div
+                    class="collapse navbar-collapse justify-content-center"
+                    id="navbarNavDropdown"
+                >
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a
+                                class="nav-link active"
+                                aria-current="page"
+                                href="index.html"
+                                >Home</a
+                            >
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a
+                                class="nav-link dropdown-toggle"
+                                href="#"
+                                role="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                            >
+                                About Us
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="about.html"
+                                        >About Us</a
+                                    >
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="terms.html"
+                                        >Terms & Conditions</a
+                                    >
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a
+                                class="nav-link dropdown-toggle"
+                                href="#"
+                                role="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                            >
+                                Learning
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a
+                                        class="dropdown-item"
+                                        href="curriculum.html"
+                                        >Curriculum</a
+                                    >
+                                </li>
+                                <li>
+                                    <a
+                                        class="dropdown-item"
+                                        href="teaching-mthodology.html"
+                                        >Teaching Methodology</a
+                                    >
+                                </li>
+                                <li>
+                                    <a
+                                        class="dropdown-item"
+                                        href="testimonials.html"
+                                        >Testimonials</a
+                                    >
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a
+                                class="nav-link dropdown-toggle"
+                                href="#"
+                                role="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                            >
+                                Courses
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a
+                                        class="dropdown-item"
+                                        href="quran-coures.html"
+                                        >Quran Courses</a
+                                    >
+                                </li>
+                                <li>
+                                    <a
+                                        class="dropdown-item"
+                                        href="arabic-course.html"
+                                        >Arabic Courses</a
+                                    >
+                                </li>
+                                <li>
+                                    <a
+                                        class="dropdown-item"
+                                        href="islamic-course.html"
+                                        >Islamic Courses</a
+                                    >
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="pricing.html">Pricing</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="blogs.html">Blog</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a
+                                class="nav-link dropdown-toggle"
+                                href="#"
+                                role="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                            >
+                                More
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="#">Log In</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#"
+                                        >Be a Teacher</a
+                                    >
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#"
+                                        >Something else here</a
+                                    >
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        {% block content %} 
+        {% endblock content %}
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="row">
+                    <!-- Logo and Description -->
+                    <div class="col-md-3 mb-4 mb-md-0">
+                        <img
+                            src="{% static 'index/img/logo.png' %}"
+                            alt="Logo"
+                            class="img-fluid mb-3"
+                        />
+                        <p>
+                            Quran Academy has become one of the leading online
+                            Islamic schools in the world due to its good
+                            reputation for many years in teaching Quran, Arabic
+                            & Islamic Studies.
+                        </p>
+                        <a href="#" class="get-start">Get Started Now</a>
+                    </div>
+                    <!-- Navigation Links -->
+                    <!-- Courses -->
+                    <div class="col-md-2 mb-4 mb-md-0">
+                        <h5>Courses</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#">Arabic Language</a></li>
+                            <li><a href="#">Islamic Studies</a></li>
+                            <li><a href="#">Quran & Tajweed</a></li>
+                        </ul>
+                    </div>
+                    <!-- Pages -->
+                    <div class="col-md-2 mb-4 mb-md-0">
+                        <h5>Pages</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#">About us</a></li>
+                            <li><a href="#">How it works</a></li>
+                            <li><a href="#">Trial Lesson</a></li>
+                            <li><a href="#">Pricing</a></li>
+                            <li><a href="#">Blog</a></li>
+                            <li><a href="#">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <!-- Contact Information -->
+                    <div class="col-md-3 mb-4 mb-md-0">
+                        <h5>Contact Us</h5>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-phone"></i> +201123550848</li>
+                            <li><i class="fas fa-phone"></i> +201123550848</li>
+                            <li>
+                                <i class="fas fa-envelope"></i>
+                                <a href="mailto:Info@mishkahacademy.com"
+                                    >Info@quranutla.com</a
+                                >
+                            </li>
+                        </ul>
+                        <h5>Follow Us</h5>
+                        <div class="social-icons">
+                            <a href="#" class="text-white"
+                                ><i class="fab fa-facebook fa-2x"></i
+                            ></a>
+                            <a href="#" class="text-white"
+                                ><i class="fab fa-twitter fa-2x"></i
+                            ></a>
+                            <a href="#" class="text-white"
+                                ><i class="fab fa-whatsapp fa-2x"></i
+                            ></a>
+                            <a href="#" class="text-white"
+                                ><i class="fab fa-telegram-plane fa-2x"></i
+                            ></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        {% include 'index/js.html' %}
+    </body>
+</html>

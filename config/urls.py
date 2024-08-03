@@ -7,7 +7,12 @@ from django.views import defaults as default_views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("dashboard/", include("apps.dashboard.urls", namespace="dash")),
-
+    path("", include("apps.main.urls", namespace="main")),
+    path("course/", include("apps.course.urls", namespace="course")),
+    path("about/", include("apps.about.urls", namespace="about")),
+    path("blog/", include("apps.blog.urls", namespace="blog")),
+    path("learning/", include("apps.learning.urls", namespace="learning")),
+    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

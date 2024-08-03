@@ -1,0 +1,38 @@
+{% extends 'index/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-md-8">
+            <div class="blog-post">
+                <h1 class="blog-title">{{post.title}}</h1>
+                <p class="blog-meta">by Admin on {{post.created_at}}</p>
+                <img src="{{post.image.url}}" class="img-fluid" alt="{{post.title}}">
+                <div class="blog-content mt-4">
+                    <p>{{post.content|safe}}</p>
+                    <!-- Add more content here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-md-4">
+            <div class="sidebar">
+                <h2>Other Blogs</h2>
+                <ul class="list-unstyled">
+                    
+                    {% for post in posts %}
+                    <li class="media mb-4">
+                        <a href="{% url 'blog:blog_detail' post.slug %}"><img src="{{post.image.url}}" class="mr-3" alt="{{post.title}}" style="width: 64px;"></a>
+                        <div class="media-body">
+                            <h5 class="mt-0 mb-1">{{post.title}}</h5>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

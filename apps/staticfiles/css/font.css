@@ -87,3 +87,10 @@ button{
 .hidden{
     display: none;
 }
+
+
+.backgrounds img{
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}

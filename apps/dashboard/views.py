@@ -588,6 +588,7 @@ def change_password(request):
     )
 
 
+@login_required
 def admin_password_change(request):
     if request.method == "POST":
         form = AdminPasswordChangeForm(request.POST)
@@ -817,6 +818,7 @@ def delete_classes(request, id):
 
 
 # ------------------------------------------------ Invoices
+@login_required
 def invoices(request):
     families = Families.objects.filter(user__is_active=True)
 
@@ -867,6 +869,7 @@ def invoices(request):
     )
 
 
+@login_required
 def family_invoice_details(request, family_id):
     family = get_object_or_404(Families, pk=family_id, user__is_active=True)
     students = Student.objects.filter(family=family)
@@ -928,6 +931,7 @@ def family_invoice_details(request, family_id):
     )
 
 
+@login_required
 def student_invoice_details(request, student_id):
     student = get_object_or_404(Student, pk=student_id, user__is_active=True)
     classes = Classes.objects.filter(student=student)
@@ -1024,6 +1028,7 @@ def instructor_invoices(request):
     )
 
 
+@login_required
 def advancesdisc(request):
     disc = Discounts.objects.all()
     if request.method == "POST":
@@ -1046,16 +1051,19 @@ def advancesdisc(request):
     )
 
 
+@login_required
 def invoices_link(request):
     families = Families.objects.filter(user__is_active=True)
     return render(request, "dashboard/invoices_link.html", {"families": families})
 
 
+@login_required
 def families_removed(request):
     families = Families.objects.filter(user__is_active=False)
     return render(request, "dashboard/families_removed.html", {"families": families})
 
 
+@login_required
 def instructor_removed(request):
     instructor = Instructor.objects.filter(user__is_active=False)
     return render(
@@ -1063,6 +1071,7 @@ def instructor_removed(request):
     )
 
 
+@login_required
 def activate_user(request, user_id):
     user = get_object_or_404(CustomUser, id=user_id)
     user.is_active = True
@@ -1071,6 +1080,7 @@ def activate_user(request, user_id):
     return HttpResponseRedirect(request.headers.get("referer"))
 
 
+@login_required
 def contact(request):
     contact = Contact.objects.all()
     return render(request, "dashboard/contact.html", {"contact": contact})

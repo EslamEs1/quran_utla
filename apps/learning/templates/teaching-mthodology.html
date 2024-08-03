@@ -1,0 +1,130 @@
+{% extends 'index/base.html' %} {% load static %} {% block content %}
+
+<div class="join-thousands-of-students about-our-mission">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 159.2 90.47">
+                    <title>One-To-One</title>
+                    <g id="Layer_2" data-name="Layer 2">
+                        <g id="Project">
+                            <path
+                                d="M60,90.47H43.66a1.66,1.66,0,0,1,0-3.31H58.81L71.37,47.63H39L34.08,63.17a1.66,1.66,0,0,1-3.16-1l5.28-16.7a1.64,1.64,0,0,1,1.58-1.15H73.64a1.63,1.63,0,0,1,1.66,1.62,1.59,1.59,0,0,1-.08.53L61.6,89.32A1.66,1.66,0,0,1,60,90.47Z"
+                                transform="translate(0)"></path>
+                            <path
+                                d="M39.63,36.19a17.51,17.51,0,0,1-12.57-5.3,18.05,18.05,0,0,1-5.21-12.77A18,18,0,0,1,39.61,0h0A18,18,0,0,1,57.42,18.08,18,18,0,0,1,39.65,36.19Zm0-32.88h0a14.64,14.64,0,0,0-14.46,14.8,14.83,14.83,0,0,0,4.26,10.46,14.22,14.22,0,0,0,10.21,4.31h0A14.64,14.64,0,0,0,54.1,18.08,14.65,14.65,0,0,0,39.63,3.31Z"
+                                transform="translate(0)"></path>
+                            <path
+                                d="M30.44,88.58h-20A10.46,10.46,0,0,1,0,78.14V61.29A18.78,18.78,0,0,1,18.41,42.16H29.12a1.66,1.66,0,0,1,.26,3.31H18.81c-8.84,0-15.5,6.8-15.5,15.82V78.14a7.14,7.14,0,0,0,7.13,7.13h20a6.07,6.07,0,0,0,4.3-10.37,6,6,0,0,0-4.3-1.8H17.13a1.65,1.65,0,0,1-1.65-1.65h0V65.32a1.66,1.66,0,0,1,3.31-.26,1.13,1.13,0,0,1,0,.26v4.47H30.44a9.3,9.3,0,0,1,6.64,2.76,8.93,8.93,0,0,1,1.64,2.22,9.38,9.38,0,0,1-8.28,13.81Z"
+                                transform="translate(0)"></path>
+                            <path
+                                d="M72.58,88.58a1.66,1.66,0,0,1-1.66-1.66h0V77.79a1.66,1.66,0,0,1,3.31-.26,1.13,1.13,0,0,1,0,.26v9.13a1.65,1.65,0,0,1-1.64,1.66Z"
+                                transform="translate(0)"></path>
+                            <path
+                                d="M157.34,87.59a1.87,1.87,0,0,1-1.86-1.87v-16C155.48,60.45,148,51,138.69,51H111c-9.26,0-16.79,9.49-16.79,18.75v16a1.87,1.87,0,0,1-3.73.27,1.22,1.22,0,0,1,0-.27v-16c0-11.32,9.2-22.48,20.52-22.48h27.68c11.31,0,20.52,11.16,20.52,22.48v16A1.87,1.87,0,0,1,157.34,87.59Z"
+                                transform="translate(0)"></path>
+                            <path
+                                d="M124.85,39.59A18.63,18.63,0,1,1,143.47,21V21A18.64,18.64,0,0,1,124.85,39.59Zm0-33.52A14.9,14.9,0,1,0,139.74,21,14.9,14.9,0,0,0,124.85,6.07Z"
+                                transform="translate(0)"></path>
+                        </g>
+                    </g>
+                </svg>
+            </div>
+            <div class="col-md-8">
+                <div class="main-title">
+                    <h2>Teaching Methodology</h2>
+                </div>
+                <p>{{methodology.content}}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="why-us classes-tow">
+    <div class="container">
+        <div class="row">
+            {% for step in steps %}
+            <div class="col-md-4">
+                <div class="why-us-item">
+                    <img src="{{step.img.url}}" alt="{{step.name}}" />
+                    <h3>{{step.name}}</h3>
+                    <p>{{step.content}}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<div class="testimonials">
+    <div class="container">
+        <div class="main-title">
+            <h2>Testimonials</h2>
+        </div>
+        <div class="owl-carousel">
+            {% for testimonial in testimonials %}
+            <div class="items">
+                <p>{{testimonial.content}}</p>
+                <span>{{testimonial.name}}</span>
+                <span>{{testimonial.position}}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+
+<div class="steps">
+    <div class="container">
+        <div class="list">
+            <div class="item">
+                <img src="{% static 'index/img/steps/steps.svg' %}" alt="Simple" />
+            </div>
+            <div class="item">
+                <div class="main-title">
+                    <h2>3 Simple Steps To Start</h2>
+                </div>
+                <div class="number">
+                    {% for steps in steps_to_start %}
+                    <div class="one">
+                        <i class="fas fa-1"></i>
+                        <h5>{{steps.title}}</h5>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="link">
+                    <a href="#">Book a Free Trial Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="steps steps-tow">
+    <div class="container">
+        <div class="list">
+            <div class="item">
+                <img src="{% static 'index/img/steps/study-plan.svg' %}" alt="" />
+            </div>
+            <div class="item">
+                <div class="main-title">
+                    <h2>Choose Your Study Plan</h2>
+                </div>
+                <div class="number">
+                    {% for plan in title %}
+                    <div class="one">
+                        <i class="fas fa-check"></i>
+                        <h5>{{plan.title}}</h5>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="link">
+                    <a href="#">See All Pricing Plans</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}

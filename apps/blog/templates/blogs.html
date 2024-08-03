@@ -1,0 +1,28 @@
+{% extends 'index/base.html' %}
+{% load static %}
+{% block content %}
+    <div class="main-title steps-tow">
+        <h2>Featured Articles</h2>
+    </div>
+
+    <div class="blogs">
+        <div class="container">
+            <div class="row">
+                <!-- Blog Post 1 -->
+                {% for post in posts %}
+                    <div class="col-md-4 blog-post">
+                        <div class="card">
+                            <img src="{{post.image.url}}" class="card-img-top" alt="{{post.title}}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{post.title}}</h5>
+                                <p class="card-text">{{post.content|safe}}</p>
+                                <a href="{% url 'blog:blog_detail' post.slug %}" class="btn btn-primary">Read More</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}

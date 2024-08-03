@@ -1,0 +1,59 @@
+{% extends 'index/base.html' %}
+{% load static %}
+{% block content %}
+
+    <div class="join-thousands-of-students about-our-mission">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="main-title">
+                        <h2>Be A Teacher</h2>
+                    </div>
+                    <p>Join us, Online Qur'an, Arabic & Islamic Studies Tutor Application</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} text-center" role="alert">
+                <li>
+                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+                    {{ message }}
+                </li>
+            </div>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <div class="contact">
+        <div class="container mt-5">
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" class="form-control" id="name" name="full_name" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="phone_number" name="phone_number" placeholder="Enter your phone number"
+                        required>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="subject" name="subject" placeholder="Enter your subject" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="qualifications" name="qualifications" placeholder="Enter your qualifications" required>
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control" id="message" rows="5" name="message" placeholder="Enter your message"
+                        required></textarea>
+                </div>
+                <button type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

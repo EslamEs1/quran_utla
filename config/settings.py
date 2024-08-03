@@ -44,6 +44,11 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "apps.dashboard",
+    "apps.about",
+    "apps.main",
+    "apps.course",
+    "apps.blog",
+    "apps.learning",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -73,6 +78,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "apps.context.context",
             ],
         },
     },
@@ -176,22 +182,22 @@ AUTHENTICATION_BACKENDS = (
 )
 
 
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-        },
-        "file": {
-            "class": "logging.FileHandler",
-            "filename": "debug.log",
-        },
-    },
-    "loggers": {
-        "django": {
-            "handlers": ["console", "file"],
-            "level": "DEBUG",
-        },
-    },
-}
+# LOGGING = {
+#     "version": 1,
+#     "disable_existing_loggers": False,
+#     "handlers": {
+#         "console": {
+#             "class": "logging.StreamHandler",
+#         },
+#         "file": {
+#             "class": "logging.FileHandler",
+#             "filename": "debug.log",
+#         },
+#     },
+#     "loggers": {
+#         "django": {
+#             "handlers": ["console", "file"],
+#             "level": "DEBUG",
+#         },
+#     },
+# }

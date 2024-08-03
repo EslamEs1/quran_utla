@@ -1,28 +1,40 @@
-{% extends "base.html" %}
 {% load static %}
+<!DOCTYPE html>
+<html lang="ar">
 
-{% block title %}
-<h3 class="text-center">تسجيل الدخول</h3>
-{% endblock title %}
-{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    {% include 'css.html' %}
+</head>
 
-<div class="container-fluid plr_30 body_white_bg pt_30">
-    <div class="row justify-content-center">
-        <div class="col-lg-12">
-            <div class="white_box mb_30">
-                <div class="row justify-content-center">
-                    <div class="col-lg-6">
+<body style="direction: rtl;">
+    <br><br>
+    {% block title %}
+    <h3 class="text-center">تسجيل الدخول</h3>
+    {% endblock title %}
 
-                        <div class="modal-content cs_modal">
-                            <div class="modal-header">
-                                <h5 class="modal-title">تسجيل الدخول</h5>
-                            </div>
-                            <div class="modal-body">
-                                <form method="post">
-                                    {% csrf_token %}
-                                    {{ form.as_p }}
-                                    <button type="submit" class="btn btn-primary">تسجيل</button>
-                                </form>
+
+
+    <div class="container-fluid plr_30 body_white_bg pt_30">
+        <div class="row justify-content-center">
+            <div class="col-lg-12">
+                <div class="white_box mb_30">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-6">
+
+                            <div class="modal-content cs_modal">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">تسجيل الدخول</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        {{ form.as_p }}
+                                        <button type="submit" class="btn btn-primary">تسجيل</button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -30,8 +42,8 @@
             </div>
         </div>
     </div>
-</div>
 
+    {% include 'js.html' %}
 
-
-{% endblock content %}
+</body>
+</html>

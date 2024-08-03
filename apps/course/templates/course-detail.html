@@ -1,0 +1,36 @@
+{% extends 'index/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-md-8">
+            <div class="blog-post">
+                <h1 class="blog-title">{{course.title}}</h1>
+                <img src="{{course.image.url}}" class="img-fluid" alt="{{course.title}}">
+                <div class="blog-content mt-4">
+                    <p>{{course.description|safe}}</p>
+                    <!-- Add more content here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-md-4">
+            <div class="sidebar">
+                <h2>Other Courses</h2>
+                <ul class="list-unstyled">
+                    {% for course in related %}
+                    <li class="media mb-4">
+                        <img src="{{course.image.url}}" class="mr-3" alt="{{course.title}}" style="width: 64px;">
+                        <div class="media-body">
+                            <h5 class="mt-0 mb-1">{{course.title}}</h5>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
