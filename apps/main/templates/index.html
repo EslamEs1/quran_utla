@@ -72,7 +72,7 @@
         </div>
     </section>
 
-        <div class="steps">
+    <div class="steps">
         <div class="container">
             <div class="list">
                 <div class="item">
@@ -217,7 +217,6 @@
                 <div class="items">
                     <img src="{{post.image.url}}" alt="{{post.title}}">
                     <h6>{{post.title}}</h6>
-                    <p>{{post.content}}</p>
                     <a href="{% url 'blog:blog_detail' post.slug %}">Read More</a>
                 </div>
                 {% endfor %}
