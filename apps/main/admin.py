@@ -20,7 +20,6 @@ class SliderAdmin(admin.ModelAdmin):
 @admin.register(Settings)
 class SettingsAdmin(admin.ModelAdmin):
     list_display = (
-        "title",
         "facebook",
         "instagram",
         "twitter",
@@ -32,9 +31,6 @@ class SettingsAdmin(admin.ModelAdmin):
         "map_link",
     )
     search_fields = ("title", "address", "email")
-    readonly_fields = (
-        "title",
-    )  # Title is made read-only to avoid multiple Settings entries with different titles
 
 
 @admin.register(Pricing_Content)
