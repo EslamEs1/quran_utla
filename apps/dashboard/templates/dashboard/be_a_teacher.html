@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-<h3 class="text-center">طلبات تواصل</h3>
+<h3 class="text-center">طلبات معلمين</h3>
 {% endblock title %}
 {% block content %}
 <!-- Button trigger modals -->
@@ -12,8 +12,10 @@
     <thead>
         <tr>
             <th scope="col">الأسم</th>
+            <th scope="col">البريد الالكترونى</th>
             <th scope="col">رقم الهاتف</th>
-            <th scope="col">الوتساب</th>
+            <th scope="col">الموضوع</th>
+            <th scope="col">المؤهل</th>
             <th scope="col">الرسالة</th>
             <th scope="col">التاريخ</th>
         </tr>
@@ -21,9 +23,11 @@
     <tbody>
         {% for contact in contacts %}
             <tr>
-                <td>{{contact.name}}</td>
-                <td>{{contact.phone}}</td>
-                <td>{{contact.whatsapp}}</td>
+                <td>{{contact.full_name}}</td>
+                <td>{{contact.email}}</td>
+                <td>{{contact.phone_number}}</td>
+                <td>{{contact.subject}}</td>
+                <td>{{contact.qualifications}}</td>
                 <td>{{contact.message}}</td>
                 <td>{{contact.created_at}}</td>
             </tr>

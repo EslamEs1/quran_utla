@@ -9,7 +9,7 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.db.models import Sum, Count, Q
-
+from urllib.parse import quote
 from .forms import (
     BaseUserForm,
     InstructorForm,
@@ -22,7 +22,7 @@ from .forms import (
     DiscountsForm,
     Marketer_StudentForm,
 )
-from apps.main.models import ContactUs
+from apps.main.models import ContactUs, TeacherContact
 from .models import (
     UserType,
     Tax,
@@ -371,6 +371,7 @@ def edit_family(request, id):
     if request.method == "POST":
         name = request.POST.get("name")
         phone = request.POST.get("phone")
+        whatsapp = request.POST.get("whatsapp")
         address = request.POST.get("address")
         gender = request.POST.get("gender")
         age = request.POST.get("age")
@@ -381,6 +382,7 @@ def edit_family(request, id):
         if (
             name
             and phone
+            and whatsapp
             and address
             and gender
             and age
@@ -391,6 +393,7 @@ def edit_family(request, id):
             try:
                 custom_user.name = name
                 custom_user.phone = phone
+                family.whatsapp = whatsapp
                 custom_user.address = address
                 custom_user.gender = gender
                 custom_user.age = age
@@ -856,6 +859,15 @@ def invoices(request):
         for family in families_with_classes
     }
 
+    message = (
+        "السلام عليكم ورحمة الله وبركاته\n"
+        "🌹الإدارة المالية لمركز  قران يتلى تتمنى لكم التوفيق🌹\n"
+        f"تم اصدار فاتورة شهر {current_date.strftime('%B %Y')}\n"
+        f"إجمالي المستحقات  لهذا الشهر {overall_totals['total_salary']}\n"
+        "يمكنكم مراجعة الفاتورة من خلال هذا الرابط\n"
+    )
+    encoded_message = quote(message)  # URL encode the message
+
     return render(
         request,
         "dashboard/family_invoices.html",
@@ -865,6 +877,7 @@ def invoices(request):
             "current_date": current_date,
             "overall_totals": overall_totals,
             "invoices": invoices,
+            "encoded_message": encoded_message,
         },
     )
 
@@ -1002,7 +1015,14 @@ def instructor_invoices(request):
             instructor__user=user, date__range=[start_date, end_date]
         )
 
-    instructors = Instructor.objects.filter(user__is_active=True)
+    instructor_ids_with_classes = (
+        Classes.objects.filter(date__range=[start_date, end_date])
+        .values_list("instructor_id", flat=True)
+        .distinct()
+    )
+    instructors = Instructor.objects.filter(
+        user__is_active=True, id__in=instructor_ids_with_classes
+    )
 
     # Calculate overall totals for the selected month (for admins only)
     overall_totals = (
@@ -1015,6 +1035,11 @@ def instructor_invoices(request):
         for instructor in instructors
     }
 
+    # Calculate overall total salary for all instructors
+    overall_instructor_salary = sum(
+        total["total_salary"] for total in instructor_totals.values()
+    )
+
     return render(
         request,
         "dashboard/instructor_invoices.html",
@@ -1024,6 +1049,7 @@ def instructor_invoices(request):
             "current_date": current_date,
             "overall_totals": overall_totals,
             "invoices": invoices,
+            "overall_instructor_salary": overall_instructor_salary,
         },
     )
 
@@ -1049,6 +1075,13 @@ def advancesdisc(request):
             "disc": disc,
         },
     )
+
+
+def delete_disc(request, id):
+    disc = Discounts.objects.get(id=id)
+    disc.delete()
+    messages.success(request, "تم حذف السلفة بنجاح!")
+    return redirect("dash:advancesdisc")
 
 
 @login_required
@@ -1084,3 +1117,9 @@ def activate_user(request, user_id):
 def contact(request):
     contact = ContactUs.objects.all()
     return render(request, "dashboard/contact.html", {"contact": contact})
+
+
+@login_required
+def teacher_contact(request):
+    contact = TeacherContact.objects.all()
+    return render(request, "dashboard/be_a_teacher.html", {"contact": contact})

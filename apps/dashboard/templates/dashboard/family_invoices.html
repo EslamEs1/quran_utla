@@ -36,9 +36,16 @@
             <td>{{ total.total_hours }}</td>
             <td>{{ total.total_salary|floatformat:"2" }} $</td>
             <td>{{ total.family.user.phone }}</td>
-            <td>http://127.0.0.1:8000/dashboard/family_inv_de/{{ family_id }}</td>
-            <td><a href="{% url 'dash:family_invoice_details' family_id %}"><img class="icon" src="{% static 'img/validating-ticket.png' %}"></a></td>
-            <td><a href="#"><img class="icon" src="{% static 'img/whatsapp.png' %}"></a></td>
+            <td>https://quranutla.com/dashboard/family_inv_de/{{ family_id }}</td>
+            <td><a href="{% url 'dash:family_invoice_details' family_id %}"><img class="icon"
+                        src="{% static 'img/validating-ticket.png' %}"></a></td>
+            <td>
+                <a href="https://wa.me/{{ whatsapp_number }}?text={{ encoded_message }} https://quranutla.com/dashboard/family_inv_de/{{family_id}}  🌹 وجزاكم الله خيرا 🌹" target="_blank">
+                    <img class="icon" src="{% static 'img/whatsapp.png' %}" alt="Contact via WhatsApp">
+                </a>
+            </td>
+
+
         </tr>
         {% endfor %}
     </tbody>
@@ -56,7 +63,7 @@
             <p>إجمالي الحصص: <span>( {{ overall_totals.total_sections }} )</span></p>
         </div>
         <div class="col">
-            <p>إجمالي ساعات:  <span>( {{ overall_totals.total_hours }} )</span></p>
+            <p>إجمالي ساعات: <span>( {{ overall_totals.total_hours }} )</span></p>
         </div>
         <div class="col">
             <p>إجمالي مبلغ الطلاب: <span>( ${{ overall_totals.total_salary|floatformat:"2" }} )</span></p>

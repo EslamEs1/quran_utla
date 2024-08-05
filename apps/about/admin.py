@@ -1,3 +1,32 @@
 from django.contrib import admin
+from .models import About, WhyUs, Testimonials, How_it_works, Terms
 
-# Register your models here.
+
+@admin.register(About)
+class AboutAdmin(admin.ModelAdmin):
+    list_display = ("content", "url")
+    search_fields = ("content",)
+
+
+@admin.register(WhyUs)
+class WhyUsAdmin(admin.ModelAdmin):
+    list_display = ("name", "img", "content")
+    search_fields = ("name",)
+
+
+@admin.register(Testimonials)
+class TestimonialsAdmin(admin.ModelAdmin):
+    list_display = ("name", "position", "content")
+    search_fields = ("name", "position")
+
+
+@admin.register(How_it_works)
+class HowItWorksAdmin(admin.ModelAdmin):
+    list_display = ("content",)
+    search_fields = ("content",)
+
+
+@admin.register(Terms)
+class TermsAdmin(admin.ModelAdmin):
+    list_display = ("content",)
+    search_fields = ("content",)

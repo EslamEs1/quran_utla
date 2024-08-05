@@ -17,7 +17,9 @@ urlpatterns = [
         "instructor_student/", views.instructor_student_view, name="instructor_student"
     ),
     path(
-        "marketer_student_view/", views.marketer_student_view, name="marketer_student_view"
+        "marketer_student_view/",
+        views.marketer_student_view,
+        name="marketer_student_view",
     ),
     path(
         "get_students_by_family/<str:family_id>/",
@@ -56,6 +58,7 @@ urlpatterns = [
         name="activate_user_inst",
     ),
     path("contact/", views.contact, name="contact"),
+    path("teacher-contact/", views.teacher_contact, name="teacher_contact"),
     path("edit-billing-month/", views.edit_billing_month, name="edit_billing_month"),
     path(
         "delete-billing-month/<int:id>/",
@@ -86,4 +89,5 @@ urlpatterns = [
         views.del_student_marketer,
         name="del_student_marketer",
     ),
+    path("delete_disc/<int:id>/", views.delete_disc, name="delete_disc"),
 ]

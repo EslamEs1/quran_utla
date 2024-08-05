@@ -38,7 +38,7 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS = [
     "django_cleanup.apps.CleanupConfig",
-    # "django_summernote",
+    "django_summernote",
     # "crispy_forms",
 ]
 

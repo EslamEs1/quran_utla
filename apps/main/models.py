@@ -6,6 +6,9 @@ class Slider(models.Model):
     title = models.CharField(max_length=100)
     content = models.CharField(max_length=200)
 
+    class Meta:
+        verbose_name_plural = "Sliders"
+        
     def __str__(self):
         return self.title
 
@@ -35,6 +38,9 @@ class Settings(models.Model):
 class Pricing_Content(models.Model):
     content = models.TextField()
 
+    class Meta:
+        verbose_name_plural = "Pricing Content"
+
     def __str__(self):
         return self.content
 
@@ -46,12 +52,18 @@ class Pricing(models.Model):
     classes = models.IntegerField()
     hours = models.IntegerField()
 
+    class Meta:
+        verbose_name_plural = "Pricing"
+
     def __str__(self):
         return self.char
 
 
 class Fees(models.Model):
     title = models.CharField(max_length=100)
+
+    class Meta:
+        verbose_name_plural = "Fees"
 
     def __str__(self):
         return self.title
@@ -62,6 +74,11 @@ class ContactUs(models.Model):
     email = models.EmailField()
     whatsapp = models.CharField(max_length=16)
     message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+    class Meta:
+        verbose_name_plural = "Contact us"
 
     def __str__(self):
         return self.name
@@ -75,7 +92,9 @@ class TeacherContact(models.Model):
     qualifications = models.TextField()
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = "Teacher Contact"
 
     def __str__(self):
         return self.full_name
@@ -85,6 +104,9 @@ class Tutors(models.Model):
     full_name = models.CharField(max_length=200)
     image = models.ImageField(upload_to="tutors/img/")
     qualifications = models.TextField()
-    
+
+    class Meta:
+        verbose_name_plural = "Tutors"
+
     def __str__(self):
         return self.full_name

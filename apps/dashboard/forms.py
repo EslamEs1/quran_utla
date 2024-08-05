@@ -143,10 +143,13 @@ class InstructorForm(forms.ModelForm):
 class FamiliesForm(forms.ModelForm):
     class Meta:
         model = Families
-        fields = ["manager", "the_state", "payment_link"]
+        fields = ["manager", "whatsapp", "the_state", "payment_link"]
         widgets = {
             "manager": forms.Select(
                 attrs={"class": "form-control", "placeholder": "المشرف"}
+            ),
+            "whatsapp": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "واتساب"}
             ),
             "the_state": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "الولاية"}
@@ -159,6 +162,7 @@ class FamiliesForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(FamiliesForm, self).__init__(*args, **kwargs)
         self.fields["manager"].label = "المشرف"
+        self.fields["whatsapp"].label = "واتساب"
         self.fields["the_state"].label = "الولاية"
         self.fields["payment_link"].label = "رابط الدفع"
 

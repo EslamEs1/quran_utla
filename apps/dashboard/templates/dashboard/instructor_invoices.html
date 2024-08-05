@@ -23,7 +23,6 @@
             <th scope="col">إجمالي الراتب</th>
             <th scope="col">الهاتف</th>
             <th scope="col">رابط الدفع</th>
-            <th scope="col">واتساب</th>
         </tr>
     </thead>
     {% if invoices|length > 0 %}
@@ -36,7 +35,6 @@
             <td>{{ total.total_salary|floatformat:"2" }} $</td>
             <td>{{ total.instructor.user.phone }}</td>
             <td>{{ total.instructor.payment_link }}</td>
-            <td><a href="#"><img class="icon" src="{% static 'img/whatsapp.png' %}"></a></td>
         </tr>
         {% endfor %}
     </tbody>
@@ -57,7 +55,7 @@
             <p>إجمالي ساعات:  <span>( {{ overall_totals.total_hours }} )</span></p>
         </div>
         <div class="col">
-            <p>إجمالي مبلغ المعلمين: <span>( ${{ overall_totals.total_salary|floatformat:"2" }} )</span></p>
+            <p>إجمالي مبلغ المعلمين: <span>( ${{ overall_instructor_salary|floatformat:"2" }} )</span></p>
         </div>
     </div>
 </div>

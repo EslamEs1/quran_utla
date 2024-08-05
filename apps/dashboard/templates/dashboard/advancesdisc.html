@@ -23,6 +23,7 @@
             <th scope="col">مبلغ السلفة</th>
             <th scope="col">تعليق</th>            
             <th scope="col">التاريخ</th>
+            <th scope="col">حذف</th>
         </tr>
     </thead>
     <tbody>
@@ -33,6 +34,7 @@
             <td>{{disc.amount}}</td>
             <td>{{disc.comment}}</td>     
             <td>{{disc.created_at}}</td>     
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModaldisc-{{ disc.id }}"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>     
         </tr>         
         {% endfor %}
             
@@ -59,4 +61,26 @@
         </div>
     </div>
 </div>
+
+{% for disc in disc %}
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModaldisc-{{ disc.id }}" tabindex="-1" aria-labelledby="deleteModalLabel-{{ class.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">تأكيد الحذف</h5>
+            </div>
+            <div class="modal-body">
+                هل أنت متأكد أنك تريد حذف هذه السلفة؟
+            </div>
+            <div class="modal-footer">
+                <a style="width:100%;" class="btn btn-danger" href="{% url 'dash:delete_disc' disc.id %}">حذف</a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
 {% endblock content %}

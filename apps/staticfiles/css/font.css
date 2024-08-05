@@ -94,3 +94,8 @@ button{
     height: auto;
     object-fit: contain;
 }
+
+
+.has-arrow img{
+    width: 25px;
+}

@@ -113,6 +113,7 @@ class Instructor(models.Model):
 class Families(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    whatsapp = models.CharField(max_length=16)
     the_state = models.CharField(max_length=250, null=True, blank=True)
     manager = models.ForeignKey(
         Manager, on_delete=models.SET_NULL, null=True, blank=True
