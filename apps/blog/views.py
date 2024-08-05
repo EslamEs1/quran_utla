@@ -12,4 +12,4 @@ def blog_detail(request, slug):
 
     posts = Post.objects.all().exclude(slug=slug)[:6]
 
-    return render(request, "blogs.html", {"post": post, "posts": posts})
+    return render(request, "blog-detail.html", {"post": post, "posts": posts})
