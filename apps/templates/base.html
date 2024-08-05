@@ -16,7 +16,7 @@
         <div class="logo d-flex justify-content-between">
             <a href="/"><img src="{{settings.logo.url}}" alt="logo"></a>
             <div class="sidebar_close_icon d-lg-none">
-                <i class="ti-close"></i>
+                <img style="width:30px;" src="{% static 'img/minu.png' %}" alt="">
             </div>
         </div>
         <ul id="sidebar_menu">
@@ -159,6 +159,24 @@
             </li>
         </ul>
     </nav>
+     <div class="header_iner d-flex justify-content-between align-items-center">
+                        <div class="sidebar_icon d-lg-none">
+                            <img style="width:30px;" src="{% static 'img/minu.png' %}" alt="">
+                        </div>
+                    </div>
+
+        <div class="footer_part">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12 col-sm-12">
+                        <div class="footer_iner text-center">
+                            <p>2024 © Influence - Designed by<a href=""> Eslam Essam</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
     {% endif %}
 
     <section class="main_content dashboard_part">
