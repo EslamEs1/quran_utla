@@ -1,5 +1,10 @@
 from django.contrib import admin
 from .models import About, WhyUs, Testimonials, How_it_works, Terms
+from django_summernote.admin import SummernoteModelAdmin
+
+
+class SomeModelAdmin(SummernoteModelAdmin):
+    summernote_fields = "__all__"
 
 
 @admin.register(About)
@@ -27,6 +32,6 @@ class HowItWorksAdmin(admin.ModelAdmin):
 
 
 @admin.register(Terms)
-class TermsAdmin(admin.ModelAdmin):
+class TermsAdmin(SomeModelAdmin, admin.ModelAdmin):
     list_display = ("content",)
     search_fields = ("content",)
