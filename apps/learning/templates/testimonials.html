@@ -17,56 +17,55 @@
     </div>
 </div>
 
-<div class="steps">
-    <div class="container">
-        <div class="list">
-            <div class="item">
-                <img src="{% static 'index/img/steps/steps.svg' %}" alt="Simple" />
-            </div>
-            <div class="item">
-                <div class="main-title">
-                    <h2>3 Simple Steps To Start</h2>
+    <div class="steps">
+        <div class="container">
+            <div class="list">
+                <div class="item">
+                    <img src="{% static 'index/img/steps/steps.svg' %}" alt="Simple" />
                 </div>
-                <div class="number">
-                    {% for steps in steps_to_start %}
-                    <div class="one">
-                        <i class="fas fa-1"></i>
-                        <h5>{{steps.title}}</h5>
+                <div class="item">
+                    <div class="main-title">
+                        <h2>3 Simple Steps To Start</h2>
                     </div>
-                    {% endfor %}
-                </div>
-                <div class="link">
-                    <a href="#">Book a Free Trial Now</a>
+                    <div class="number">
+                        {% for steps in steps_to_start %}
+                        <div class="one">
+                            <i class="fas fa-1"></i>
+                            <h5>{{steps.title}}</h5>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="link">
+                        <a href="{% url 'main:pricing' %}">See All Pricing</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="steps steps-tow">
-    <div class="container">
-        <div class="list">
-            <div class="item">
-                <img src="{% static 'index/img/steps/study-plan.svg' %}" alt="" />
-            </div>
-            <div class="item">
-                <div class="main-title">
-                    <h2>Choose Your Study Plan</h2>
+    <div class="steps steps-tow">
+        <div class="container">
+            <div class="list">
+                <div class="item">
+                    <img src="{% static 'index/img/steps/study-plan.svg' %}" alt="" />
                 </div>
-                <div class="number">
-                    {% for plan in title %}
-                    <div class="one">
-                        <i class="fas fa-check"></i>
-                        <h5>{{plan.title}}</h5>
+                <div class="item">
+                    <div class="main-title">
+                        <h2>Choose Your Study Plan</h2>
                     </div>
-                    {% endfor %}
-                </div>
-                <div class="link">
-                    <a href="#">See All Pricing Plans</a>
+                    <div class="number">
+                        {% for plan in study_plan %}
+                        <div class="one">
+                            <i class="fas fa-check"></i>
+                            <h5>{{plan.title}}</h5>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="link">
+                        <a href="{% url 'main:pricing' %}">See All Pricing Plans</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
 {% endblock content %}
