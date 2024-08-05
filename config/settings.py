@@ -21,7 +21,8 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DJANGO_DEBUG", False)
 
-ALLOWED_HOSTS = ["www.quranutla.com", "quranutla.com"]
+# ALLOWED_HOSTS = ["www.quranutla.com", "quranutla.com"]
+ALLOWED_HOSTS = []
 
 
 # Application definition
