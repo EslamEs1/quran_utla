@@ -12,7 +12,7 @@ urlpatterns = [
     path("about/", include("apps.about.urls", namespace="about")),
     path("blog/", include("apps.blog.urls", namespace="blog")),
     path("learning/", include("apps.learning.urls", namespace="learning")),
-    
+    path("summernote/", include("django_summernote.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
