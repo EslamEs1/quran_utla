@@ -10,6 +10,6 @@ def blog(request):
 def blog_detail(request, slug):
     post = get_object_or_404(Post, slug=slug)
 
-    posts = Post.objects.all()[:6].exclude(slug=slug)
+    posts = Post.objects.all().exclude(slug=slug)[:6]
 
     return render(request, "blogs.html", {"post": post, "posts": posts})
