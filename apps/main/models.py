@@ -27,6 +27,7 @@ class Settings(models.Model):
     phones = models.CharField(max_length=100, blank=True, null=True)
     map_link = models.URLField(blank=True, null=True)
     text = models.TextField()
+    video = models.CharField(max_length=1000)
 
     class Meta:
         verbose_name_plural = "Settings"
