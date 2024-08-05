@@ -22,7 +22,7 @@ def islamic(request):
 
 def course_detail(request, slug):
     course = get_object_or_404(Course, slug=slug)
-    related = Course.objects.all()[:6].exclude(id=id)
+    related = Course.objects.all().exclude(id=id)[:6]
 
     return render(
         request,
