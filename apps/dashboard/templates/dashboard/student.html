@@ -40,15 +40,15 @@
     <tbody>
         {% for student in students %}
         <tr>
-            <td>{{student.user.name}}</td>
+            <td>{{student.name}}</td>
             <td>{{student.family}}</td>
-            <td>{{student.user.age}}</td>     
-            <td>{{student.user.gender}}</td>     
-            <td>{{student.user.created_at}}</td>     
+            <td>{{student.age}}</td>     
+            <td>{{student.gender}}</td>     
+            <td>{{student.created_at}}</td>     
             <td>{{student.payment_link}}</td>     
             <td><a href="{% url 'dash:student_invoice_details' student.id %}"><img class="icon" src="{% static 'img/validating-ticket.png'%}"></a></td>       
-            <td><a href="#" data-bs-toggle="modal" data-bs-target="#editModalstudent{{student.user.id}}"><img class="icon" src="{% static 'img/edit.png'%}"></a></td>
-            <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModalstudent{{student.user.id}}"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#editModalstudent{{student.id}}"><img class="icon" src="{% static 'img/edit.png'%}"></a></td>
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModalstudent{{student.id}}"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
         </tr>
         {% endfor %}
     </tbody>
@@ -65,9 +65,7 @@
             <div class="modal-body">
                 <form method="post" action="{% url 'dash:register_student' %}">
                     {% csrf_token %}
-                    {{ base_form.as_p }}
                     {{ student_form.as_p }}
-                    <input type="hidden" name="user_type" value="Student">
                     <input type="submit" class="hidden" id="hiddenSubmitBtn">
                 </form>
             </div>
@@ -82,7 +80,7 @@
 
 
 {% for student in students %}
-<div class="modal fade" id="editModalstudent{{student.user.id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+<div class="modal fade" id="editModalstudent{{student.id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -90,19 +88,19 @@
                 <h5 class="modal-title" id="staticBackdropLabel">تعديل عائلة</h5>
             </div>
             <div class="modal-body">
-                <form method="post" action="{% url 'dash:edit_student' student.user.id %}">
+                <form method="post" action="{% url 'dash:edit_student' student.id %}">
                     {% csrf_token %}
                     <div class="mb-3">
+                        <label class="form-label">العائلة</label>
+                        <select class="form-select" name="family">
+                            {% for family in families %}
+                                <option value="{{ family.id }}" {% if student.family.id == family.id %}selected{% endif %}>{{ family.name }}</option>                      
+                            {% endfor %}                          
+                        </select>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label">الأسم</label>
-                        <input type="text" class="form-control" name="name" value="{{ student.user.name }}">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">رقم الهاتف</label>
-                        <input type="text" class="form-control" name="phone" value="{{ student.user.phone }}">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">العنوان</label>
-                        <input type="text" class="form-control" name="address" value="{{ student.user.address }}">
+                        <input type="text" class="form-control" name="name" value="{{ student.name }}">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">الجنس</label>
@@ -113,20 +111,12 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">العمر</label>
-                        <input type="number" class="form-control" name="age" value="{{ student.user.age }}">
+                        <input type="number" class="form-control" name="age" value="{{ student.age }}">
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">العائلة</label>
-                        <select class="form-select" name="family">
-                            {% for family in families %}
-                            <option value="{{family.id}}">{{family.name}}</option>                      
-                            {% endfor %}                          
-                        </select>
-                    </div>
 
                     <div class="mb-3">
-                        <label class="form-label">الراتب بالساعه</label>
+                        <label class="form-label">السعر بالساعه</label>
                         <input type="number" class="form-control" name="hourly_salary" value="{{ student.hourly_salary }}">
                     </div>
 
@@ -151,7 +141,7 @@
 
 {% for student in students %}
 <!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModalstudent{{student.user.id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+<div class="modal fade" id="deleteModalstudent{{student.id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -161,7 +151,7 @@
                 هل أنت متأكد أنك تريد حذف هذه الشخص؟
             </div>
             <div class="modal-footer">
-                <a style="width:100%;" class="btn btn-danger" href="{% url 'dash:delete_student' student.user.id %}">حذف</a>
+                <a style="width:100%;" class="btn btn-danger" href="{% url 'dash:delete_student' student.id %}">حذف</a>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
             </div>
         </div>

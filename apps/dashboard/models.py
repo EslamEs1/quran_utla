@@ -29,10 +29,8 @@ class BillingMonths(models.Model):
 # ------------------------People
 class UserType(models.TextChoices):
     MARKETER = "Marketer", "مسوق"
-    STUDENT = "Student", "طالب"
     INSTRUCTOR = "Instructor", "معلم"
     MANAGER = "Manager", "مشرف"
-    FAMILIES = "Families", "عائله"
     ADMIN = "Admin", "ادمن"
 
 
@@ -100,11 +98,9 @@ class Instructor(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     qualification = models.CharField(max_length=250)
     hourly_salary = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    class_link = models.CharField(max_length=1000)
-    manager = models.ForeignKey(
-        Manager, on_delete=models.SET_NULL, null=True, blank=True
-    )
-    id_number = models.IntegerField()
+    class_link = models.CharField(max_length=1000, null=True, blank=True)
+    manager = models.ForeignKey(Manager, on_delete=models.SET_NULL, null=True, blank=True)
+    id_number = models.CharField(max_length=14, null=True, blank=True)
 
     def __str__(self):
         return self.user.name
@@ -112,26 +108,32 @@ class Instructor(models.Model):
 
 class Families(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    whatsapp = models.CharField(max_length=16)
-    the_state = models.CharField(max_length=250, null=True, blank=True)
-    manager = models.ForeignKey(
-        Manager, on_delete=models.SET_NULL, null=True, blank=True
-    )
-    payment_link = models.CharField(max_length=1000)
+    name = models.CharField(max_length=250)
+    number = models.IntegerField()
+    address = models.CharField(max_length=100)
+    gender = models.CharField(choices=Gender.choices, max_length=10)
+    the_state = models.CharField(max_length=250)
+    manager = models.ForeignKey(Manager, on_delete=models.SET_NULL, null=True, blank=True)
+    payment_link = models.CharField(max_length=1000, null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.user.name
+        return self.name
 
 
 class Student(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     family = models.ForeignKey(Families, on_delete=models.CASCADE)
+    name = models.CharField(max_length=250)
+    gender = models.CharField(choices=Gender.choices, max_length=10)
+    age = models.IntegerField()
     hourly_salary = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     payment_link = models.CharField(max_length=1000)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.user.name
+        return self.name
 
 
 class Instructor_Student(models.Model):
@@ -301,5 +303,3 @@ class Discounts(models.Model):
     amount = models.IntegerField(default=0)
     comment = models.CharField(max_length=250)
     created_at = models.DateTimeField(auto_now_add=True)
-
-

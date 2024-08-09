@@ -40,17 +40,17 @@
         </tr>
     </thead>
     <tbody>
-        {% for familie in families %}
+        {% for family in families %}
         <tr>
-            <td>{{familie.user.name}}</td>
-            <td>{{familie.user.phone}}</td>
-            <td>{{familie.user.address}}</td>     
-            <td>{{familie.the_state}}</td>     
-            <td>{{familie.payment_link}}</td>     
-            <td>{{familie.user.created_at}}</td>     
-            <td><a href="{% url 'dash:family_invoice_details' familie.id %}"><img class="icon" src="{% static 'img/validating-ticket.png'%}"></a></td>       
-            <td><a href="#" data-bs-toggle="modal" data-bs-target="#editModalfamily{{familie.user.id}}"><img class="icon" src="{% static 'img/edit.png'%}"></a></td>
-            <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModalfamily{{familie.user.id}}"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
+            <td>{{family.name}}</td>
+            <td>{{family.number}}</td>
+            <td>{{family.address}}</td>     
+            <td>{{family.the_state}}</td>     
+            <td>{{family.payment_link}}</td>     
+            <td>{{family.created_at}}</td>     
+            <td><a href="{% url 'dash:family_invoice_details' family.id %}"><img class="icon" src="{% static 'img/validating-ticket.png'%}"></a></td>       
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#editModalfamily{{family.id}}"><img class="icon" src="{% static 'img/edit.png'%}"></a></td>
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModalfamily{{family.id}}"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
         </tr>
         {% endfor %}
     </tbody>
@@ -66,13 +66,12 @@
             <div class="modal-body">
                 <form method="post" action="{% url 'dash:register_family' %}">
                     {% csrf_token %}
-                    {{ base_form.as_p }}
                     {{ families_form.as_p }}
-                    <input type="hidden" name="user_type" value="Families">
-                    <button type="submit" class="btn btn-primary">تسجيل</button>
+                    <input type="submit" class="hidden" id="hiddenSubmiSave-{{family.id}}">
                 </form>
             </div>
             <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" onclick="document.getElementById('hiddenSubmiSave-{{family.id}}').click();">تسجيل</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
             </div>
         </div>
@@ -81,7 +80,7 @@
 
 
 {% for family in families %}
-<div class="modal fade" id="editModalfamily{{family.user.id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+<div class="modal fade" id="editModalfamily{{family.id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -89,23 +88,15 @@
                 <h5 class="modal-title" id="staticBackdropLabel">تعديل عائلة</h5>
             </div>
             <div class="modal-body">
-                <form method="post" action="{% url 'dash:edit_family' family.user.id %}">
+                <form method="post" action="{% url 'dash:edit_family' family.id %}">
                     {% csrf_token %}
                     <div class="mb-3">
                         <label class="form-label">الأسم</label>
-                        <input type="text" class="form-control" name="name" value="{{ family.user.name }}">
+                        <input type="text" class="form-control" name="name" value="{{ family.name }}">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">رقم الهاتف</label>
-                        <input type="text" class="form-control" name="phone" value="{{ family.user.phone }}">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">واتساب</label>
-                        <input type="text" class="form-control" name="whatsapp" value="{{ family.whatsapp }}">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">العنوان</label>
-                        <input type="text" class="form-control" name="address" value="{{ family.user.address }}">
+                        <input type="text" class="form-control" name="phone" value="{{ family.number }}">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">الجنس</label>
@@ -115,17 +106,16 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">العمر</label>
-                        <input type="number" class="form-control" name="age" value="{{ family.user.age }}">
-                    </div>
-
-                    <div class="mb-3">
                         <label class="form-label">المشرف</label>
                         <select class="form-select" name="manager">
                             {% for manager in managers %}
                             <option value="{{manager.id}}">{{manager.name}}</option>                      
                             {% endfor %}                          
                         </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">العنوان</label>
+                        <input type="text" class="form-control" name="address" value="{{ family.address }}">
                     </div>
 
                     <div class="mb-3">
@@ -153,7 +143,7 @@
 
 {% for family in families %}
 <!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModalfamily{{family.user.id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+<div class="modal fade" id="deleteModalfamily{{family.id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -163,7 +153,7 @@
                 هل أنت متأكد أنك تريد حذف هذه الشخص؟
             </div>
             <div class="modal-footer">
-                <a style="width:100%;" class="btn btn-danger" href="{% url 'dash:delete_family' family.user.id %}">حذف</a>
+                <a style="width:100%;" class="btn btn-danger" href="{% url 'dash:delete_family' family.id %}">حذف</a>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
             </div>
         </div>

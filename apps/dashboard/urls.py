@@ -67,8 +67,8 @@ urlpatterns = [
     ),
     path("edit_manager/<int:id>/", views.edit_manager, name="edit_manager"),
     path("delete_manager/<int:id>/", views.delete_manager, name="delete_manager"),
-    path("edit_family/<int:id>/", views.edit_family, name="edit_family"),
-    path("delete_family/<int:id>/", views.delete_family, name="delete_family"),
+    path("edit_family/<str:id>/", views.edit_family, name="edit_family"),
+    path("delete_family/<str:id>/", views.delete_family, name="delete_family"),
     path("edit_instructor/<int:id>/", views.edit_instructor, name="edit_instructor"),
     path(
         "delete_instructor/<int:id>/", views.delete_instructor, name="delete_instructor"

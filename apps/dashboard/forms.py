@@ -121,10 +121,16 @@ class InstructorForm(forms.ModelForm):
                 attrs={"class": "form-control", "placeholder": "الراتب بالساعه"}
             ),
             "class_link": forms.URLInput(
-                attrs={"class": "form-control", "placeholder": "رابط الحصه"}
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "رابط الحصة يمكنك تركة فارغ",
+                }
             ),
             "id_number": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "رقم الهويه"}
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "رقم الهوية يمكنك تركة فارغ",
+                }
             ),
             "manager": forms.Select(
                 attrs={"class": "form-control", "placeholder": "المشرف"}
@@ -143,26 +149,46 @@ class InstructorForm(forms.ModelForm):
 class FamiliesForm(forms.ModelForm):
     class Meta:
         model = Families
-        fields = ["manager", "whatsapp", "the_state", "payment_link"]
+        fields = [
+            "name",
+            "number",
+            "manager",
+            "address",
+            "gender",
+            "the_state",
+            "payment_link",
+        ]
         widgets = {
+            "name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "الأسم"}
+            ),
+            "number": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "رقم الهاتف"}
+            ),
             "manager": forms.Select(
                 attrs={"class": "form-control", "placeholder": "المشرف"}
             ),
-            "whatsapp": forms.NumberInput(
-                attrs={"class": "form-control", "placeholder": "واتساب"}
+            "gender": forms.Select(
+                attrs={"class": "form-control", "placeholder": "الجنس"}
+            ),
+            "address": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "العنوان"}
             ),
             "the_state": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "الولاية"}
             ),
-            "payment_link": forms.URLInput(
+            "payment_link": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "رابط الدفع"}
             ),
         }
 
     def __init__(self, *args, **kwargs):
         super(FamiliesForm, self).__init__(*args, **kwargs)
+        self.fields["name"].label = "الأسم"
+        self.fields["number"].label = "رقم الهاتف"
         self.fields["manager"].label = "المشرف"
-        self.fields["whatsapp"].label = "واتساب"
+        self.fields["gender"].label = "الجنس"
+        self.fields["address"].label = "العنوان"
         self.fields["the_state"].label = "الولاية"
         self.fields["payment_link"].label = "رابط الدفع"
 
@@ -170,15 +196,24 @@ class FamiliesForm(forms.ModelForm):
 class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
-        fields = ["family", "hourly_salary", "payment_link"]
+        fields = ["family", "name", "gender", "age", "hourly_salary", "payment_link"]
         widgets = {
             "family": forms.Select(
                 attrs={"class": "form-control", "placeholder": "العائلة"}
             ),
-            "hourly_salary": forms.NumberInput(
-                attrs={"class": "form-control", "placeholder": "الراتب بالساعه"}
+            "name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "الأسم"}
             ),
-            "payment_link": forms.URLInput(
+            "gender": forms.Select(
+                attrs={"class": "form-control", "placeholder": "الجنس"}
+            ),
+            "age": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "العمر"}
+            ),
+            "hourly_salary": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "السعر بالساعه"}
+            ),
+            "payment_link": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "رابط الدفع"}
             ),
         }
@@ -186,7 +221,10 @@ class StudentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(StudentForm, self).__init__(*args, **kwargs)
         self.fields["family"].label = "العائلة"
-        self.fields["hourly_salary"].label = "الراتب بالساعه"
+        self.fields["name"].label = "الأسم"
+        self.fields["gender"].label = "الجنس"
+        self.fields["age"].label = "العمر"
+        self.fields["hourly_salary"].label = "السعر بالساعه"
         self.fields["payment_link"].label = "رابط الدفع"
 
 
@@ -207,7 +245,7 @@ class Instructor_StudentForm(forms.ModelForm):
         self.fields["family"].label = "العائله"
         self.fields["student"].label = "الطالب"
         self.fields["instructor"].label = "المعلم"
-        
+
         if "family" in self.data:
             try:
                 family_id = str(self.data.get("family"))
@@ -401,7 +439,7 @@ class DiscountsForm(forms.ModelForm):
             ),
             "comment": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "تعليق"}
-            ),  
+            ),
         }
 
     def __init__(self, *args, **kwargs):
@@ -430,7 +468,9 @@ class Marketer_StudentForm(forms.ModelForm):
         self.fields["marketer"].label = "المسوق"
 
         # Set the queryset for the marketer field
-        self.fields["marketer"].queryset = CustomUser.objects.filter(type=UserType.MARKETER, is_active=True)
+        self.fields["marketer"].queryset = CustomUser.objects.filter(
+            type=UserType.MARKETER, is_active=True
+        )
 
         if "family" in self.data:
             try:
