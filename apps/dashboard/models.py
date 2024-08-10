@@ -73,7 +73,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     created_at = models.DateTimeField(auto_now_add=True)
 
     objects = CustomUserManager()
-    
+
     USERNAME_FIELD = "phone"
     REQUIRED_FIELDS = ["name"]
 
@@ -99,7 +99,9 @@ class Instructor(models.Model):
     qualification = models.CharField(max_length=250)
     hourly_salary = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     class_link = models.CharField(max_length=1000, null=True, blank=True)
-    manager = models.ForeignKey(Manager, on_delete=models.SET_NULL, null=True, blank=True)
+    manager = models.ForeignKey(
+        Manager, on_delete=models.SET_NULL, null=True, blank=True
+    )
     id_number = models.CharField(max_length=14, null=True, blank=True)
 
     def __str__(self):
@@ -113,7 +115,9 @@ class Families(models.Model):
     address = models.CharField(max_length=100)
     gender = models.CharField(choices=Gender.choices, max_length=10)
     the_state = models.CharField(max_length=250)
-    manager = models.ForeignKey(Manager, on_delete=models.SET_NULL, null=True, blank=True)
+    manager = models.ForeignKey(
+        Manager, on_delete=models.SET_NULL, null=True, blank=True
+    )
     payment_link = models.CharField(max_length=1000, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -143,6 +147,14 @@ class Instructor_Student(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
+class Marketer(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    salary = models.IntegerField()
+
+    def __str__(self):
+        return self.salary
+
+
 class Marketer_Student(models.Model):
     family = models.ForeignKey(Families, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
@@ -154,6 +166,7 @@ class Marketer_Student(models.Model):
         on_delete=models.CASCADE,
     )
     created_at = models.DateTimeField(auto_now_add=True)
+
 
 # ------------------------Registration of classes
 

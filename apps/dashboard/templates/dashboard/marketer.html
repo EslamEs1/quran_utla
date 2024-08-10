@@ -63,6 +63,7 @@
                 <form method="post" action="{% url 'dash:register_marketer' %}">
                     {% csrf_token %}
                     {{ base_form.as_p }}
+                    {{marketer_form.as_p}}
                     <input type="hidden" name="user_type" value="Marketer">
                     <input type="submit" id="create-marketer" class="hidden">
                 </form>

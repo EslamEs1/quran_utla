@@ -21,6 +21,7 @@ from .forms import (
     AdminPasswordChangeForm,
     DiscountsForm,
     Marketer_StudentForm,
+    MarketerForm,
 )
 from apps.main.models import ContactUs, TeacherContact
 from .models import (
@@ -319,7 +320,7 @@ def register_family(request):
         families = Families.objects.filter(
             (
                 Q(name__icontains=search_query)
-                | Q(phone__icontains=search_query)
+                | Q(number__icontains=search_query)
                 | Q(address__icontains=search_query)
             )
             & Q(is_active=True)
@@ -330,15 +331,19 @@ def register_family(request):
     managers = CustomUser.objects.filter(type=UserType.MANAGER, is_active=True)
 
     if request.method == "POST":
-        families_form = FamiliesForm(request.POST)
+        families_form = FamiliesForm(request.POST, user=request.user)
         if families_form.is_valid():
-            families_form.save()
+            family = families_form.save(commit=False)
+            if request.user.type == UserType.MANAGER:
+                manager_instance = Manager.objects.get(user=request.user)
+                family.manager = manager_instance
+            family.save()
             messages.success(request, "تم اضافة عائلة جديدة بنجاح")
             return HttpResponseRedirect(request.headers.get("referer"))
         else:
             messages.error(request, "لم يتم الحفظ ربما رقم موجود من قبل")
     else:
-        families_form = FamiliesForm()
+        families_form = FamiliesForm(user=request.user)
 
     context = {
         "families_form": families_form,
@@ -605,24 +610,29 @@ def register_marketer(request):
 
     if request.method == "POST":
         base_form = BaseUserForm(request.POST)
+        marketer_form = MarketerForm(request.POST)
         user_type = request.POST.get("user_type")
         if user_type and user_type == UserType.MARKETER:
-            if base_form.is_valid():
+            if base_form.is_valid() and marketer_form.is_valid():
                 user = base_form.save(commit=False)
                 user.type = UserType.MARKETER
+                marketer_form.user = user
                 user.set_password(base_form.cleaned_data["password"])
+                marketer_form.save()
                 user.save()
                 messages.success(request, "تم اضافة مسوق جديد بنجاح")
                 return HttpResponseRedirect(request.headers.get("referer"))
             else:
                 messages.error(request, "لم يتم الحفظ ربما رقم موجود من قبل")
     else:
+        marketer_form = MarketerForm()
         base_form = BaseUserForm()
 
     context = {
         "base_form": base_form,
         "marketer": marketer,
         "search_query": search_query,
+        "marketer_form":marketer_form
     }
     return render(request, "dashboard/marketer.html", context)
 

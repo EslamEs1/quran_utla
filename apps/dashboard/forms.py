@@ -4,13 +4,15 @@ from .models import (
     Instructor,
     Families,
     Student,
-    Gender,
     Instructor_Student,
     Classes,
     Discounts,
     Marketer_Student,
     UserType,
+    Manager,
+    Marketer
 )
+from django.db.models import Q
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.validators import RegexValidator
@@ -183,7 +185,14 @@ class FamiliesForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop("user", None)
         super(FamiliesForm, self).__init__(*args, **kwargs)
+
+        if user and user.type == UserType.MANAGER:
+            manager_instance = Manager.objects.get(user=user)
+            self.fields["manager"].widget = forms.HiddenInput()
+            self.fields["manager"].initial = manager_instance.pk
+
         self.fields["name"].label = "الأسم"
         self.fields["number"].label = "رقم الهاتف"
         self.fields["manager"].label = "المشرف"
@@ -228,16 +237,46 @@ class StudentForm(forms.ModelForm):
         self.fields["payment_link"].label = "رابط الدفع"
 
 
+class MarketerForm(forms.ModelForm):
+    class Meta:
+        model = Marketer
+        fields = ["salary"]
+        widgets = {
+            "salary": forms.Select(
+                attrs={"class": "form-control", "placeholder": "نسبة الفاتورة"}
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(MarketerForm, self).__init__(*args, **kwargs)
+        self.fields["salary"].label = "نسبة الفاتورة"
+
+
 class Instructor_StudentForm(forms.ModelForm):
     class Meta:
         model = Instructor_Student
         fields = ["family", "student", "instructor"]
         widgets = {
-            "family": forms.Select(attrs={"class": "form-control", "id": "id_family"}),
-            "student": forms.Select(
-                attrs={"class": "form-control", "id": "id_student"}
+            "family": forms.Select(
+                attrs={
+                    "class": "form-control selectpicker",
+                    "id": "id_family",
+                    "data-show-subtext": "true",
+                }
             ),
-            "instructor": forms.Select(attrs={"class": "form-control"}),
+            "student": forms.Select(
+                attrs={
+                    "class": "form-control selectpicker",
+                    "id": "id_student",
+                    "data-show-subtext": "true",
+                }
+            ),
+            "instructor": forms.Select(
+                attrs={
+                    "class": "form-control selectpicker",
+                    "data-show-subtext": "true",
+                }
+            ),
         }
 
     def __init__(self, *args, **kwargs):
