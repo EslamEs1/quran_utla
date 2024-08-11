@@ -19,10 +19,11 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th scope="col">إسم المعلم</th>
+            <th scope="col">إسم الشخص</th>
             <th scope="col">مبلغ السلفة</th>
             <th scope="col">تعليق</th>            
-            <th scope="col">التاريخ</th>
+            <th scope="col">تاريخ السلفة</th>            
+            <th scope="col">تاريخ التسجيل</th>
             <th scope="col">حذف</th>
         </tr>
     </thead>
@@ -30,9 +31,14 @@
         
         {% for disc in disc %}
         <tr>
+            {% if disc.instructor %}
             <td>{{disc.instructor.user.name}}</td>
+            {% else %}
+            <td>{{disc.marketer.user.name}}</td>
+            {% endif%}
             <td>{{disc.amount}}</td>
             <td>{{disc.comment}}</td>     
+            <td>{{disc.date}}</td>     
             <td>{{disc.created_at}}</td>     
             <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModaldisc-{{ disc.id }}"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>     
         </tr>         
@@ -51,11 +57,34 @@
             <div class="modal-body">
                 <form method="post">
                     {% csrf_token %}
-                    {{ form.as_p }}
-                    <button type="submit" class="btn btn-primary">إضافة</button>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" value="instructor" onclick="toggleFields('instructor')" checked>
+                        <label class="form-check-label" for="flexRadioDefault1">
+                            معلم
+                        </label>
+                    </div>
+                    <hr>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" value="marketer" onclick="toggleFields('marketer')">
+                        <label class="form-check-label" for="flexRadioDefault2">
+                            مسوق
+                        </label>
+                    </div>
+                    <br>
+                    <div id="instructor-field" style="display: block;">
+                        {{ form.instructor.label_tag }}{{ form.instructor }}
+                    </div>
+                    <div id="marketer-field" style="display: none;">
+                        {{ form.marketer.label_tag }}{{ form.marketer }}
+                    </div>
+                    {{ form.amount.label_tag }}{{ form.amount }}
+                    {{ form.comment.label_tag }}{{ form.comment }}
+                    {{ form.date.label_tag }}{{ form.date }}
+                    <input type="submit" class="hidden" id="hiddenadddescound">
                 </form>
             </div>
             <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" onclick="document.getElementById('hiddenadddescound').click();">إضافة</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
             </div>
         </div>
@@ -82,5 +111,18 @@
 </div>
 {% endfor %}
 
-
+<script>
+    function toggleFields(selected) {
+        var instructorField = document.getElementById('instructor-field');
+        var marketerField = document.getElementById('marketer-field');
+        
+        if (selected === 'instructor') {
+            instructorField.style.display = 'block';
+            marketerField.style.display = 'none';
+        } else if (selected === 'marketer') {
+            instructorField.style.display = 'none';
+            marketerField.style.display = 'block';
+        }
+    }
+</script>
 {% endblock content %}

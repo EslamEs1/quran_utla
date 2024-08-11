@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+<h3 class="text-center">الطلاب</h3>
+{% endblock title %}
+{% block content %}
+
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">الأسم</th>
+            <th scope="col">العائلة</th>
+            <th scope="col">العمر</th>
+            <th scope="col">النوع</th>
+            <th scope="col">تاريخ الانضمام</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        {% for student in students %}
+        <tr>
+            <td>{{student.name}}</td>
+            <td>{{student.family}}</td>
+            <td>{{student.age}}</td>     
+            <td>{{student.gender}}</td>     
+            <td>{{student.created_at}}</td>     
+            
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock content %}

@@ -122,16 +122,16 @@ class InstructorForm(forms.ModelForm):
             "hourly_salary": forms.NumberInput(
                 attrs={"class": "form-control", "placeholder": "الراتب بالساعه"}
             ),
-            "class_link": forms.URLInput(
+            "class_link": forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "رابط الحصة يمكنك تركة فارغ",
+                    "placeholder": "رابط الحصة",
                 }
             ),
             "id_number": forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "رقم الهوية يمكنك تركة فارغ",
+                    "placeholder": "رقم الهوية",
                 }
             ),
             "manager": forms.Select(
@@ -140,7 +140,18 @@ class InstructorForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop("user", None)
         super(InstructorForm, self).__init__(*args, **kwargs)
+
+        if user and user.type == UserType.MANAGER:
+            try:
+                manager_instance = Manager.objects.get(user=user)
+                self.fields["manager"].widget = forms.HiddenInput()
+                self.fields["manager"].initial = manager_instance.pk
+            except Manager.DoesNotExist:
+                self.fields["manager"].widget = forms.HiddenInput()
+                self.fields["manager"].initial = None
+
         self.fields["qualification"].label = "المؤهل"
         self.fields["hourly_salary"].label = "الراتب بالساعه"
         self.fields["class_link"].label = "رابط الحصه"
@@ -189,9 +200,13 @@ class FamiliesForm(forms.ModelForm):
         super(FamiliesForm, self).__init__(*args, **kwargs)
 
         if user and user.type == UserType.MANAGER:
-            manager_instance = Manager.objects.get(user=user)
-            self.fields["manager"].widget = forms.HiddenInput()
-            self.fields["manager"].initial = manager_instance.pk
+            try:
+                manager_instance = Manager.objects.get(user=user)
+                self.fields["manager"].widget = forms.HiddenInput()
+                self.fields["manager"].initial = manager_instance.pk
+            except Manager.DoesNotExist:
+                self.fields["manager"].widget = forms.HiddenInput()
+                self.fields["manager"].initial = None
 
         self.fields["name"].label = "الأسم"
         self.fields["number"].label = "رقم الهاتف"
@@ -240,16 +255,20 @@ class StudentForm(forms.ModelForm):
 class MarketerForm(forms.ModelForm):
     class Meta:
         model = Marketer
-        fields = ["salary"]
+        fields = ["ratio", "salary"]
         widgets = {
-            "salary": forms.Select(
-                attrs={"class": "form-control", "placeholder": "نسبة الفاتورة"}
+            "salary": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "المرتب"}
+            ),
+            "ratio": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "النسبة"}
             ),
         }
 
     def __init__(self, *args, **kwargs):
         super(MarketerForm, self).__init__(*args, **kwargs)
-        self.fields["salary"].label = "نسبة الفاتورة"
+        self.fields["salary"].label = "المرتب"
+        self.fields["ratio"].label = "نسبة الفاتورة"
 
 
 class Instructor_StudentForm(forms.ModelForm):
@@ -289,13 +308,13 @@ class Instructor_StudentForm(forms.ModelForm):
             try:
                 family_id = str(self.data.get("family"))
                 self.fields["student"].queryset = Student.objects.filter(
-                    family_id=family_id, user__is_active=True
-                ).order_by("user__name")
+                    family_id=family_id, is_active=True
+                ).order_by("name")
             except (ValueError, TypeError):
                 self.fields["student"].queryset = Student.objects.none()
         elif self.instance.pk:
             self.fields["student"].queryset = self.instance.family.student_set.order_by(
-                "user__name"
+                "name"
             )
         else:
             self.fields["student"].queryset = Student.objects.none()
@@ -347,8 +366,21 @@ class ClassesForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop("user", None)
         super(ClassesForm, self).__init__(*args, **kwargs)
+
+        if user and user.type == UserType.INSTRUCTOR:
+            try:
+                # Assume you have a way to get the instructor instance from the user
+                instructor_instance = Instructor.objects.get(user=user)
+                self.fields['instructor'].widget = forms.HiddenInput()
+                self.fields['instructor'].initial = instructor_instance.pk
+            except Instructor.DoesNotExist:
+                self.fields['instructor'].widget = forms.HiddenInput()
+                self.fields['instructor'].initial = None
+
         self.fields["family"].label = "العائلة"
+        self.fields["instructor"].label = "المعلم"
         self.fields["student"].label = "الطالب"
         self.fields["date"].label = "تاريخ الحصة"
         self.fields["number_class_hours"].label = "عدد ساعات الحصة"
@@ -361,12 +393,12 @@ class ClassesForm(forms.ModelForm):
                 family_id = str(self.data.get("family"))
                 self.fields["student"].queryset = Student.objects.filter(
                     family_id=family_id
-                ).order_by("user__name")
+                ).order_by("name")
             except (ValueError, TypeError):
                 self.fields["student"].queryset = Student.objects.none()
         elif self.instance.pk:
             self.fields["student"].queryset = self.instance.family.student_set.order_by(
-                "user__name"
+                "name"
             )
         else:
             self.fields["student"].queryset = Student.objects.none()
@@ -473,19 +505,48 @@ class DiscountsForm(forms.ModelForm):
             "instructor": forms.Select(
                 attrs={"class": "form-control", "placeholder": "المعلم"}
             ),
+            "marketer": forms.Select(
+                attrs={"class": "form-control", "placeholder": "المسوق"}
+            ),
             "amount": forms.NumberInput(
                 attrs={"class": "form-control", "placeholder": "المبلغ"}
             ),
             "comment": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "تعليق"}
             ),
+            "date": forms.DateInput(
+                format="%Y-%m-%d",
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "التاريخ",
+                    "type": "date",
+                },
+            ),
         }
 
     def __init__(self, *args, **kwargs):
         super(DiscountsForm, self).__init__(*args, **kwargs)
         self.fields["instructor"].label = "المعلم"
+        self.fields["marketer"].label = "المسوق"
         self.fields["amount"].label = "المبلغ"
         self.fields["comment"].label = "تعليق"
+        self.fields["date"].label = "التاريخ"
+
+    def clean(self):
+        cleaned_data = super().clean()
+        instructor = cleaned_data.get("instructor")
+        marketer = cleaned_data.get("marketer")
+
+        if not instructor and not marketer:
+            raise forms.ValidationError("الرجاء اختيار إما مدرب أو مسوق.")
+
+        # Set the field not selected to None
+        if instructor:
+            cleaned_data["marketer"] = None
+        if marketer:
+            cleaned_data["instructor"] = None
+
+        return cleaned_data
 
 
 class Marketer_StudentForm(forms.ModelForm):
@@ -506,22 +567,17 @@ class Marketer_StudentForm(forms.ModelForm):
         self.fields["student"].label = "الطالب"
         self.fields["marketer"].label = "المسوق"
 
-        # Set the queryset for the marketer field
-        self.fields["marketer"].queryset = CustomUser.objects.filter(
-            type=UserType.MARKETER, is_active=True
-        )
-
         if "family" in self.data:
             try:
                 family_id = str(self.data.get("family"))
                 self.fields["student"].queryset = Student.objects.filter(
-                    family_id=family_id, user__is_active=True
-                ).order_by("user__name")
+                    family_id=family_id, is_active=True
+                ).order_by("name")
             except (ValueError, TypeError):
                 self.fields["student"].queryset = Student.objects.none()
         elif self.instance.pk:
             self.fields["student"].queryset = self.instance.family.student_set.order_by(
-                "user__name"
+                "name"
             )
         else:
             self.fields["student"].queryset = Student.objects.none()

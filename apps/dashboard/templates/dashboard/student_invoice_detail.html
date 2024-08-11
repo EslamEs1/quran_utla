@@ -10,9 +10,9 @@
 {% block content %}
 <div class="list-family">
         <ul>
-            <li>أسم العائلة : {{ student.family.user.name }}</li>
-            <li>رقم الهاتف : {{ student.family.user.phone }}</li>
-            <li>العنوان : {{ student.family.user.address }}</li>
+            <li>أسم العائلة : {{ student.family.name }}</li>
+            <li>رقم الهاتف : {{ student.family.number }}</li>
+            <li>العنوان : {{ student.family.address }}</li>
         </ul>
 
         <ul>
@@ -31,7 +31,7 @@
                 <th>أسم الطالب</th>
                 <th>المعلم</th>
                 <th>التاريخ</th>
-                <th>عدد ساعات الدرس</th>
+                <th>عدد دقائق الدرس</th>
                 <th>اسم الموضوع</th>
                 <th>التقييم</th>
                 <th>ملاحظات</th>
@@ -40,7 +40,7 @@
         <tbody>
             {% for class in classes %}
             <tr>
-                <td>{{ class.student.user.name }}</td>
+                <td>{{ class.student.name }}</td>
                 <td>{{ class.instructor.user.name }}</td>
                 <td>{{ class.date }}</td>
                 <td>{{ class.number_class_hours }}</td>

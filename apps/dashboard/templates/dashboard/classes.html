@@ -5,8 +5,23 @@
 <h3 class="text-center">أضافة الحصص</h3>
 {% endblock title %}
 {% block content %}
-<!-- Button trigger modals -->
-<!-- Button trigger modals -->
+<form method="GET" action="{% url 'dash:classes' %}">
+    <div class="mb-2">
+        <label for="dateInput" class="form-label">اختر التاريخ</label>
+        <input type="month" class="form-control" id="dateInput" name="filter_month"
+            value="{% if request.GET.filter_month %}{{ request.GET.filter_month }}{% else %}{{ current_date|date:'Y-m' }}{% endif %}"
+            onchange="this.form.submit()">
+    </div>
+</form>
+
+
+<div class="search">
+    <form method="get" role="search">
+        <input class="form-control" type="search" placeholder="بحث..." aria-label="Search" name="search" value="{{ search_query }}">
+        <button class="btn btn-outline-success" type="submit">بحث...</button>
+    </form>
+</div>
+
 <div class="row">
     <div class="col-md-3">
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdropclasses">
@@ -23,13 +38,17 @@
             <th scope="col">ولى الأمر</th>
             <th scope="col">الطالب</th>
             <th scope="col">موعد الحصة</th>
+            {% if request.user.type == "Admin" or request.user.type == "Manager" %}
             <th scope="col">موعد تسجيل الحصة</th>
-            <th scope="col">عدد الساعات</th>
+            {% endif %}
+            <th scope="col">عدد الدقائق</th>
             <th scope="col">التقيم</th>
             <th scope="col">أسم الماده</th>
             <th scope="col">ملحوظة</th>
+            {% if request.user.type == "Admin" or request.user.type == "Manager" %}
             <th scope="col">تعديل</th>
             <th scope="col">حذف</th>
+            {% endif %}
             
         </tr>
     </thead>
@@ -39,14 +58,18 @@
             <td>{{class.instructor}}</td>
             <td>{{class.family}}</td>
             <td>{{class.student}}</td>     
-            <td>{{class.date}}</td>     
-            <td>{{class.created_at}}</td>     
+            <td>{{class.date}}</td>   
+            {% if request.user.type == "Admin" or request.user.type == "Manager" %}  
+            <td>{{class.created_at}}</td>  
+            {% endif %}
             <td>{{class.number_class_hours}}</td>     
             <td>{{class.evaluation}}</td>     
             <td>{{class.subject_name}}</td>     
             <td>{{class.notes}}</td>     
+            {% if request.user.type == "Admin" or request.user.type == "Manager" %}  
             <td><a href="#" data-bs-toggle="modal" data-bs-target="#editModalclasses-{{ class.id }}"><img class="icon" src="{% static 'img/edit.png'%}"></a></td>
             <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModalclasses-{{ class.id }}"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
+            {% endif %}
         </tr>
         {% endfor %}
     </tbody>
@@ -65,10 +88,11 @@
                     {% csrf_token %}
                     {{ form.as_p }}
                     <input type="hidden" name="user_type" value="Student">
-                    <button type="submit" class="btn btn-primary">تسجيل</button>
+                    <input type="submit" class="hidden" id="hiddenaddclass">
                 </form>
             </div>
             <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" onclick="document.getElementById('hiddenaddclass').click();">تسجيل</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
             </div>
         </div>
@@ -94,11 +118,11 @@
                     <div class="mb-3">
                         <label class="form-label">عدد ساعات الحصة</label>
                         <select class="form-select" name="number_class_hours">
-                            <option value="1" {% if family.number_class_hours == "1" %}selected{% endif %}>1 ساعه</option>
-                            <option value="2" {% if family.number_class_hours == "2" %}selected{% endif %}>2 ساعه</option>
-                            <option value="3" {% if family.number_class_hours == "3" %}selected{% endif %}>3 ساعه</option>
-                            <option value="4" {% if family.number_class_hours == "4" %}selected{% endif %}>4 ساعه</option>
-                            <option value="5" {% if family.number_class_hours == "5" %}selected{% endif %}>5 ساعه</option>
+                            <option value="30" {% if family.number_class_hours == "30" %}selected{% endif %}>30 دقيقة</option>
+                            <option value="45" {% if family.number_class_hours == "45" %}selected{% endif %}>45 دقيقة</option>
+                            <option value="60" {% if family.number_class_hours == "60" %}selected{% endif %}>60 دقيقة</option>
+                            <option value="90" {% if family.number_class_hours == "90" %}selected{% endif %}>90 دقيقة</option>
+                            <option value="120" {% if family.number_class_hours == "120" %}selected{% endif %}>120 دقيقة</option>
                         </select>
                     </div>
 
@@ -173,7 +197,7 @@
                         data.students.forEach(student => {
                             const option = document.createElement('option');
                             option.value = student.id;
-                            option.textContent = student['user__name'];
+                            option.textContent = student['name'];
                             studentSelect.appendChild(option);
                         });
                     })

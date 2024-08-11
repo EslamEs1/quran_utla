@@ -53,7 +53,18 @@
                 </ul>
             </li>
             {% endif %}
-
+            {% if request.user.type == "Marketer" %}
+            <li class>
+                <a class="has-arrow" href="#" aria-expanded="false">
+                    <img src="{% static 'img/icons/pepole.png' %}" alt>
+                    <span>الطلاب</span>
+                </a>
+                <ul>
+                    <li><a href="{% url 'dash:marketer_students' %}">الطلاب</a></li>
+                </ul>
+            </li>
+            {% endif %}
+            {% if not request.user.type == "Marketer" %}
             <li class>
                 <a class="has-arrow" href="#" aria-expanded="false">
                     <img src="{% static 'img/icons/classes.png' %}" alt>
@@ -63,7 +74,8 @@
                     <li><a href="{% url 'dash:classes' %}">الحصص</a></li>
                 </ul>
             </li>
-            {% if request.user.type == "Admin" or request.user.type == "Instructor" %}
+            {% endif %}
+            {% if request.user.type == "Admin" or request.user.type == "Instructor" or request.user.type == "Marketer" %}
             {% if request.user.type == "Admin" %}
             <li class>
                 <a class="has-arrow" href="#" aria-expanded="false">
@@ -84,10 +96,16 @@
                     {% if request.user.type == "Admin" %}
                     <li><a href="{% url 'dash:invoices' %}">العائلات</a></li>
                     {% endif %}
+                    {% if request.user.type == "Admin" or request.user.type == "Instructor" %}
                     <li><a href="{% url 'dash:instructor_invoices' %}">المعلمين</a></li>
+                    {% endif %}
+                    {% if request.user.type == "Admin" or request.user.type == "Marketer" %}
+                    <li><a href="{% url 'dash:marketer_commission_view' %}">المسوقين</a></li>
+                    {% endif %}
                 </ul>
             </li>
             {% endif %}
+
             {% if request.user.type == "Admin" or request.user.type == "Manager" %}
             <li class>
                 <a class="has-arrow" href="#" aria-expanded="false">

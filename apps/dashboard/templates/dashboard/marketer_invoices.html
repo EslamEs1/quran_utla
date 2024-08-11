@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+<h3 class="text-center">فواتير المسوقين</h3>
+{% endblock title %}
+
+{% block content %}
+<form method="GET" action="{% url 'dash:marketer_commission_view' %}">
+    <div class="mb-2">
+        <label for="dateInput" class="form-label">اختر التاريخ</label>
+        <input type="month" class="form-control" id="dateInput" name="filter_month"
+            value="{% if request.GET.filter_month %}{{ request.GET.filter_month }}{% else %}{{ current_date|date:'Y-m' }}{% endif %}"
+            onchange="this.form.submit()">
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">اسم المسوق</th>
+            <th scope="col">المرتب</th>
+            <th scope="col">العموله</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for commission  in commissions %}
+        <tr>
+            <td>{{ commission.marketer.marketer.user.name }}</td>
+            <td>{{ commission.marketer.marketer.salary }}</td>
+            <td>{{ commission.total_commission|floatformat:"2" }} $</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    
+</table>
+
+
+{% endblock content %}

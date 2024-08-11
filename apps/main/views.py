@@ -13,15 +13,16 @@ from apps.course.models import Course
 from apps.blog.models import Post
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from apps.dashboard.models import UserType
+from apps.dashboard.models import UserType, Student, Families
 
 User = get_user_model()
+
 
 def index(request):
     sliders = Slider.objects.all()
     courses = Course.objects.all()
-    student = User.objects.filter(type=UserType.STUDENT, is_active=True).count()
-    family = User.objects.filter(type=UserType.FAMILIES, is_active=True).count()
+    student = Student.objects.filter(is_active=True).count()
+    family = Families.objects.filter(is_active=True).count()
     teacher = User.objects.filter(type=UserType.INSTRUCTOR, is_active=True).count()
     tutors = Tutors.objects.all()
     posts = Post.objects.all()

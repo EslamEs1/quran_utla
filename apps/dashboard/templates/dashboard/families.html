@@ -28,12 +28,16 @@
     <thead>
         <tr>
             <th scope="col">الأسم</th>
+            {% if request.user.type == "Admin" %}
             <th scope="col">رقم التلفون</th>
+            {% endif %}
             <th scope="col">المحافظه</th>
             <th scope="col">الولايه</th>
             <th scope="col">رابط الدفع</th>
             <th scope="col">تاريخ الانضمام</th>
+            {% if request.user.type == "Admin" %}
             <th scope="col">الفاتوره</th>
+            {% endif %}
             <th scope="col">تعديل</th>
             <th scope="col">حذف</th>
             
