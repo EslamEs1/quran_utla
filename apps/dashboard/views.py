@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.contrib.auth import update_session_auth_hash
+from django.urls import reverse
 from .forms import CustomAuthenticationForm
 from datetime import datetime, timedelta
 from django.contrib.auth import authenticate, login, logout
@@ -21,7 +22,9 @@ from .forms import (
     AdminPasswordChangeForm,
     DiscountsForm,
     Marketer_StudentForm,
+    MarketerForm,
 )
+from decimal import Decimal
 from apps.main.models import ContactUs, TeacherContact
 from .models import (
     UserType,
@@ -35,6 +38,8 @@ from .models import (
     BillingMonths,
     Manager,
     Marketer_Student,
+    Marketer,
+    Instructor
 )
 
 CustomUser = get_user_model()
@@ -230,6 +235,9 @@ def register_instructor(request):
             instructor = instructor_form.save(commit=False)
             instructor.user = user
             user.set_password(base_form.cleaned_data["password"])
+            if request.user.type == UserType.MANAGER:
+                manager_instance = Manager.objects.get(user=request.user)
+                instructor.manager = manager_instance
             instructor.save()
             messages.success(request, "تم اضافة معلم جديد بنجاح")
             return HttpResponseRedirect(request.headers.get("referer"))
@@ -238,7 +246,7 @@ def register_instructor(request):
 
     else:
         base_form = BaseUserForm()
-        instructor_form = InstructorForm()
+        instructor_form = InstructorForm(user=request.user)
 
     context = {
         "base_form": base_form,
@@ -318,43 +326,33 @@ def register_family(request):
     if search_query:
         families = Families.objects.filter(
             (
-                Q(user__name__icontains=search_query)
-                | Q(user__phone__icontains=search_query)
-                | Q(user__address__icontains=search_query)
+                Q(name__icontains=search_query)
+                | Q(number__icontains=search_query)
+                | Q(address__icontains=search_query)
             )
-            & Q(user__is_active=True)  # Correct placement of the '&' operator
+            & Q(is_active=True)
         )
     else:
-        families = Families.objects.filter(user__is_active=True)
+        families = Families.objects.filter(is_active=True)
 
     managers = CustomUser.objects.filter(type=UserType.MANAGER, is_active=True)
-    if request.method == "POST":
-        base_form = BaseUserForm(request.POST)
-        families_form = FamiliesForm(request.POST)
-        user_type = request.POST.get("user_type")
 
-        if (
-            base_form.is_valid()
-            and families_form.is_valid()
-            and user_type == UserType.FAMILIES
-        ):
-            user = base_form.save(commit=False)
-            user.type = UserType.FAMILIES
-            user.save()
+    if request.method == "POST":
+        families_form = FamiliesForm(request.POST, user=request.user)
+        if families_form.is_valid():
             family = families_form.save(commit=False)
-            family.user = user
-            user.set_password(base_form.cleaned_data["password"])
+            if request.user.type == UserType.MANAGER:
+                manager_instance = Manager.objects.get(user=request.user)
+                family.manager = manager_instance
             family.save()
             messages.success(request, "تم اضافة عائلة جديدة بنجاح")
             return HttpResponseRedirect(request.headers.get("referer"))
         else:
             messages.error(request, "لم يتم الحفظ ربما رقم موجود من قبل")
     else:
-        base_form = BaseUserForm()
-        families_form = FamiliesForm()
+        families_form = FamiliesForm(user=request.user)
 
     context = {
-        "base_form": base_form,
         "families_form": families_form,
         "families": families,
         "managers": managers,
@@ -365,16 +363,13 @@ def register_family(request):
 
 @login_required
 def edit_family(request, id):
-    custom_user = get_object_or_404(CustomUser, id=id)
-    family = get_object_or_404(Families, user=custom_user)
+    family = get_object_or_404(Families, id=id)
 
     if request.method == "POST":
         name = request.POST.get("name")
         phone = request.POST.get("phone")
-        whatsapp = request.POST.get("whatsapp")
         address = request.POST.get("address")
         gender = request.POST.get("gender")
-        age = request.POST.get("age")
         manager_id = request.POST.get("manager")
         the_state = request.POST.get("the_state")
         payment_link = request.POST.get("payment_link")
@@ -382,26 +377,21 @@ def edit_family(request, id):
         if (
             name
             and phone
-            and whatsapp
             and address
             and gender
-            and age
             and manager_id
             and the_state
             and payment_link
         ):
             try:
-                custom_user.name = name
-                custom_user.phone = phone
-                family.whatsapp = whatsapp
-                custom_user.address = address
-                custom_user.gender = gender
-                custom_user.age = age
+                family.name = name
+                family.number = phone
+                family.address = address
+                family.gender = gender
                 family.manager = Manager.objects.get(user__id=manager_id)
                 family.the_state = the_state
                 family.payment_link = payment_link
-                custom_user.save()  # Save changes to CustomUser
-                family.save()  # Save changes to Families
+                family.save()  # Save changes to CustomUser
 
                 messages.success(request, "تم تعديل العائلة بنجاح")
             except Manager.DoesNotExist:
@@ -414,7 +404,7 @@ def edit_family(request, id):
 
 @login_required
 def delete_family(request, id):
-    family = get_object_or_404(CustomUser, id=id)
+    family = get_object_or_404(Families, id=id)
     family.is_active = False
     family.save()
     messages.success(request, "تم حذف العائلة بنجاح")
@@ -426,44 +416,25 @@ def delete_family(request, id):
 def register_student(request):
     search_query = request.GET.get("search", "")
     if search_query:
-        students = Student.objects.filter(
-            (
-                Q(user__name__icontains=search_query)
-                | Q(user__phone__icontains=search_query)
-                | Q(user__address__icontains=search_query)
-            )
-            & Q(user__is_active=True)  # Correct placement of the '&' operator
-        )
+        students = Student.objects.filter(name__icontains=search_query, is_active=True)
     else:
-        students = Student.objects.filter(user__is_active=True)
+        students = Student.objects.filter(is_active=True)
 
+    families = Families.objects.all()
     if request.method == "POST":
-        base_form = BaseUserForm(request.POST)
         student_form = StudentForm(request.POST)
-        user_type = request.POST.get("user_type")
 
-        if (
-            base_form.is_valid()
-            and student_form.is_valid()
-            and user_type == UserType.STUDENT
-        ):
-            user = base_form.save(commit=False)
-            user.type = UserType.STUDENT
-            user.save()
-            student = student_form.save(commit=False)
-            student.user = user
-            user.set_password(base_form.cleaned_data["password"])
-            student.save()
+        if student_form.is_valid():
+            student_form.save()
             messages.success(request, "تم اضافة طالب جديد بنجاح")
             return HttpResponseRedirect(request.headers.get("referer"))
         else:
             messages.error(request, "لم يتم الحفظ ربما رقم موجود من قبل")
     else:
-        base_form = BaseUserForm()
         student_form = StudentForm()
 
     context = {
-        "base_form": base_form,
+        "families": families,
         "students": students,
         "student_form": student_form,
         "search_query": search_query,
@@ -506,40 +477,25 @@ def instructor_student_view(request):
 
 @login_required
 def edit_student(request, id):
-    custom_user = get_object_or_404(CustomUser, id=id)
-    student = get_object_or_404(Student, user=custom_user)
+    student = get_object_or_404(Student, id=id)
 
     if request.method == "POST":
         name = request.POST.get("name")
-        phone = request.POST.get("phone")
-        address = request.POST.get("address")
         gender = request.POST.get("gender")
         age = request.POST.get("age")
         family_id = request.POST.get("family")
         payment_link = request.POST.get("payment_link")
         hourly_salary = request.POST.get("hourly_salary")
 
-        if (
-            name
-            and phone
-            and address
-            and gender
-            and age
-            and family_id
-            and hourly_salary
-            and payment_link
-        ):
+        if name and gender and age and family_id and hourly_salary and payment_link:
             try:
-                custom_user.name = name
-                custom_user.phone = phone
-                custom_user.address = address
-                custom_user.gender = gender
-                custom_user.age = age
-                student.family = Families.objects.get(user__id=family_id)
+                student.name = name
+                student.gender = gender
+                student.age = age
+                student.family = Families.objects.get(id=family_id)
                 student.hourly_salary = hourly_salary
                 student.payment_link = payment_link
-                custom_user.save()  # Save changes to CustomUser
-                student.save()  # Save changes to Families
+                student.save()
 
                 messages.success(request, "تم تعديل الطالب بنجاح")
             except Manager.DoesNotExist:
@@ -552,7 +508,7 @@ def edit_student(request, id):
 
 @login_required
 def delete_student(request, id):
-    student = get_object_or_404(CustomUser, id=id)
+    student = get_object_or_404(Student, id=id)
     student.is_active = False
     student.save()
     messages.success(request, "تم حذف الطالب بنجاح")
@@ -638,7 +594,7 @@ def logout_view(request):
 
 # ------------------------------------------------ Student By Family
 def get_students_by_family(request, family_id):
-    students = Student.objects.filter(family_id=family_id).values("id", "user__name")
+    students = Student.objects.filter(family_id=family_id).values("id", "name")
     return JsonResponse({"students": list(students)})
 
 
@@ -647,38 +603,47 @@ def get_students_by_family(request, family_id):
 def register_marketer(request):
     search_query = request.GET.get("search", "")
     if search_query:
-        marketer = CustomUser.objects.filter(
+        marketer = Marketer.objects.filter(
             (
-                Q(name__icontains=search_query)
-                | Q(phone__icontains=search_query)
-                | Q(address__icontains=search_query)
+                Q(user__name__icontains=search_query)
+                | Q(user__phone__icontains=search_query)
+                | Q(user__address__icontains=search_query)
             )
-            & Q(is_active=True)
-            & Q(type=UserType.MARKETER)
+            & Q(user__is_active=True)
+            & Q(user__type=UserType.MARKETER)
         )
     else:
-        marketer = CustomUser.objects.filter(type=UserType.MARKETER, is_active=True)
+        marketer = Marketer.objects.filter(user__type=UserType.MARKETER, user__is_active=True)
 
     if request.method == "POST":
         base_form = BaseUserForm(request.POST)
+        marketer_form = MarketerForm(request.POST)
         user_type = request.POST.get("user_type")
+
         if user_type and user_type == UserType.MARKETER:
-            if base_form.is_valid():
+            if base_form.is_valid() and marketer_form.is_valid():
                 user = base_form.save(commit=False)
                 user.type = UserType.MARKETER
                 user.set_password(base_form.cleaned_data["password"])
-                user.save()
+                user.save() 
+
+                marketer = marketer_form.save(commit=False)
+                marketer.user = user 
+                marketer.save()
+
                 messages.success(request, "تم اضافة مسوق جديد بنجاح")
                 return HttpResponseRedirect(request.headers.get("referer"))
             else:
                 messages.error(request, "لم يتم الحفظ ربما رقم موجود من قبل")
     else:
+        marketer_form = MarketerForm()
         base_form = BaseUserForm()
 
     context = {
         "base_form": base_form,
         "marketer": marketer,
         "search_query": search_query,
+        "marketer_form": marketer_form,
     }
     return render(request, "dashboard/marketer.html", context)
 
@@ -686,6 +651,7 @@ def register_marketer(request):
 @login_required
 def edit_markter(request, id):
     manager = get_object_or_404(CustomUser, id=id)
+    marketer = get_object_or_404(Marketer, user=manager)
 
     if request.method == "POST":
         name = request.POST.get("name")
@@ -693,20 +659,26 @@ def edit_markter(request, id):
         address = request.POST.get("address")
         gender = request.POST.get("gender")
         age = request.POST.get("age")
+        ratio = request.POST.get("ratio")
+        salary = request.POST.get("salary")
 
-        if name and phone and address and gender and age:
+        if name and phone and address and gender and age and ratio and salary:
             # Update the manager's details
             manager.name = name
+            marketer.ratio = ratio
+            marketer.salary = salary
             manager.phone = phone
             manager.address = address
             manager.gender = gender
             manager.age = age
-            manager.save()  # Save the changes to the database
+            manager.save() 
+            marketer.save()
 
             messages.success(request, "تم تعديل المسوق بنجاح")
             return HttpResponseRedirect(request.headers.get("referer"))
         else:
             messages.error(request, "حدث خطأ أثناء تعديل المسوق")
+            return HttpResponseRedirect(request.headers.get("referer"))
 
 
 @login_required
@@ -761,12 +733,46 @@ def del_student_marketer(request, id):
 # ------------------------------------------------ Classes
 @login_required
 def classes(request):
-    classes_list = Classes.objects.all()
+
+    # Default to current month if not specified in GET parameters
+    current_date = datetime.now()
+    start_date = current_date.replace(day=1).date()  # First day of the current month
+    end_date = start_date.replace(day=1, month=start_date.month + 1) - timedelta(
+        days=1
+    )  # Last day of the current month
+
+    # Handle form submission for month filter
+    if request.method == "GET" and "filter_month" in request.GET:
+        selected_month = request.GET.get("filter_month")
+        year, month = selected_month.split("-")
+        start_date = datetime(
+            int(year), int(month), 1
+        ).date()  # First day of selected month
+        end_date = start_date.replace(day=1, month=int(month) + 1) - timedelta(
+            days=1
+        )  # Last day of selected month
+
+    search_query = request.GET.get("search", "")
+    if search_query:
+        classes_list = Classes.objects.filter(
+            (
+                Q(family__name__icontains=search_query)
+                | Q(student__name__icontains=search_query)
+                | Q(instructor__user__name__icontains=search_query)
+            )
+        )
+    else:
+        classes_list = Classes.objects.filter(created_at__range=[start_date, end_date])
+
     if request.method == "POST":
         form = ClassesForm(request.POST)
         if form.is_valid():
             try:
-                form.save()
+                form_2 = form.save(commit=False)
+                if request.user.type == UserType.INSTRUCTOR:
+                    instructor_instance = Instructor.objects.get(user=request.user)
+                    form_2.instructor = instructor_instance
+                form_2.save()
                 messages.success(request, "تم اضافة الحصة بنجاح")
                 return HttpResponseRedirect(request.headers.get("referer"))
             except Instructor_Student.DoesNotExist:
@@ -776,7 +782,7 @@ def classes(request):
                 request, "ربما هناك حقول فارغة او لا يوجد معلم مرتبط بهذا الطالب"
             )
     else:
-        form = ClassesForm()
+        form = ClassesForm(request.POST or None, user=request.user)
 
     context = {
         "form": form,
@@ -821,9 +827,11 @@ def delete_classes(request, id):
 
 
 # ------------------------------------------------ Invoices
-@login_required
 def invoices(request):
-    families = Families.objects.filter(user__is_active=True)
+    if not request.user.type == "Admin":
+        return redirect("dash:dashboard")
+    
+    families = Families.objects.filter(is_active=True)
 
     # Default to current month if not specified in GET parameters
     current_date = datetime.now()
@@ -844,7 +852,7 @@ def invoices(request):
         )  # Last day of selected month
 
     families_with_classes = Families.objects.filter(
-        user__is_active=True, student__classes__date__range=[start_date, end_date]
+        is_active=True, student__classes__date__range=[start_date, end_date]
     ).distinct()
 
     # Query invoices for the selected month
@@ -882,9 +890,9 @@ def invoices(request):
     )
 
 
-@login_required
 def family_invoice_details(request, family_id):
-    family = get_object_or_404(Families, pk=family_id, user__is_active=True)
+    
+    family = get_object_or_404(Families, pk=family_id, is_active=True)
     students = Student.objects.filter(family=family)
 
     try:
@@ -929,8 +937,8 @@ def family_invoice_details(request, family_id):
         # Assign totals to student objects
         student.total_hours = total_hours
         student.total_classes = total_classes
-        student.total_before_tax = total_before_tax
-        student.total_after_tax = total_after_tax
+        student.total_before_tax = total_before_tax / 60
+        student.total_after_tax = total_after_tax / 60
 
     return render(
         request,
@@ -944,9 +952,8 @@ def family_invoice_details(request, family_id):
     )
 
 
-@login_required
 def student_invoice_details(request, student_id):
-    student = get_object_or_404(Student, pk=student_id, user__is_active=True)
+    student = get_object_or_404(Student, pk=student_id, is_active=True)
     classes = Classes.objects.filter(student=student)
 
     # Determine the current month
@@ -966,7 +973,7 @@ def student_invoice_details(request, student_id):
     total_classes = classes.filter(
         date__month=current_date.month, date__year=current_date.year
     ).count()
-    total_before_tax = total_hours * student.hourly_salary
+    total_before_tax = total_hours * student.hourly_salary / 60
     total_after_tax = total_before_tax * (1 - tax_percentage / 100)
 
     return render(
@@ -1055,6 +1062,69 @@ def instructor_invoices(request):
 
 
 @login_required
+def marketer_commission_view(request):
+    # Default to current month if not specified in GET parameters
+    current_date = datetime.now()
+    start_date = current_date.replace(day=1).date()  # First day of the current month
+    end_date = start_date.replace(day=1, month=start_date.month + 1) - timedelta(
+        days=1
+    )  # Last day of the current month
+
+    # Handle form submission for month filter
+    if request.method == "GET" and "filter_month" in request.GET:
+        selected_month = request.GET.get("filter_month")
+        year, month = selected_month.split("-")
+        start_date = datetime(
+            int(year), int(month), 1
+        ).date()  # First day of selected month
+        end_date = start_date.replace(day=1, month=int(month) + 1) - timedelta(
+            days=1
+        )  # Last day of selected month
+
+    marketers = CustomUser.objects.filter(type=UserType.MARKETER, is_active=True)
+
+    commissions = []
+
+    for marketer in marketers:
+        # Get all students who registered through this marketer
+        marketer_students = Marketer_Student.objects.filter(marketer=marketer)
+
+        total_commission = Decimal(0)
+
+        for ms in marketer_students:
+            student = ms.student
+            # Calculate total salary for the student within the selected date range
+            student_totals = Classes.get_family_totals(
+                student.family, start_date, end_date
+            )
+            student_total_salary = student_totals["total_salary"]
+
+            # Calculate the marketer's commission for this student
+            commission = (marketer.marketer.ratio / 100) * student_total_salary
+            total_commission += commission
+
+        commissions.append({"marketer": marketer, "total_commission": total_commission})
+
+    return render(
+        request, "dashboard/marketer_invoices.html", {"commissions": commissions}
+    )
+
+
+def marketer_students(request):
+    # Get the marketer object using the provided ID
+    marketer_students = Marketer_Student.objects.filter(marketer=request.user)
+
+    students = Student.objects.filter(id__in=marketer_students.values('student'))
+
+    return render(
+        request,
+        "dashboard/student_the_marketer.html",
+        {"students": students},
+    )
+
+
+# ------------------------------------------------ AdvancesDisc
+@login_required
 def advancesdisc(request):
     disc = Discounts.objects.all()
     if request.method == "POST":
@@ -1086,13 +1156,19 @@ def delete_disc(request, id):
 
 @login_required
 def invoices_link(request):
-    families = Families.objects.filter(user__is_active=True)
+    if not request.user.type == "Admin":
+        return redirect("dash:dashboard")
+    
+    families = Families.objects.filter(is_active=True)
     return render(request, "dashboard/invoices_link.html", {"families": families})
+
+
+# ------------------------------------------------ Removed User
 
 
 @login_required
 def families_removed(request):
-    families = Families.objects.filter(user__is_active=False)
+    families = Families.objects.filter(is_active=False)
     return render(request, "dashboard/families_removed.html", {"families": families})
 
 
@@ -1104,6 +1180,7 @@ def instructor_removed(request):
     )
 
 
+# ------------------------------------------------ Active User
 @login_required
 def activate_user(request, user_id):
     user = get_object_or_404(CustomUser, id=user_id)
@@ -1113,13 +1190,20 @@ def activate_user(request, user_id):
     return HttpResponseRedirect(request.headers.get("referer"))
 
 
+# ------------------------------------------------ Contact
 @login_required
 def contact(request):
-    contact = ContactUs.objects.all()
-    return render(request, "dashboard/contact.html", {"contact": contact})
+    if not request.user.type == "Admin":
+        return redirect("dash:dashboard")
+
+    contacts = ContactUs.objects.all()
+    return render(request, "dashboard/contact.html", {"contacts": contacts})
 
 
 @login_required
 def teacher_contact(request):
-    contact = TeacherContact.objects.all()
-    return render(request, "dashboard/be_a_teacher.html", {"contact": contact})
+    if not request.user.type == "Admin":
+        return redirect("dash:dashboard")
+
+    contacts = TeacherContact.objects.all()
+    return render(request, "dashboard/be_a_teacher.html", {"contacts": contacts})

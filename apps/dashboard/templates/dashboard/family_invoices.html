@@ -19,7 +19,7 @@
         <tr>
             <th scope="col">اسم العائلة</th>
             <th scope="col">إجمالي الحصص</th>
-            <th scope="col">إجمالي ساعات</th>
+            <th scope="col">إجمالي الدقائق</th>
             <th scope="col">إجمالي الراتب</th>
             <th scope="col">الهاتف</th>
             <th scope="col">الرابط</th>
@@ -31,11 +31,11 @@
     <tbody>
         {% for family_id, total in family_totals.items %}
         <tr>
-            <td>{{ total.family.user.name }}</td>
+            <td>{{ total.family.name }}</td>
             <td>{{ total.total_sections }}</td>
             <td>{{ total.total_hours }}</td>
             <td>{{ total.total_salary|floatformat:"2" }} $</td>
-            <td>{{ total.family.user.phone }}</td>
+            <td>{{ total.family.number }}</td>
             <td>https://quranutla.com/dashboard/family_inv_de/{{ family_id }}</td>
             <td><a href="{% url 'dash:family_invoice_details' family_id %}"><img class="icon"
                         src="{% static 'img/validating-ticket.png' %}"></a></td>

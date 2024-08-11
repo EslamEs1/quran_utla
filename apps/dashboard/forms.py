@@ -4,13 +4,15 @@ from .models import (
     Instructor,
     Families,
     Student,
-    Gender,
     Instructor_Student,
     Classes,
     Discounts,
     Marketer_Student,
     UserType,
+    Manager,
+    Marketer
 )
+from django.db.models import Q
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.validators import RegexValidator
@@ -120,11 +122,17 @@ class InstructorForm(forms.ModelForm):
             "hourly_salary": forms.NumberInput(
                 attrs={"class": "form-control", "placeholder": "الراتب بالساعه"}
             ),
-            "class_link": forms.URLInput(
-                attrs={"class": "form-control", "placeholder": "رابط الحصه"}
+            "class_link": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "رابط الحصة",
+                }
             ),
             "id_number": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "رقم الهويه"}
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "رقم الهوية",
+                }
             ),
             "manager": forms.Select(
                 attrs={"class": "form-control", "placeholder": "المشرف"}
@@ -132,7 +140,18 @@ class InstructorForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop("user", None)
         super(InstructorForm, self).__init__(*args, **kwargs)
+
+        if user and user.type == UserType.MANAGER:
+            try:
+                manager_instance = Manager.objects.get(user=user)
+                self.fields["manager"].widget = forms.HiddenInput()
+                self.fields["manager"].initial = manager_instance.pk
+            except Manager.DoesNotExist:
+                self.fields["manager"].widget = forms.HiddenInput()
+                self.fields["manager"].initial = None
+
         self.fields["qualification"].label = "المؤهل"
         self.fields["hourly_salary"].label = "الراتب بالساعه"
         self.fields["class_link"].label = "رابط الحصه"
@@ -143,26 +162,57 @@ class InstructorForm(forms.ModelForm):
 class FamiliesForm(forms.ModelForm):
     class Meta:
         model = Families
-        fields = ["manager", "whatsapp", "the_state", "payment_link"]
+        fields = [
+            "name",
+            "number",
+            "manager",
+            "address",
+            "gender",
+            "the_state",
+            "payment_link",
+        ]
         widgets = {
+            "name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "الأسم"}
+            ),
+            "number": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "رقم الهاتف"}
+            ),
             "manager": forms.Select(
                 attrs={"class": "form-control", "placeholder": "المشرف"}
             ),
-            "whatsapp": forms.NumberInput(
-                attrs={"class": "form-control", "placeholder": "واتساب"}
+            "gender": forms.Select(
+                attrs={"class": "form-control", "placeholder": "الجنس"}
+            ),
+            "address": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "العنوان"}
             ),
             "the_state": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "الولاية"}
             ),
-            "payment_link": forms.URLInput(
+            "payment_link": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "رابط الدفع"}
             ),
         }
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop("user", None)
         super(FamiliesForm, self).__init__(*args, **kwargs)
+
+        if user and user.type == UserType.MANAGER:
+            try:
+                manager_instance = Manager.objects.get(user=user)
+                self.fields["manager"].widget = forms.HiddenInput()
+                self.fields["manager"].initial = manager_instance.pk
+            except Manager.DoesNotExist:
+                self.fields["manager"].widget = forms.HiddenInput()
+                self.fields["manager"].initial = None
+
+        self.fields["name"].label = "الأسم"
+        self.fields["number"].label = "رقم الهاتف"
         self.fields["manager"].label = "المشرف"
-        self.fields["whatsapp"].label = "واتساب"
+        self.fields["gender"].label = "الجنس"
+        self.fields["address"].label = "العنوان"
         self.fields["the_state"].label = "الولاية"
         self.fields["payment_link"].label = "رابط الدفع"
 
@@ -170,15 +220,24 @@ class FamiliesForm(forms.ModelForm):
 class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
-        fields = ["family", "hourly_salary", "payment_link"]
+        fields = ["family", "name", "gender", "age", "hourly_salary", "payment_link"]
         widgets = {
             "family": forms.Select(
                 attrs={"class": "form-control", "placeholder": "العائلة"}
             ),
-            "hourly_salary": forms.NumberInput(
-                attrs={"class": "form-control", "placeholder": "الراتب بالساعه"}
+            "name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "الأسم"}
             ),
-            "payment_link": forms.URLInput(
+            "gender": forms.Select(
+                attrs={"class": "form-control", "placeholder": "الجنس"}
+            ),
+            "age": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "العمر"}
+            ),
+            "hourly_salary": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "السعر بالساعه"}
+            ),
+            "payment_link": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "رابط الدفع"}
             ),
         }
@@ -186,8 +245,30 @@ class StudentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(StudentForm, self).__init__(*args, **kwargs)
         self.fields["family"].label = "العائلة"
-        self.fields["hourly_salary"].label = "الراتب بالساعه"
+        self.fields["name"].label = "الأسم"
+        self.fields["gender"].label = "الجنس"
+        self.fields["age"].label = "العمر"
+        self.fields["hourly_salary"].label = "السعر بالساعه"
         self.fields["payment_link"].label = "رابط الدفع"
+
+
+class MarketerForm(forms.ModelForm):
+    class Meta:
+        model = Marketer
+        fields = ["ratio", "salary"]
+        widgets = {
+            "salary": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "المرتب"}
+            ),
+            "ratio": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "النسبة"}
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(MarketerForm, self).__init__(*args, **kwargs)
+        self.fields["salary"].label = "المرتب"
+        self.fields["ratio"].label = "نسبة الفاتورة"
 
 
 class Instructor_StudentForm(forms.ModelForm):
@@ -195,11 +276,26 @@ class Instructor_StudentForm(forms.ModelForm):
         model = Instructor_Student
         fields = ["family", "student", "instructor"]
         widgets = {
-            "family": forms.Select(attrs={"class": "form-control", "id": "id_family"}),
-            "student": forms.Select(
-                attrs={"class": "form-control", "id": "id_student"}
+            "family": forms.Select(
+                attrs={
+                    "class": "form-control selectpicker",
+                    "id": "id_family",
+                    "data-show-subtext": "true",
+                }
             ),
-            "instructor": forms.Select(attrs={"class": "form-control"}),
+            "student": forms.Select(
+                attrs={
+                    "class": "form-control selectpicker",
+                    "id": "id_student",
+                    "data-show-subtext": "true",
+                }
+            ),
+            "instructor": forms.Select(
+                attrs={
+                    "class": "form-control selectpicker",
+                    "data-show-subtext": "true",
+                }
+            ),
         }
 
     def __init__(self, *args, **kwargs):
@@ -207,18 +303,18 @@ class Instructor_StudentForm(forms.ModelForm):
         self.fields["family"].label = "العائله"
         self.fields["student"].label = "الطالب"
         self.fields["instructor"].label = "المعلم"
-        
+
         if "family" in self.data:
             try:
                 family_id = str(self.data.get("family"))
                 self.fields["student"].queryset = Student.objects.filter(
-                    family_id=family_id, user__is_active=True
-                ).order_by("user__name")
+                    family_id=family_id, is_active=True
+                ).order_by("name")
             except (ValueError, TypeError):
                 self.fields["student"].queryset = Student.objects.none()
         elif self.instance.pk:
             self.fields["student"].queryset = self.instance.family.student_set.order_by(
-                "user__name"
+                "name"
             )
         else:
             self.fields["student"].queryset = Student.objects.none()
@@ -270,8 +366,21 @@ class ClassesForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop("user", None)
         super(ClassesForm, self).__init__(*args, **kwargs)
+
+        if user and user.type == UserType.INSTRUCTOR:
+            try:
+                # Assume you have a way to get the instructor instance from the user
+                instructor_instance = Instructor.objects.get(user=user)
+                self.fields['instructor'].widget = forms.HiddenInput()
+                self.fields['instructor'].initial = instructor_instance.pk
+            except Instructor.DoesNotExist:
+                self.fields['instructor'].widget = forms.HiddenInput()
+                self.fields['instructor'].initial = None
+
         self.fields["family"].label = "العائلة"
+        self.fields["instructor"].label = "المعلم"
         self.fields["student"].label = "الطالب"
         self.fields["date"].label = "تاريخ الحصة"
         self.fields["number_class_hours"].label = "عدد ساعات الحصة"
@@ -284,12 +393,12 @@ class ClassesForm(forms.ModelForm):
                 family_id = str(self.data.get("family"))
                 self.fields["student"].queryset = Student.objects.filter(
                     family_id=family_id
-                ).order_by("user__name")
+                ).order_by("name")
             except (ValueError, TypeError):
                 self.fields["student"].queryset = Student.objects.none()
         elif self.instance.pk:
             self.fields["student"].queryset = self.instance.family.student_set.order_by(
-                "user__name"
+                "name"
             )
         else:
             self.fields["student"].queryset = Student.objects.none()
@@ -396,19 +505,48 @@ class DiscountsForm(forms.ModelForm):
             "instructor": forms.Select(
                 attrs={"class": "form-control", "placeholder": "المعلم"}
             ),
+            "marketer": forms.Select(
+                attrs={"class": "form-control", "placeholder": "المسوق"}
+            ),
             "amount": forms.NumberInput(
                 attrs={"class": "form-control", "placeholder": "المبلغ"}
             ),
             "comment": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "تعليق"}
-            ),  
+            ),
+            "date": forms.DateInput(
+                format="%Y-%m-%d",
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "التاريخ",
+                    "type": "date",
+                },
+            ),
         }
 
     def __init__(self, *args, **kwargs):
         super(DiscountsForm, self).__init__(*args, **kwargs)
         self.fields["instructor"].label = "المعلم"
+        self.fields["marketer"].label = "المسوق"
         self.fields["amount"].label = "المبلغ"
         self.fields["comment"].label = "تعليق"
+        self.fields["date"].label = "التاريخ"
+
+    def clean(self):
+        cleaned_data = super().clean()
+        instructor = cleaned_data.get("instructor")
+        marketer = cleaned_data.get("marketer")
+
+        if not instructor and not marketer:
+            raise forms.ValidationError("الرجاء اختيار إما مدرب أو مسوق.")
+
+        # Set the field not selected to None
+        if instructor:
+            cleaned_data["marketer"] = None
+        if marketer:
+            cleaned_data["instructor"] = None
+
+        return cleaned_data
 
 
 class Marketer_StudentForm(forms.ModelForm):
@@ -429,20 +567,17 @@ class Marketer_StudentForm(forms.ModelForm):
         self.fields["student"].label = "الطالب"
         self.fields["marketer"].label = "المسوق"
 
-        # Set the queryset for the marketer field
-        self.fields["marketer"].queryset = CustomUser.objects.filter(type=UserType.MARKETER, is_active=True)
-
         if "family" in self.data:
             try:
                 family_id = str(self.data.get("family"))
                 self.fields["student"].queryset = Student.objects.filter(
-                    family_id=family_id, user__is_active=True
-                ).order_by("user__name")
+                    family_id=family_id, is_active=True
+                ).order_by("name")
             except (ValueError, TypeError):
                 self.fields["student"].queryset = Student.objects.none()
         elif self.instance.pk:
             self.fields["student"].queryset = self.instance.family.student_set.order_by(
-                "user__name"
+                "name"
             )
         else:
             self.fields["student"].queryset = Student.objects.none()

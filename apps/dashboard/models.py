@@ -29,10 +29,8 @@ class BillingMonths(models.Model):
 # ------------------------People
 class UserType(models.TextChoices):
     MARKETER = "Marketer", "مسوق"
-    STUDENT = "Student", "طالب"
     INSTRUCTOR = "Instructor", "معلم"
     MANAGER = "Manager", "مشرف"
-    FAMILIES = "Families", "عائله"
     ADMIN = "Admin", "ادمن"
 
 
@@ -75,7 +73,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     created_at = models.DateTimeField(auto_now_add=True)
 
     objects = CustomUserManager()
-    
+
     USERNAME_FIELD = "phone"
     REQUIRED_FIELDS = ["name"]
 
@@ -100,11 +98,11 @@ class Instructor(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     qualification = models.CharField(max_length=250)
     hourly_salary = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    class_link = models.CharField(max_length=1000)
+    class_link = models.CharField(max_length=1000, null=True, blank=True)
     manager = models.ForeignKey(
         Manager, on_delete=models.SET_NULL, null=True, blank=True
     )
-    id_number = models.IntegerField()
+    id_number = models.CharField(max_length=14, null=True, blank=True)
 
     def __str__(self):
         return self.user.name
@@ -112,26 +110,34 @@ class Instructor(models.Model):
 
 class Families(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    whatsapp = models.CharField(max_length=16)
-    the_state = models.CharField(max_length=250, null=True, blank=True)
+    name = models.CharField(max_length=250)
+    number = models.IntegerField()
+    address = models.CharField(max_length=100)
+    gender = models.CharField(choices=Gender.choices, max_length=10)
+    the_state = models.CharField(max_length=250)
     manager = models.ForeignKey(
         Manager, on_delete=models.SET_NULL, null=True, blank=True
     )
-    payment_link = models.CharField(max_length=1000)
+    payment_link = models.CharField(max_length=1000, null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.user.name
+        return self.name
 
 
 class Student(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     family = models.ForeignKey(Families, on_delete=models.CASCADE)
+    name = models.CharField(max_length=250)
+    gender = models.CharField(choices=Gender.choices, max_length=10)
+    age = models.IntegerField()
     hourly_salary = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     payment_link = models.CharField(max_length=1000)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.user.name
+        return self.name
 
 
 class Instructor_Student(models.Model):
@@ -139,6 +145,15 @@ class Instructor_Student(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class Marketer(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    ratio = models.DecimalField(max_digits=5, decimal_places=2, default=0)  # Percentage
+    salary = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def __str__(self):
+        return str(self.user.name)
 
 
 class Marketer_Student(models.Model):
@@ -153,6 +168,7 @@ class Marketer_Student(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
+
 # ------------------------Registration of classes
 
 
@@ -164,11 +180,11 @@ class Evaluation(models.TextChoices):
 
 
 class Duration(models.TextChoices):
-    FORTY = "1", "1 ساعه"
-    FORTYFIVE = "2", "2 ساعه"
-    SIXTY = "3", "3 ساعه"
-    EIGHTY = "4", "4 ساعه"
-    NINETY = "5", "6 ساعه"
+    FORTY = "30", "30 دقيقة"
+    FORTYFIVE = "45", "45 دقيقة"
+    SIXTY = "60", "60 دقيقة"
+    EIGHTY = "90", "90 دقيقة"
+    NINETY = "120", "120 دقيقة"
 
 
 class Classes(models.Model):
@@ -190,9 +206,9 @@ class Classes(models.Model):
 
     def __str__(self):
         if self.instructor:
-            return f"Class on {self.date} by {self.instructor.user.name} for {self.student.user.name}"
+            return f"Class on {self.date} by {self.instructor.user.name} for {self.student.name}"
         else:
-            return f"Class on {self.date} for {self.family.user.name}'s family"
+            return f"Class on {self.date} for {self.family.name}'s family"
 
     @staticmethod
     def get_overall_totals(start_date=None, end_date=None):
@@ -210,7 +226,7 @@ class Classes(models.Model):
             queryset.values("student")
             .annotate(
                 total_salary=Sum(Cast("number_class_hours", models.DecimalField()))
-                * F("student__hourly_salary")
+                * F("student__hourly_salary") / 60
             )
             .aggregate(total_salary_sum=Sum("total_salary"))
         )
@@ -237,7 +253,7 @@ class Classes(models.Model):
             queryset.values("student")
             .annotate(
                 total_salary=Sum(Cast("number_class_hours", models.DecimalField()))
-                * F("student__hourly_salary")
+                * F("student__hourly_salary") / 60
             )
             .aggregate(total_salary_sum=Sum("total_salary"))
         )
@@ -267,7 +283,7 @@ class Classes(models.Model):
             queryset.values("instructor")
             .annotate(
                 total_salary=Sum(Cast("number_class_hours", models.DecimalField()))
-                * F("instructor__hourly_salary")
+                * F("instructor__hourly_salary") / 60
             )
             .aggregate(total_salary_sum=Sum("total_salary"))
         )
@@ -297,9 +313,9 @@ class Classes(models.Model):
 
 # ------------------------Advances and discounts
 class Discounts(models.Model):
-    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, null=True, blank=True)
+    marketer = models.ForeignKey(Marketer, on_delete=models.CASCADE, null=True, blank=True)
     amount = models.IntegerField(default=0)
     comment = models.CharField(max_length=250)
+    date = models.DateField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
-

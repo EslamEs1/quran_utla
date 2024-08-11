@@ -21,7 +21,8 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DJANGO_DEBUG", False)
 
-ALLOWED_HOSTS = ["www.quranutla.com", "quranutla.com"]
+
+ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS",)
 
 
 # Application definition
@@ -91,14 +92,24 @@ WSGI_APPLICATION = "config.wsgi.application"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 
-if DEBUG:
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
+
+if not DEBUG:
     DATABASES = {
         "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": env("POSTGRES_DB"),
+            "USER": env("POSTGRES_USER"),
+            "PASSWORD": env("POSTGRES_PASSWORD"),
+            "HOST": env("POSTGRES_HOST"),
+            "PORT": env("POSTGRES_PORT"),
         }
     }
-
 
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.Argon2PasswordHasher",
@@ -183,6 +194,16 @@ AUTHENTICATION_BACKENDS = (
     "apps.dashboard.backends.PhoneBackend",  # Add your custom backend
 )
 
+# Set the session timeout period (in seconds)
+SESSION_COOKIE_AGE = 300  # 300 seconds = 5 minutes
+
+# Set the session cookie to expire when the browser is closed
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+
+LOGIN_URL = "/dashboard/login/"
+
+LOGOUT_REDIRECT_URL = "/dashboard/login/"
 
 # LOGGING = {
 #     "version": 1,
