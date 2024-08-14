@@ -6,22 +6,29 @@
 {% endblock title %}
 {% block content %}
 <!-- Button trigger modals -->
-<div class="search">
-    <form method="get" role="search">
-        <input class="form-control" type="search" placeholder="بحث..." aria-label="Search" name="search" value="{{ search_query }}">
-        <button class="btn btn-outline-success" type="submit">بحث...</button>
-    </form>
-</div>
-<hr />
-<div class="row">
-    <div class="col-md-3">
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdropinst">
+
+<div class="container">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-md-6">
+            <div class="register-button">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdropinst">
             تسجيل معلم
         </button>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="search">
+                <form method="get" role="search">
+                    <input class="form-control" type="search" placeholder="بحث..." aria-label="Search" name="search"
+                        value="{{ search_query }}">
+                    <button type="submit"><img src="{% static 'img/search.png'%}" alt=""></button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
-<hr/>
+<hr>
 
 
 <table class="table table-striped">

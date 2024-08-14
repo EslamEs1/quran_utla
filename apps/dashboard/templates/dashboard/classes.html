@@ -5,22 +5,32 @@
 <h3 class="text-center">أضافة الحصص</h3>
 {% endblock title %}
 {% block content %}
-<form method="GET" action="{% url 'dash:classes' %}">
-    <div class="mb-2">
-        <label for="dateInput" class="form-label">اختر التاريخ</label>
-        <input type="month" class="form-control" id="dateInput" name="filter_month"
-            value="{% if request.GET.filter_month %}{{ request.GET.filter_month }}{% else %}{{ current_date|date:'Y-m' }}{% endif %}"
-            onchange="this.form.submit()">
+
+<div class="container">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-md-6">
+            <div class="search">
+                <form method="get" role="search">
+                    <input class="form-control" type="search" placeholder="بحث..." aria-label="Search" name="search" value="{{ search_query }}">
+                    <button type="submit">
+                        <img src="{% static 'img/search.png'%}" alt="">
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <form method="GET" action="{% url 'dash:classes' %}">
+                <div class="mb-2">
+                    <input type="month" class="form-control" id="dateInput" name="filter_month"
+                        value="{% if request.GET.filter_month %}{{ request.GET.filter_month }}{% else %}{{ current_date|date:'Y-m' }}{% endif %}"
+                        onchange="this.form.submit()">
+                </div>
+            </form>
+        </div>
     </div>
-</form>
-
-
-<div class="search">
-    <form method="get" role="search">
-        <input class="form-control" type="search" placeholder="بحث..." aria-label="Search" name="search" value="{{ search_query }}">
-        <button class="btn btn-outline-success" type="submit">بحث...</button>
-    </form>
 </div>
+
 
 <div class="row">
     <div class="col-md-3">
@@ -71,6 +81,8 @@
             <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModalclasses-{{ class.id }}"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
             {% endif %}
         </tr>
+        {% empty%}
+        <h6 class="text-danger text-center">لا يوجد حصص</h>
         {% endfor %}
     </tbody>
 </table>

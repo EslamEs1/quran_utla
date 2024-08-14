@@ -344,7 +344,7 @@ class ClassesForm(forms.ModelForm):
                 attrs={"class": "form-control", "placeholder": "المعلم"}
             ),
             "date": forms.DateInput(
-                format="%Y-%m-%d",  # Adjust date format if needed
+                format="%Y-%m-%d",
                 attrs={
                     "class": "form-control",
                     "placeholder": "تاريخ الحصة",
@@ -371,14 +371,53 @@ class ClassesForm(forms.ModelForm):
 
         if user and user.type == UserType.INSTRUCTOR:
             try:
-                # Assume you have a way to get the instructor instance from the user
                 instructor_instance = Instructor.objects.get(user=user)
-                self.fields['instructor'].widget = forms.HiddenInput()
-                self.fields['instructor'].initial = instructor_instance.pk
-            except Instructor.DoesNotExist:
-                self.fields['instructor'].widget = forms.HiddenInput()
-                self.fields['instructor'].initial = None
 
+                # Filter families to include only those associated with the instructor
+                family_ids = Instructor_Student.objects.filter(
+                    instructor=instructor_instance
+                ).values_list("family", flat=True)
+                self.fields["family"].queryset = Families.objects.filter(
+                    id__in=family_ids
+                )
+
+                # Automatically set the instructor and hide the field
+                self.fields["instructor"].widget = forms.HiddenInput()
+                self.fields["instructor"].initial = instructor_instance.pk
+
+                # Set initial queryset for students based on the selected family
+                if "family" in self.data:
+                    try:
+                        family_id = int(self.data.get("family"))
+                        self.fields["student"].queryset = Student.objects.filter(
+                            family_id=family_id,
+                            id__in=Instructor_Student.objects.filter(
+                                instructor=instructor_instance
+                            ).values_list("student", flat=True),
+                        ).order_by("name")
+                    except (ValueError, TypeError):
+                        self.fields["student"].queryset = Student.objects.none()
+                elif self.instance.pk:
+                    self.fields["student"].queryset = (
+                        self.instance.family.student_set.filter(
+                            id__in=Instructor_Student.objects.filter(
+                                instructor=instructor_instance
+                            ).values_list("student", flat=True)
+                        ).order_by("name")
+                    )
+                else:
+                    self.fields["student"].queryset = Student.objects.none()
+
+            except Instructor.DoesNotExist:
+                self.fields["instructor"].widget = forms.HiddenInput()
+                self.fields["instructor"].initial = None
+                self.fields["family"].queryset = Families.objects.none()
+                self.fields["student"].queryset = Student.objects.none()
+        else:
+            self.fields["family"].queryset = Families.objects.none()
+            self.fields["student"].queryset = Student.objects.none()
+
+        # Set labels for form fields
         self.fields["family"].label = "العائلة"
         self.fields["instructor"].label = "المعلم"
         self.fields["student"].label = "الطالب"
@@ -388,30 +427,17 @@ class ClassesForm(forms.ModelForm):
         self.fields["subject_name"].label = "أسم الماده"
         self.fields["notes"].label = "ملحوظة"
 
-        if "family" in self.data:
-            try:
-                family_id = str(self.data.get("family"))
-                self.fields["student"].queryset = Student.objects.filter(
-                    family_id=family_id
-                ).order_by("name")
-            except (ValueError, TypeError):
-                self.fields["student"].queryset = Student.objects.none()
-        elif self.instance.pk:
-            self.fields["student"].queryset = self.instance.family.student_set.order_by(
-                "name"
-            )
-        else:
-            self.fields["student"].queryset = Student.objects.none()
-
     def save(self, commit=True):
         instance = super(ClassesForm, self).save(commit=False)
 
-        # Retrieve the instructor for the selected student
+        # Automatically set the instructor based on the selected student
         student_id = self.cleaned_data.get("student")
-        instructor = Instructor_Student.objects.filter(student_id=student_id).first()
+        instructor_student = Instructor_Student.objects.filter(
+            student_id=student_id
+        ).first()
 
-        if instructor:
-            instance.instructor = instructor.instructor
+        if instructor_student:
+            instance.instructor = instructor_student.instructor
 
         if commit:
             instance.save()

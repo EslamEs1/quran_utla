@@ -21,8 +21,10 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DJANGO_DEBUG", False)
 
+ALLOWED_HOSTS = []
 
-ALLOWED_HOSTS = ["www.quranutla.com", "quranutla.com"]
+if not DEBUG:
+    ALLOWED_HOSTS = ["www.quranutla.com", "quranutla.com"]
 
 
 # Application definition
@@ -194,11 +196,9 @@ AUTHENTICATION_BACKENDS = (
     "apps.dashboard.backends.PhoneBackend",  # Add your custom backend
 )
 
-# Set the session timeout period (in seconds)
-SESSION_COOKIE_AGE = 300  # 300 seconds = 5 minutes
+# SESSION_COOKIE_AGE = 300  
 
-# Set the session cookie to expire when the browser is closed
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+# SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 
 LOGIN_URL = "/dashboard/login/"

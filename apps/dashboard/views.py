@@ -594,7 +594,23 @@ def logout_view(request):
 
 # ------------------------------------------------ Student By Family
 def get_students_by_family(request, family_id):
-    students = Student.objects.filter(family_id=family_id).values("id", "name")
+    user = request.user
+    if user.type == UserType.INSTRUCTOR:
+        try:
+            instructor_instance = Instructor.objects.get(user=user)
+            # Filter students by both family and instructor
+            students = Student.objects.filter(
+                family_id=family_id,
+                id__in=Instructor_Student.objects.filter(
+                    instructor=instructor_instance
+                ).values_list("student", flat=True),
+            ).values("id", "name")
+        except Instructor.DoesNotExist:
+            students = Student.objects.none()
+    else:
+        # If the user is not an instructor, don't return any students
+        students = Student.objects.none()
+
     return JsonResponse({"students": list(students)})
 
 
@@ -733,11 +749,12 @@ def del_student_marketer(request, id):
 # ------------------------------------------------ Classes
 @login_required
 def classes(request):
-
     # Default to current month if not specified in GET parameters
     current_date = datetime.now()
     start_date = current_date.replace(day=1).date()  # First day of the current month
-    end_date = start_date.replace(day=1, month=start_date.month + 1) - timedelta(
+    end_date = (start_date.replace(day=28) + timedelta(days=4)).replace(
+        day=1
+    ) - timedelta(
         days=1
     )  # Last day of the current month
 
@@ -748,24 +765,39 @@ def classes(request):
         start_date = datetime(
             int(year), int(month), 1
         ).date()  # First day of selected month
-        end_date = start_date.replace(day=1, month=int(month) + 1) - timedelta(
+        end_date = (start_date.replace(day=28) + timedelta(days=4)).replace(
+            day=1
+        ) - timedelta(
             days=1
         )  # Last day of selected month
 
     search_query = request.GET.get("search", "")
-    if search_query:
+
+    if request.user.type == UserType.INSTRUCTOR:
+        # Filter classes only for the instructor, including search if provided
         classes_list = Classes.objects.filter(
-            (
+            instructor__user=request.user, created_at__range=[start_date, end_date]
+        )
+
+        if search_query:
+            classes_list = classes_list.filter(
                 Q(family__name__icontains=search_query)
                 | Q(student__name__icontains=search_query)
                 | Q(instructor__user__name__icontains=search_query)
             )
-        )
     else:
+        # For non-instructors, filter classes based on the search query if provided
         classes_list = Classes.objects.filter(created_at__range=[start_date, end_date])
 
+        if search_query:
+            classes_list = classes_list.filter(
+                Q(family__name__icontains=search_query)
+                | Q(student__name__icontains=search_query)
+                | Q(instructor__user__name__icontains=search_query)
+            )
+
     if request.method == "POST":
-        form = ClassesForm(request.POST)
+        form = ClassesForm(request.POST, user=request.user)
         if form.is_valid():
             try:
                 form_2 = form.save(commit=False)
@@ -782,7 +814,7 @@ def classes(request):
                 request, "ربما هناك حقول فارغة او لا يوجد معلم مرتبط بهذا الطالب"
             )
     else:
-        form = ClassesForm(request.POST or None, user=request.user)
+        form = ClassesForm(user=request.user)
 
     context = {
         "form": form,
@@ -796,21 +828,9 @@ def edit_classes(request, id):
     classes = get_object_or_404(Classes, id=id)
 
     if request.method == "POST":
-        # family = request.POST.get("family")
-        # student = request.POST.get("student")
-        date = request.POST.get("date")
-        number_class_hours = request.POST.get("number_class_hours")
-        evaluation = request.POST.get("evaluation")
-        subject_name = request.POST.get("subject_name")
-        notes = request.POST.get("notes")
-
-        if date and number_class_hours and evaluation and subject_name and notes:
-            classes.date = date
-            classes.number_class_hours = number_class_hours
-            classes.evaluation = evaluation
-            classes.subject_name = subject_name
-            classes.notes = notes
-            classes.save()
+        form = ClassesForm(request.POST, instance=classes, user=request.user)
+        if form.is_valid():
+            form.save()
             messages.success(request, "تم تعديل الحصة بنجاح")
         else:
             messages.error(request, "حدث خطأ أثناء تعديل الحصة")
@@ -1014,7 +1034,7 @@ def instructor_invoices(request):
         )  # Last day of selected month
 
     # Query invoices for the selected month
-    if user.is_staff:  # Assuming 'is_staff' indicates admin user
+    if user.is_superuser:  # Assuming 'is_staff' indicates admin user
         invoices = Classes.objects.filter(date__range=[start_date, end_date])
     else:
         # Filter invoices for the logged-in instructor

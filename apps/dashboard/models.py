@@ -170,8 +170,6 @@ class Marketer_Student(models.Model):
 
 
 # ------------------------Registration of classes
-
-
 class Evaluation(models.TextChoices):
     LOW = "Low", "ضعيف"
     GOOD = "Good", "مقبول"
@@ -190,16 +188,10 @@ class Duration(models.TextChoices):
 class Classes(models.Model):
     family = models.ForeignKey(Families, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    instructor = models.ForeignKey(
-        Instructor, on_delete=models.CASCADE, blank=True, null=True
-    )
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, blank=True, null=True)
     date = models.DateField()
-    number_class_hours = models.CharField(
-        choices=Duration.choices, default=Duration.FORTY, max_length=50
-    )
-    evaluation = models.CharField(
-        choices=Evaluation.choices, default=Evaluation.LOW, max_length=50
-    )
+    number_class_hours = models.CharField(choices=Duration.choices, default=Duration.FORTY, max_length=50)
+    evaluation = models.CharField(choices=Evaluation.choices, default=Evaluation.LOW, max_length=50)
     subject_name = models.CharField(max_length=300)
     notes = models.CharField(max_length=500)
     created_at = models.DateTimeField(auto_now_add=True)

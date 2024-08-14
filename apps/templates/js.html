@@ -31,3 +31,29 @@
 <script src="{% static 'vendors/apex_chart/area_chart.js' %}"></script>
 <script src="{% static 'vendors/apex_chart/bar_active_1.js' %}"></script>
 <script src="{% static 'vendors/chartjs/chartjs_active.js' %}"></script>
+
+<script>
+    var inactivityTime = function () {
+        var time;
+
+        // Reset timer on any activity
+        window.onload = resetTimer;
+        window.onmousemove = resetTimer;
+        window.onmousedown = resetTimer;  // Catches touchscreen presses
+        window.ontouchstart = resetTimer;
+        window.onclick = resetTimer;      // Catches touchpad/mouse clicks
+        window.onkeydown = resetTimer;    // Catches keyboard activity
+
+        function logout() {
+            // Log out and redirect to the login page
+            window.location.href = "{% url 'dash:logout' %}?next={% url 'dash:login' %}";
+        }
+
+        function resetTimer() {
+            clearTimeout(time);
+            time = setTimeout(logout, 300000);  // 5 minutes in milliseconds
+        }
+    };
+
+    inactivityTime();  // Initialize the function
+</script>

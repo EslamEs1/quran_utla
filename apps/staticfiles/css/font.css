@@ -7,9 +7,7 @@
     direction: rtl;
 }
 
-form{
-    padding-bottom: 50px !important;
-}
+
 
 
 .icon{
@@ -99,3 +97,49 @@ button{
 .has-arrow img{
     width: 25px;
 }
+
+.search {
+    position: relative;
+}
+
+.register-button {
+    position: relative;
+}
+
+.profile_info img{
+    border-radius: unset !important;
+    border: none !important;
+}
+
+
+.search input[type="search"] {
+    padding-left: 40px;
+}
+
+
+.register-button button {
+    position: absolute;
+    left: 0; 
+    top: -23px;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.search button {
+    position: absolute;
+    left: 10px; 
+    top: 0;
+    transform: translateY(-50%);
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: inline;
+    width: unset !important;
+}
+
+.search button img {
+    width: 20px;
+    height: auto;
+}
+
