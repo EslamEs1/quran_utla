@@ -42,6 +42,7 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     "django_cleanup.apps.CleanupConfig",
     "django_summernote",
+    "phonenumber_field",
     # "crispy_forms",
 ]
 
@@ -196,7 +197,7 @@ AUTHENTICATION_BACKENDS = (
     "apps.dashboard.backends.PhoneBackend",  # Add your custom backend
 )
 
-# SESSION_COOKIE_AGE = 300  
+# SESSION_COOKIE_AGE = 300
 
 # SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
@@ -224,3 +225,6 @@ LOGOUT_REDIRECT_URL = "/dashboard/login/"
 #         },
 #     },
 # }
+
+
+PHONENUMBER_DEFAULT_REGION = "US"

@@ -17,6 +17,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.validators import RegexValidator
 from django.contrib.auth.password_validation import validate_password
+from phonenumber_field.formfields import PhoneNumberField
 
 CustomUser = get_user_model()
 
@@ -160,6 +161,7 @@ class InstructorForm(forms.ModelForm):
 
 
 class FamiliesForm(forms.ModelForm):
+    number = PhoneNumberField()
     class Meta:
         model = Families
         fields = [
