@@ -2,24 +2,19 @@
 {% load static %}
 {% block title %}
 <div class="title-invoices">
-    <h3 class="text-center">فاتورة العائلة</h3>
-    <p class="text-center">فاتورة شهر {{ selected_month|date:"m/Y" }}</p>
+    <h3 class="text-center">Family Invoice</h3>
+    <h6 class="text-center">{{ family.name }}</h6>
 </div>
+
 {% endblock title %}
 
 {% block content %}
     <div class="list-family">
         <ul>
-            <li>أسم العائلة : {{ family.name }}</li>
-            <li>رقم الهاتف : {{ family.number }}</li>
-            <li>العنوان : {{ family.address }}</li>
-        </ul>
-
-        <ul>
-            <li>أكاديمية قرأن يتلى</li>
-            <li>رقم الهاتف : 01158268124</li>
-            <li>البريد الألكترونى : admin@quran.com</li>
-            <li>العنوان مصر - القاهرة</li>
+            <li>Quran Utla Academy</li>
+            <li>Phone Number: +20 1014205947</li>
+            <li>Email: admin@quran.com</li>
+            <li>Address: Egypt - Cairo</li>
         </ul>
 
         <img src="{% static 'img/logo.png' %}" alt="logo">
@@ -28,25 +23,25 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>اسم الطالب</th>
-                <th>إجمالي الساعات</th>
-                <th>إجمالي الحصص</th>
-                <th>الإجمالي قبل الضريبة</th>
-                <th>الإجمالي بعد الضريبة</th>
-                <th>فاتورة الطالب</th>
+                <th>Student Name</th>
+                <th>Sessions</th>
+                <th>Hours</th>
+                <th>Before Tax</th>
+                <th>After Tax</th>
+                <th>Student Invoice</th>
             </tr>
         </thead>
         <tbody>
             {% for student in students %}
             <tr>
                 <td>{{ student }}</td>
-                <td>{{ student.total_hours }}</td>
                 <td>{{ student.total_classes }}</td>
+                <td>{{ student.total_hours }}</td>
                 <td>${{ student.total_before_tax|floatformat:"2" }}</td>
                 <td>${{ student.total_after_tax|floatformat:"2" }}</td>
                 <td>
                     {% if student.total_hours == 0 %}
-                        لا توجد حصص في هذا الشهر
+                    <p>There are no classes this month</p>
                     {% else %}
                         <a href="{% url 'dash:student_invoice_details' student.id %}">
                             <img class="icon" src="{% static 'img/validating-ticket.png' %}">
@@ -57,9 +52,17 @@
             {% endfor %}
         </tbody>
     </table>
-    <br>
-    <hr>
-    <h4>معلومات الضريبة</h4>
-    <p>نسبة الضريبة الحالية: {{ tax_percentage }}%</p>
-    <br>
+
+    <div class="total-list">
+        <img src="{% static 'img/logo.png' %}" alt="logo">
+        <div class="total">
+            <h4>Family Totals</h4>
+            <h6>Invoice for Month {{ selected_month|date:"m/Y" }}</h6>
+            <p>Total Sessions: {{ total_classes }}</p>
+            <p>Total Hours: {{ total_hours }}</p>
+            <p>Total Before Tax: ${{ total_before_tax|floatformat:"2" }}</p>
+            <p>Total After Tax: ${{ total_after_tax|floatformat:"2" }}</p>
+            <p>Tax Percentage: {{ tax_percentage }}%</p>
+        </div>
+    </div>
 {% endblock content %}

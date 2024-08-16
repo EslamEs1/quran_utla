@@ -23,6 +23,7 @@ urlpatterns = [
     path("admin_password_change/", views.admin_password_change, name="admin_password_change",),
     path("invoices/", views.invoices, name="invoices"),
     path("instructor_invoices/", views.instructor_invoices, name="instructor_invoices"),
+    path("instructor/invoices/detail/", views.instructor_invoices_detail, name="instructor_invoices_detail"),
     path("family_inv_de/<str:family_id>/", views.family_invoice_details, name="family_invoice_details",),
     path("invoices/student/<int:student_id>/", views.student_invoice_details, name="student_invoice_details",),
     path("invoices/instructor/advancesdisc/", views.advancesdisc, name="advancesdisc"),

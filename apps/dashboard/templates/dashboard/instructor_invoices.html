@@ -1,28 +1,32 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}
-<h3 class="text-center">فواتير المعلمين</h3>
+<h3 class="text-center">Instructor Invoices</h3>
 {% endblock title %}
 
 {% block content %}
-<form method="GET" action="{% url 'dash:instructor_invoices' %}">
-    <div class="mb-2">
-        <label for="dateInput" class="form-label">اختر التاريخ</label>
-        <input type="month" class="form-control" id="dateInput" name="filter_month"
-            value="{% if request.GET.filter_month %}{{ request.GET.filter_month }}{% else %}{{ current_date|date:'Y-m' }}{% endif %}"
-            onchange="this.form.submit()">
+<div class="row">
+    <div class="col-md-3">
+        <form method="GET" action="{% url 'dash:instructor_invoices' %}">
+            <div class="mb-2">
+                <label for="dateInput" class="form-label">Select Date</label>
+                <input type="month" class="form-control" id="dateInput" name="filter_month"
+                    value="{% if request.GET.filter_month %}{{ request.GET.filter_month }}{% else %}{{ current_date|date:'Y-m' }}{% endif %}"
+                    onchange="this.form.submit()">
+            </div>
+        </form>
     </div>
-</form>
+</div>
 
 <table class="table table-striped">
     <thead>
         <tr>
-            <th scope="col">اسم المعلم</th>
-            <th scope="col">إجمالي الحصص</th>
-            <th scope="col">إجمالي الدقائق</th>
-            <th scope="col">إجمالي الراتب</th>
-            <th scope="col">الهاتف</th>
-            <th scope="col">رابط الدفع</th>
+            <th scope="col">Teacher</th>
+            <th scope="col">Sessions</th>
+            <th scope="col">Hours</th>
+            <th scope="col">Cash</th>
+            <th scope="col">Phone</th>
+            <th scope="col">Payment Link</th>
         </tr>
     </thead>
     {% if invoices|length > 0 %}
@@ -39,23 +43,23 @@
         {% endfor %}
     </tbody>
     {% else %}
-        <p class="text-danger">لا توجد فواتير للشهر المحدد.</p>
+        <p class="text-danger">No invoices for the selected month.</p>
     {% endif %}
 </table>
 
 <div class="total">
     <hr>
-    <h3>مجموع الفواتير</h3>
+    <h3>Total Invoices</h3>
     <hr>
     <div class="list">
         <div class="col">
-            <p>إجمالي الحصص: <span>( {{ overall_totals.total_sections }} )</span></p>
+            <p>Total Sessions: <span>( {{ overall_totals.total_sections }} )</span></p>
         </div>
         <div class="col">
-            <p>إجمالي ساعات:  <span>( {{ overall_totals.total_hours }} )</span></p>
+            <p>Total Hours:  <span>( {{ total_hours }} )</span></p>
         </div>
         <div class="col">
-            <p>إجمالي مبلغ المعلمين: <span>( ${{ overall_instructor_salary|floatformat:"2" }} )</span></p>
+            <p>Total Instructor Salary: <span>( ${{ overall_instructor_salary|floatformat:"2" }} )</span></p>
         </div>
     </div>
 </div>

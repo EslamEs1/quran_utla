@@ -39,7 +39,7 @@ from .models import (
     Manager,
     Marketer_Student,
     Marketer,
-    Instructor
+    Instructor,
 )
 
 CustomUser = get_user_model()
@@ -533,9 +533,7 @@ def change_password(request):
             user = form.save()
             update_session_auth_hash(request, user)  # Important to update the session
             messages.success(request, "تم تغيير كلمة المرور بنجاح!")
-            return redirect(
-                "profile"
-            )  # Replace 'profile' with your desired redirect URL after password change
+            return redirect("dash:dashboard") 
         else:
             messages.error(request, "يرجى تصحيح الأخطاء الموجودة في النموذج.")
     else:
@@ -594,7 +592,23 @@ def logout_view(request):
 
 # ------------------------------------------------ Student By Family
 def get_students_by_family(request, family_id):
-    students = Student.objects.filter(family_id=family_id).values("id", "name")
+    user = request.user
+    if user.type == UserType.INSTRUCTOR:
+        try:
+            instructor_instance = Instructor.objects.get(user=user)
+            # Filter students by both family and instructor
+            students = Student.objects.filter(
+                family_id=family_id,
+                id__in=Instructor_Student.objects.filter(
+                    instructor=instructor_instance
+                ).values_list("student", flat=True),
+            ).values("id", "name")
+        except Instructor.DoesNotExist:
+            students = Student.objects.none()
+    else:
+        # If the user is not an instructor, don't return any students
+        students = Student.objects.none()
+
     return JsonResponse({"students": list(students)})
 
 
@@ -613,7 +627,9 @@ def register_marketer(request):
             & Q(user__type=UserType.MARKETER)
         )
     else:
-        marketer = Marketer.objects.filter(user__type=UserType.MARKETER, user__is_active=True)
+        marketer = Marketer.objects.filter(
+            user__type=UserType.MARKETER, user__is_active=True
+        )
 
     if request.method == "POST":
         base_form = BaseUserForm(request.POST)
@@ -625,10 +641,10 @@ def register_marketer(request):
                 user = base_form.save(commit=False)
                 user.type = UserType.MARKETER
                 user.set_password(base_form.cleaned_data["password"])
-                user.save() 
+                user.save()
 
                 marketer = marketer_form.save(commit=False)
-                marketer.user = user 
+                marketer.user = user
                 marketer.save()
 
                 messages.success(request, "تم اضافة مسوق جديد بنجاح")
@@ -671,7 +687,7 @@ def edit_markter(request, id):
             manager.address = address
             manager.gender = gender
             manager.age = age
-            manager.save() 
+            manager.save()
             marketer.save()
 
             messages.success(request, "تم تعديل المسوق بنجاح")
@@ -733,11 +749,12 @@ def del_student_marketer(request, id):
 # ------------------------------------------------ Classes
 @login_required
 def classes(request):
-
     # Default to current month if not specified in GET parameters
     current_date = datetime.now()
     start_date = current_date.replace(day=1).date()  # First day of the current month
-    end_date = start_date.replace(day=1, month=start_date.month + 1) - timedelta(
+    end_date = (start_date.replace(day=28) + timedelta(days=4)).replace(
+        day=1
+    ) - timedelta(
         days=1
     )  # Last day of the current month
 
@@ -748,24 +765,39 @@ def classes(request):
         start_date = datetime(
             int(year), int(month), 1
         ).date()  # First day of selected month
-        end_date = start_date.replace(day=1, month=int(month) + 1) - timedelta(
+        end_date = (start_date.replace(day=28) + timedelta(days=4)).replace(
+            day=1
+        ) - timedelta(
             days=1
         )  # Last day of selected month
 
     search_query = request.GET.get("search", "")
-    if search_query:
+
+    if request.user.type == UserType.INSTRUCTOR:
+        # Filter classes only for the instructor, including search if provided
         classes_list = Classes.objects.filter(
-            (
+            instructor__user=request.user, created_at__range=[start_date, end_date]
+        )
+
+        if search_query:
+            classes_list = classes_list.filter(
                 Q(family__name__icontains=search_query)
                 | Q(student__name__icontains=search_query)
                 | Q(instructor__user__name__icontains=search_query)
             )
-        )
     else:
+        # For non-instructors, filter classes based on the search query if provided
         classes_list = Classes.objects.filter(created_at__range=[start_date, end_date])
 
+        if search_query:
+            classes_list = classes_list.filter(
+                Q(family__name__icontains=search_query)
+                | Q(student__name__icontains=search_query)
+                | Q(instructor__user__name__icontains=search_query)
+            )
+
     if request.method == "POST":
-        form = ClassesForm(request.POST)
+        form = ClassesForm(request.POST, user=request.user)
         if form.is_valid():
             try:
                 form_2 = form.save(commit=False)
@@ -782,11 +814,18 @@ def classes(request):
                 request, "ربما هناك حقول فارغة او لا يوجد معلم مرتبط بهذا الطالب"
             )
     else:
-        form = ClassesForm(request.POST or None, user=request.user)
+        form = ClassesForm(user=request.user)
 
+    families = Families.objects.all()
+    students = Student.objects.all()
+    instructors = Instructor.objects.all()
+    
     context = {
         "form": form,
         "classes": classes_list,
+        "families": families,
+        "students": students,
+        "instructors": instructors,
     }
     return render(request, "dashboard/classes.html", context)
 
@@ -830,7 +869,9 @@ def delete_classes(request, id):
 def invoices(request):
     if not request.user.type == "Admin":
         return redirect("dash:dashboard")
-    
+
+    search_query = request.GET.get("search", "")
+
     families = Families.objects.filter(is_active=True)
 
     # Default to current month if not specified in GET parameters
@@ -855,11 +896,16 @@ def invoices(request):
         is_active=True, student__classes__date__range=[start_date, end_date]
     ).distinct()
 
+    if search_query:
+        families_with_classes = families_with_classes.filter(name__icontains=search_query)
+
     # Query invoices for the selected month
     invoices = Classes.objects.filter(date__range=[start_date, end_date])
 
     # Calculate overall totals for the selected month
     overall_totals = Classes.get_overall_totals(start_date, end_date)
+
+    total_hours = overall_totals["total_hours"] // 60
 
     # Calculate family totals for the selected month
     family_totals = {
@@ -886,12 +932,12 @@ def invoices(request):
             "overall_totals": overall_totals,
             "invoices": invoices,
             "encoded_message": encoded_message,
+            "total_hours": total_hours,
         },
     )
 
 
 def family_invoice_details(request, family_id):
-    
     family = get_object_or_404(Families, pk=family_id, is_active=True)
     students = Student.objects.filter(family=family)
 
@@ -901,17 +947,19 @@ def family_invoice_details(request, family_id):
     except BillingMonths.DoesNotExist:
         selected_date = None
 
-    # Default to the current month if no specific month is selected
     if not selected_date:
         current_date = datetime.now().date()
-        selected_date = current_date.replace(day=1)  # First day of the current month
+        selected_date = current_date.replace(day=1)
 
-    # Get the latest tax percentage
     latest_tax = Tax.objects.latest("date")
     tax_percentage = latest_tax.percentage if latest_tax else 0.0
 
+    total_hours = 0
+    total_classes = 0
+    total_before_tax = Decimal(0)
+    total_after_tax = Decimal(0)
+
     for student in students:
-        # Calculate totals for each student based on selected or current month
         classes = Classes.objects.filter(
             student=student,
             date__month=selected_date.month,
@@ -919,26 +967,28 @@ def family_invoice_details(request, family_id):
         )
 
         if classes.exists():
-            total_hours = (
+            student_hours = (
                 classes.aggregate(total_hours=Sum("number_class_hours"))["total_hours"]
                 or 0
             )
-            total_classes = (
-                classes.aggregate(total_classes=Count("id"))["total_classes"] or 0
-            )
-            total_before_tax = total_hours * student.hourly_salary
-            total_after_tax = total_before_tax * (1 - tax_percentage / 100)
+            student_classes = classes.count()
+            student_before_tax = student_hours * student.hourly_salary
+            student_after_tax = student_before_tax * (1 - tax_percentage / 100)
         else:
-            total_hours = 0
-            total_classes = 0
-            total_before_tax = 0.0
-            total_after_tax = 0.0
+            student_hours = 0
+            student_classes = 0
+            student_before_tax = 0.0
+            student_after_tax = 0.0
 
-        # Assign totals to student objects
-        student.total_hours = total_hours
-        student.total_classes = total_classes
-        student.total_before_tax = total_before_tax / 60
-        student.total_after_tax = total_after_tax / 60
+        student.total_hours = student_hours // 60
+        student.total_classes = student_classes
+        student.total_before_tax = student_before_tax / 60
+        student.total_after_tax = student_after_tax / 60
+
+        total_hours += student.total_hours
+        total_classes += student.total_classes
+        total_before_tax += Decimal(student.total_before_tax)
+        total_after_tax += Decimal(student.total_after_tax)
 
     return render(
         request,
@@ -948,6 +998,10 @@ def family_invoice_details(request, family_id):
             "students": students,
             "tax_percentage": tax_percentage,
             "selected_month": selected_date,
+            "total_hours": total_hours,
+            "total_classes": total_classes,
+            "total_before_tax": total_before_tax,
+            "total_after_tax": total_after_tax,
         },
     )
 
@@ -956,8 +1010,17 @@ def student_invoice_details(request, student_id):
     student = get_object_or_404(Student, pk=student_id, is_active=True)
     classes = Classes.objects.filter(student=student)
 
-    # Determine the current month
     current_date = datetime.now().date()
+    
+    try:
+        billing_month = BillingMonths.objects.get(family=student.family)
+        selected_date = billing_month.date
+    except BillingMonths.DoesNotExist:
+        selected_date = None
+
+    if not selected_date:
+        current_date = datetime.now().date()
+        selected_date = current_date.replace(day=1)
 
     # Get the latest tax percentage
     latest_tax = Tax.objects.latest("date")
@@ -982,18 +1045,20 @@ def student_invoice_details(request, student_id):
         {
             "student": student,
             "classes": classes,
-            "total_hours": total_hours,
+            "total_hours": total_hours // 60,
             "total_classes": total_classes,
             "total_before_tax": total_before_tax,
             "total_after_tax": total_after_tax,
             "tax_percentage": tax_percentage,
+            "selected_month": selected_date,
         },
     )
 
 
 @login_required
 def instructor_invoices(request):
-    user = request.user
+    if not request.user.type == "Admin":
+        return redirect("dash:dashboard")
 
     # Default to current month if not specified in GET parameters
     current_date = datetime.now()
@@ -1014,13 +1079,7 @@ def instructor_invoices(request):
         )  # Last day of selected month
 
     # Query invoices for the selected month
-    if user.is_staff:  # Assuming 'is_staff' indicates admin user
-        invoices = Classes.objects.filter(date__range=[start_date, end_date])
-    else:
-        # Filter invoices for the logged-in instructor
-        invoices = Classes.objects.filter(
-            instructor__user=user, date__range=[start_date, end_date]
-        )
+    invoices = Classes.objects.filter(date__range=[start_date, end_date])
 
     instructor_ids_with_classes = (
         Classes.objects.filter(date__range=[start_date, end_date])
@@ -1033,8 +1092,10 @@ def instructor_invoices(request):
 
     # Calculate overall totals for the selected month (for admins only)
     overall_totals = (
-        Classes.get_overall_totals(start_date, end_date) if user.is_staff else None
+        Classes.get_overall_totals(start_date, end_date)
     )
+
+    total_hours = overall_totals["total_hours"] // 60
 
     # Calculate instructor totals for the selected month
     instructor_totals = {
@@ -1057,6 +1118,7 @@ def instructor_invoices(request):
             "overall_totals": overall_totals,
             "invoices": invoices,
             "overall_instructor_salary": overall_instructor_salary,
+            "total_hours": total_hours,
         },
     )
 
@@ -1114,12 +1176,53 @@ def marketer_students(request):
     # Get the marketer object using the provided ID
     marketer_students = Marketer_Student.objects.filter(marketer=request.user)
 
-    students = Student.objects.filter(id__in=marketer_students.values('student'))
+    students = Student.objects.filter(id__in=marketer_students.values("student"))
 
     return render(
         request,
         "dashboard/student_the_marketer.html",
         {"students": students},
+    )
+
+
+@login_required
+def instructor_invoices_detail(request):
+    user = request.user
+
+    # Default to current month if not specified in GET parameters
+    current_date = datetime.now()
+    start_date = current_date.replace(day=1).date()  # First day of the current month
+    end_date = start_date.replace(day=1, month=start_date.month + 1) - timedelta(
+        days=1
+    )  # Last day of the current month
+
+    # Handle form submission for month filter
+    if request.method == "GET" and "filter_month" in request.GET:
+        selected_month = request.GET.get("filter_month")
+        year, month = selected_month.split("-")
+        start_date = datetime(
+            int(year), int(month), 1
+        ).date()  # First day of selected month
+        end_date = start_date.replace(day=1, month=int(month) + 1) - timedelta(
+            days=1
+        )  # Last day of selected month
+
+    # Filter invoices for the logged-in instructor
+    invoices = Classes.objects.filter(
+        instructor__user=user, date__range=[start_date, end_date]
+    )
+
+    # Calculate instructor totals for the logged-in instructor only
+    instructor_totals = Classes.get_instructor_totals(user.instructor, start_date, end_date)
+
+    return render(
+        request,
+        "dashboard/instructor-inv-detail.html",
+        {
+            "instructor_totals": instructor_totals,
+            "current_date": current_date,
+            "invoices": invoices,
+        },
     )
 
 
@@ -1158,7 +1261,7 @@ def delete_disc(request, id):
 def invoices_link(request):
     if not request.user.type == "Admin":
         return redirect("dash:dashboard")
-    
+
     families = Families.objects.filter(is_active=True)
     return render(request, "dashboard/invoices_link.html", {"families": families})
 

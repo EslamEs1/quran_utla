@@ -122,6 +122,9 @@ class Families(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ["-created_at"]
+
     def __str__(self):
         return self.name
 
@@ -136,6 +139,9 @@ class Student(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ["-created_at"]
+
     def __str__(self):
         return self.name
 
@@ -145,6 +151,9 @@ class Instructor_Student(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
 
 
 class Marketer(models.Model):
@@ -168,10 +177,11 @@ class Marketer_Student(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ["-created_at"]
+
 
 # ------------------------Registration of classes
-
-
 class Evaluation(models.TextChoices):
     LOW = "Low", "ضعيف"
     GOOD = "Good", "مقبول"
@@ -190,19 +200,16 @@ class Duration(models.TextChoices):
 class Classes(models.Model):
     family = models.ForeignKey(Families, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    instructor = models.ForeignKey(
-        Instructor, on_delete=models.CASCADE, blank=True, null=True
-    )
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, blank=True, null=True)
     date = models.DateField()
-    number_class_hours = models.CharField(
-        choices=Duration.choices, default=Duration.FORTY, max_length=50
-    )
-    evaluation = models.CharField(
-        choices=Evaluation.choices, default=Evaluation.LOW, max_length=50
-    )
+    number_class_hours = models.CharField(choices=Duration.choices, default=Duration.FORTY, max_length=50)
+    evaluation = models.CharField(choices=Evaluation.choices, default=Evaluation.LOW, max_length=50)
     subject_name = models.CharField(max_length=300)
     notes = models.CharField(max_length=500)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
 
     def __str__(self):
         if self.instructor:
@@ -261,7 +268,7 @@ class Classes(models.Model):
         return {
             "family": family,
             "total_sections": total_sections,
-            "total_hours": total_hours["total_hours"] or 0,
+            "total_hours": total_hours["total_hours"] // 60 or 0,
             "total_salary": total_salary["total_salary_sum"] or 0,
         }
 
@@ -297,6 +304,9 @@ class Classes(models.Model):
 
         total_discounts = discount_queryset.aggregate(total_discounts=Sum("amount"))
 
+        # Handle None values before calculation
+        total_hours_value = total_hours["total_hours"] or 0
+
         # Subtract discounts from the total salary
         total_salary_after_discounts = (total_salary["total_salary_sum"] or 0) - (
             total_discounts["total_discounts"] or 0
@@ -305,7 +315,7 @@ class Classes(models.Model):
         return {
             "instructor": instructor,
             "total_sections": total_sections,
-            "total_hours": total_hours["total_hours"] or 0,
+            "total_hours": total_hours_value // 60,
             "total_salary": total_salary_after_discounts,
             "total_discounts": total_discounts["total_discounts"] or 0,
         }

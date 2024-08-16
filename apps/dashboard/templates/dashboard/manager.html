@@ -6,21 +6,27 @@
 {% block content %}
 <!-- Button trigger modals -->
 
-<div class="search">
-    <form method="get" role="search">
-        <input class="form-control" type="search" placeholder="بحث..." aria-label="Search" name="search" value="{{ search_query }}">
-        <button class="btn btn-outline-success" type="submit">بحث...</button>
-    </form>
-</div>
-<hr />
-<div class="row">
-    <div class="col-md-3">
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdropmanager">
-            تسجيل مشرف
-        </button>
+<div class="container">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-md-6">
+            <div class="register-button">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdropmanager">تسجيل مشرف</button>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="search">
+                <form method="get" role="search">
+                    <input class="form-control" type="search" placeholder="بحث..." aria-label="Search" name="search"
+                        value="{{ search_query }}">
+                    <button type="submit"><img src="{% static 'img/search.png'%}" alt=""></button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
-<br />
+<hr>
+
 
 <table class="table table-striped">
     <thead>
@@ -41,8 +47,9 @@
             <td>{{manager.address}}</td>
             <td><a href="#" data-bs-toggle="modal" data-bs-target="#editModal{{manager.id}}"><img class="icon"
                         src="{% static 'img/edit.png'%}"></a></td>
-            <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal{{ manager.id }}"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
-        </tr>            
+            <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModal{{ manager.id }}"><img class="icon"
+                        src="{% static 'img/delete.png'%}"></a></td>
+        </tr>
         {% empty %}
         <h6 class="text-center">لا يوجد مشرفين الأن</h6>
         <hr>
@@ -51,7 +58,6 @@
 </table>
 
 
-<!-- Modal for Manager -->
 <div class="modal fade" id="staticBackdropmanager" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -77,55 +83,56 @@
 </div>
 
 {% for manager in managers %}
-<div class="modal fade" id="editModal{{manager.id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">تعديل مشرف</h5>
-            </div>
-            <div class="modal-body">
-                <form method="post" action="{% url 'dash:edit_manager' manager.id %}">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label class="form-label">الأسم</label>
-                        <input type="text" class="form-control" name="name" value="{{ manager.name }}">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">رقم الهاتف</label>
-                        <input type="text" class="form-control" name="phone" value="{{ manager.phone }}">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">العنوان</label>
-                        <input type="text" class="form-control" name="address" value="{{ manager.address }}">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">الجنس</label>
-                        <select class="form-select" name="gender">
-                            <option value="Male" {% if manager.gender == "Male" %}selected{% endif %}>ذكر</option>
-                            <option value="Female" {% if manager.gender == "Female" %}selected{% endif %}>أنثى</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">العمر</label>
-                        <input type="number" class="form-control" name="age" value="{{ manager.age }}">
-                    </div>
-                    <input type="submit" class="hidden" id="hiddenSubmitBtn-{{manager.id}}">
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary"
-                    onclick="document.getElementById('hiddenSubmitBtn-{{manager.id}}').click();">حفظ التغييرات</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+    <div class="modal fade" id="editModal{{manager.id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">تعديل مشرف</h5>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="{% url 'dash:edit_manager' manager.id %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">الأسم</label>
+                            <input type="text" class="form-control" name="name" value="{{ manager.name }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">رقم الهاتف</label>
+                            <input type="text" class="form-control" name="phone" value="{{ manager.phone }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">العنوان</label>
+                            <input type="text" class="form-control" name="address" value="{{ manager.address }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">الجنس</label>
+                            <select class="form-select" name="gender">
+                                <option value="Male" {% if manager.gender == "Male" %}selected{% endif %}>ذكر</option>
+                                <option value="Female" {% if manager.gender == "Female" %}selected{% endif %}>أنثى</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">العمر</label>
+                            <input type="number" class="form-control" name="age" value="{{ manager.age }}">
+                        </div>
+                        <input type="submit" class="hidden" id="hiddenSubmitBtn-{{manager.id}}">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary"
+                        onclick="document.getElementById('hiddenSubmitBtn-{{manager.id}}').click();">حفظ التغييرات</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 {% endfor %}
 
 {% for manager in managers %}
 <!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal{{ manager.id }}" tabindex="-1" aria-labelledby="deleteModal{{ manager.id }}" aria-hidden="true">
+<div class="modal fade" id="deleteModal{{ manager.id }}" tabindex="-1" aria-labelledby="deleteModal{{ manager.id }}"
+    aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">

@@ -5,22 +5,30 @@
 <h3 class="text-center">أضافة الحصص</h3>
 {% endblock title %}
 {% block content %}
-<form method="GET" action="{% url 'dash:classes' %}">
-    <div class="mb-2">
-        <label for="dateInput" class="form-label">اختر التاريخ</label>
-        <input type="month" class="form-control" id="dateInput" name="filter_month"
-            value="{% if request.GET.filter_month %}{{ request.GET.filter_month }}{% else %}{{ current_date|date:'Y-m' }}{% endif %}"
-            onchange="this.form.submit()">
+
+<div class="row justify-content-center align-items-center">
+    <div class="col-md-6">
+        <div class="search">
+            <form method="get" role="search">
+                <input class="form-control" type="search" placeholder="بحث..." aria-label="Search" name="search" value="{{ search_query }}">
+                <button type="submit">
+                    <img src="{% static 'img/search.png'%}" alt="">
+                </button>
+            </form>
+        </div>
     </div>
-</form>
-
-
-<div class="search">
-    <form method="get" role="search">
-        <input class="form-control" type="search" placeholder="بحث..." aria-label="Search" name="search" value="{{ search_query }}">
-        <button class="btn btn-outline-success" type="submit">بحث...</button>
-    </form>
+    
+    <div class="col-md-6">
+        <form method="GET" action="{% url 'dash:classes' %}">
+            <div class="mb-2">
+                <input type="month" class="form-control" id="dateInput" name="filter_month"
+                    value="{% if request.GET.filter_month %}{{ request.GET.filter_month }}{% else %}{{ current_date|date:'Y-m' }}{% endif %}"
+                    onchange="this.form.submit()">
+            </div>
+        </form>
+    </div>
 </div>
+
 
 <div class="row">
     <div class="col-md-3">
@@ -38,10 +46,10 @@
             <th scope="col">ولى الأمر</th>
             <th scope="col">الطالب</th>
             <th scope="col">موعد الحصة</th>
+            <th scope="col">عدد الساعات</th>
             {% if request.user.type == "Admin" or request.user.type == "Manager" %}
             <th scope="col">موعد تسجيل الحصة</th>
             {% endif %}
-            <th scope="col">عدد الدقائق</th>
             <th scope="col">التقيم</th>
             <th scope="col">أسم الماده</th>
             <th scope="col">ملحوظة</th>
@@ -59,10 +67,10 @@
             <td>{{class.family}}</td>
             <td>{{class.student}}</td>     
             <td>{{class.date}}</td>   
+            <td>{{class.number_class_hours}}</td>     
             {% if request.user.type == "Admin" or request.user.type == "Manager" %}  
             <td>{{class.created_at}}</td>  
             {% endif %}
-            <td>{{class.number_class_hours}}</td>     
             <td>{{class.evaluation}}</td>     
             <td>{{class.subject_name}}</td>     
             <td>{{class.notes}}</td>     
@@ -71,6 +79,8 @@
             <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModalclasses-{{ class.id }}"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
             {% endif %}
         </tr>
+        {% empty%}
+        <h6 class="text-danger text-center">لا يوجد حصص</h>
         {% endfor %}
     </tbody>
 </table>
