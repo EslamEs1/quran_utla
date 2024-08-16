@@ -596,7 +596,6 @@ def get_students_by_family(request, family_id):
     if user.type == UserType.INSTRUCTOR:
         try:
             instructor_instance = Instructor.objects.get(user=user)
-            # Filter students by both family and instructor
             students = Student.objects.filter(
                 family_id=family_id,
                 id__in=Instructor_Student.objects.filter(
@@ -606,9 +605,9 @@ def get_students_by_family(request, family_id):
         except Instructor.DoesNotExist:
             students = Student.objects.none()
     else:
-        # If the user is not an instructor, don't return any students
-        students = Student.objects.none()
+        students = Student.objects.filter(family_id=family_id).values("id", "name")
 
+    print("Students:", list(students))  # Debugging line
     return JsonResponse({"students": list(students)})
 
 
