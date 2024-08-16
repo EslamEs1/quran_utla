@@ -18,6 +18,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.core.validators import RegexValidator
 from django.contrib.auth.password_validation import validate_password
 from phonenumber_field.formfields import PhoneNumberField
+from phonenumber_field.widgets import PhoneNumberPrefixWidget
 
 CustomUser = get_user_model()
 
@@ -161,7 +162,11 @@ class InstructorForm(forms.ModelForm):
 
 
 class FamiliesForm(forms.ModelForm):
-    number = PhoneNumberField()
+    number = PhoneNumberField(
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "رقم الهاتف"}
+        )
+    )
     class Meta:
         model = Families
         fields = [
@@ -176,9 +181,6 @@ class FamiliesForm(forms.ModelForm):
         widgets = {
             "name": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "الأسم"}
-            ),
-            "number": forms.NumberInput(
-                attrs={"class": "form-control", "placeholder": "رقم الهاتف"}
             ),
             "manager": forms.Select(
                 attrs={"class": "form-control", "placeholder": "المشرف"}
