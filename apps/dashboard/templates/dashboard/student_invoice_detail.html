@@ -2,63 +2,66 @@
 {% load static %}
 {% block title %}
 <div class="title-invoices">
-    <h3 class="text-center">فاتورة الطالب</h3>
-    <p class="text-center">فاتورة شهر 7/2024</p>
+    <h3 class="text-center">Student Invoice</h3>
+    <h6 class="text-center">{{ student.name }}</h6>
 </div>
 {% endblock title %}
 
 {% block content %}
 <div class="list-family">
-        <ul>
-            <li>أسم العائلة : {{ student.family.name }}</li>
-            <li>رقم الهاتف : {{ student.family.number }}</li>
-            <li>العنوان : {{ student.family.address }}</li>
-        </ul>
+    <ul>
+        <li>Quran Utla Academy</li>
+        <li>Phone Number: +20 1014205947</li>
+        <li>Email: admin@quran.com</li>
+        <li>Address: Egypt - Cairo</li>
+    </ul>
 
-        <ul>
-            <li>أكاديمية قرأن يتلى</li>
-            <li>رقم الهاتف : 01158268124</li>
-            <li>البريد الألكترونى : admin@quran.com</li>
-            <li>العنوان مصر - القاهرة</li>
-        </ul>
+    <img src="{% static 'img/logo.png' %}" alt="logo">
+</div>
+<hr>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Student Name</th>
+            <th>Teacher</th>
+            <th>Date</th>
+            <th>Total Hours</th>
+            <th>Subject Name</th>
+            <th>Evaluation</th>
+            <th>Comment</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for class in classes %}
+        <tr>
+            <td>{{ class.student.name }}</td>
+            <td>{{ class.instructor.user.name }}</td>
+            <td>{{ class.date }}</td>
+            <td>{{ total_hours }}</td>
+            <td>{{ class.subject_name }}</td>
+            <td>{{ class.evaluation }}</td>
+            <td>{{ class.notes }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
-        <img src="{% static 'img/logo.png' %}" alt="logo">
-    </div>
-    <hr>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>أسم الطالب</th>
-                <th>المعلم</th>
-                <th>التاريخ</th>
-                <th>عدد دقائق الدرس</th>
-                <th>اسم الموضوع</th>
-                <th>التقييم</th>
-                <th>ملاحظات</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for class in classes %}
-            <tr>
-                <td>{{ class.student.name }}</td>
-                <td>{{ class.instructor.user.name }}</td>
-                <td>{{ class.date }}</td>
-                <td>{{ class.number_class_hours }}</td>
-                <td>{{ class.subject_name }}</td>
-                <td>{{ class.evaluation }}</td>
-                <td>{{ class.notes }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
 
+<div class="total-list">
+    <img src="{% static 'img/logo.png' %}" alt="logo">
     <div class="total">
-        <h4>إجمالي الفاتورة</h4>
-        <p>إجمالي الساعات: <span>{{ total_hours }}</span></p>
-        <p>إجمالي الحصص: <span>{{ total_classes }}</span></p>
-        <p>الإجمالي قبل الضريبة: <span>${{ total_before_tax|floatformat:"2" }}</span></p>
-        <p>الإجمالي بعد الضريبة: <span>${{ total_after_tax|floatformat:"2" }}</span></p>
-        <p>نسبة الضريبة: <span>{{ tax_percentage }}%</span></p>
-
+        <div class="list">
+            <div class="col">
+                <h4>Total Invoice</h4>
+                <h6>Invoice for Month {{ selected_month|date:"m/Y" }}</h6>
+                <p>Total Hours: <span>{{ total_hours }}</span></p>
+                <p>Total Sessions: <span>{{ total_classes }}</span></p>
+                <p>Total Before Tax: <span>${{ total_before_tax|floatformat:"2" }}</span></p>
+                <p>Total After Tax: <span>${{ total_after_tax|floatformat:"2" }}</span></p>
+                <p>Tax Percentage: <span>{{ tax_percentage }}%</span></p>
+            </div>
+        </div>
     </div>
+</div>
+
 {% endblock content %}

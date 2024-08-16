@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+<h3 class="text-center">Teachers' Invoices</h3>
+{% endblock title %}
+
+{% block content %}
+<div class="list-family">
+    <ul>
+        <li>Quran Utla</li>
+        <li>Phone : +20 1014205947</li>
+        <li>E-mail : quranutla@gmail.com</li>
+        <li>Address: Egypt - Cairo</li>
+    </ul>
+    <div>
+        <img src="{% static 'img/logo.png' %}" alt="logo">
+        <h6 style="text-align: center; color:#0dcaf0">{{request.user.name}}</h6>
+    </div>
+
+    <form method="GET" action="{% url 'dash:instructor_invoices_detail' %}">
+        <div class="mb-2">
+            <input type="month" class="form-control" id="dateInput" name="filter_month"
+                value="{% if request.GET.filter_month %}{{ request.GET.filter_month }}{% else %}{{ current_date|date:'Y-m' }}{% endif %}"
+                onchange="this.form.submit()">
+        </div>
+    </form>
+</div>
+<hr>
+
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Student</th>
+            <th scope="col">Teacher</th>
+            <th scope="col">Minute</th>
+            <th scope="col">Date</th>
+        </tr>
+    </thead>
+    {% if invoices|length > 0 %}
+    <tbody>
+        {% for invoice in invoices %}
+        <tr>
+            <td>{{ invoice.student }}</td>
+            <td>{{ invoice.instructor.user.name }}</td>
+            <td>{{ invoice.number_class_hours }} </td>
+            <td>{{ invoice.created_at }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    {% else %}
+    <p class="text-danger">لا توجد فواتير للشهر المحدد.</p>
+    {% endif %}
+</table>
+
+<div class="total-list">
+    <div class="col-md 6">
+        <img src="{% static 'img/logo.png' %}" alt="logo">
+    </div>
+
+    <div class="col-md 6">
+        <div class="total">
+            <h3>The Total</h3>
+            <div class="list">
+                <div class="col">
+                    <p>Total Section: <span>( {{ instructor_totals.total_sections }} )</span></p>
+                </div>
+                <div class="col">
+                    <p>Total Hour: <span>( {{ instructor_totals.total_hours }} )</span></p>
+                </div>
+                <div class="col">
+                    <p>Total Salary: <span>( ${{ instructor_totals.total_salary|floatformat:"2" }} )</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

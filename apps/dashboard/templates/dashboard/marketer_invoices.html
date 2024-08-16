@@ -1,29 +1,33 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}
-<h3 class="text-center">فواتير المسوقين</h3>
+<h3 class="text-center">Marketer Invoices</h3>
 {% endblock title %}
 
 {% block content %}
-<form method="GET" action="{% url 'dash:marketer_commission_view' %}">
-    <div class="mb-2">
-        <label for="dateInput" class="form-label">اختر التاريخ</label>
-        <input type="month" class="form-control" id="dateInput" name="filter_month"
-            value="{% if request.GET.filter_month %}{{ request.GET.filter_month }}{% else %}{{ current_date|date:'Y-m' }}{% endif %}"
-            onchange="this.form.submit()">
+    <div class="row">
+        <div class="col-md-3">
+            <form method="GET" action="{% url 'dash:marketer_commission_view' %}">
+                <div class="mb-2">
+                    <label for="dateInput" class="form-label">Select Date</label>
+                    <input type="month" class="form-control" id="dateInput" name="filter_month"
+                        value="{% if request.GET.filter_month %}{{ request.GET.filter_month }}{% else %}{{ current_date|date:'Y-m' }}{% endif %}"
+                        onchange="this.form.submit()">
+                </div>
+            </form>
+        </div>
     </div>
-</form>
 
 <table class="table table-striped">
     <thead>
         <tr>
-            <th scope="col">اسم المسوق</th>
-            <th scope="col">المرتب</th>
-            <th scope="col">العموله</th>
+            <th scope="col">Marketer Name</th>
+            <th scope="col">Salary</th>
+            <th scope="col">Commission</th>
         </tr>
     </thead>
     <tbody>
-        {% for commission  in commissions %}
+        {% for commission in commissions %}
         <tr>
             <td>{{ commission.marketer.marketer.user.name }}</td>
             <td>{{ commission.marketer.marketer.salary }}</td>
@@ -31,8 +35,5 @@
         </tr>
         {% endfor %}
     </tbody>
-    
 </table>
-
-
 {% endblock content %}
