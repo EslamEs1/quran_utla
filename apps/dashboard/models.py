@@ -11,7 +11,6 @@ from django.db.models import Sum, F
 from django.db.models.functions import Cast
 import uuid
 
-
 # ------------------------Settings
 class Tax(models.Model):
     percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
