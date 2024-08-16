@@ -163,9 +163,7 @@ class InstructorForm(forms.ModelForm):
 
 class FamiliesForm(forms.ModelForm):
     number = PhoneNumberField(
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "رقم الهاتف"}
-        )
+       
     )
     class Meta:
         model = Families
