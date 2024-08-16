@@ -27,13 +27,17 @@ class BaseUserForm(forms.ModelForm):
     password = forms.CharField(
         label="كلمة المرور",
         widget=forms.PasswordInput(
-            attrs={"class": "form-control", "placeholder": "كلمة المرور"}
+            attrs={"class": "form-control", "placeholder": "كلمة المرور", "autocomplete": "new-password"}
         ),
     )
     phone = forms.CharField(
         label="رقم الهاتف",
         widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "رقم الهاتف"}
+            attrs={
+                "class": "form-control",
+                "placeholder": "رقم الهاتف",
+                "autocomplete": "off",
+            }
         ),
         validators=[
             RegexValidator(
@@ -90,6 +94,7 @@ class BaseUserForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
 
 
 class CustomAuthenticationForm(AuthenticationForm):
@@ -162,9 +167,6 @@ class InstructorForm(forms.ModelForm):
 
 
 class FamiliesForm(forms.ModelForm):
-    number = PhoneNumberField(
-       
-    )
     class Meta:
         model = Families
         fields = [
@@ -179,6 +181,9 @@ class FamiliesForm(forms.ModelForm):
         widgets = {
             "name": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "الأسم"}
+            ),
+            "number": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "رقم الهاتف"}
             ),
             "manager": forms.Select(
                 attrs={"class": "form-control", "placeholder": "المشرف"}
