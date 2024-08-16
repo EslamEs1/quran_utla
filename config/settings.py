@@ -21,10 +21,10 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DJANGO_DEBUG", False)
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
 
-if not DEBUG:
-    ALLOWED_HOSTS = ["www.quranutla.com", "quranutla.com"]
+# if not DEBUG:
+ALLOWED_HOSTS = ["www.quranutla.com", "quranutla.com"]
 
 
 # Application definition
@@ -101,17 +101,17 @@ DATABASES = {
     }
 }
 
-if not DEBUG:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": env("POSTGRES_DB"),
-            "USER": env("POSTGRES_USER"),
-            "PASSWORD": env("POSTGRES_PASSWORD"),
-            "HOST": env("POSTGRES_HOST"),
-            "PORT": env("POSTGRES_PORT"),
-        }
-    }
+# if not DEBUG:
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.postgresql",
+#             "NAME": env("POSTGRES_DB"),
+#             "USER": env("POSTGRES_USER"),
+#             "PASSWORD": env("POSTGRES_PASSWORD"),
+#             "HOST": env("POSTGRES_HOST"),
+#             "PORT": env("POSTGRES_PORT"),
+#         }
+#     }
 
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.Argon2PasswordHasher",
