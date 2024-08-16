@@ -10,6 +10,8 @@ from django.dispatch import receiver
 from django.db.models import Sum, F
 from django.db.models.functions import Cast
 import uuid
+from phonenumber_field.modelfields import PhoneNumberField
+
 
 # ------------------------Settings
 class Tax(models.Model):
@@ -110,7 +112,7 @@ class Instructor(models.Model):
 class Families(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=250)
-    number = models.IntegerField()
+    number = PhoneNumberField()
     address = models.CharField(max_length=100)
     gender = models.CharField(choices=Gender.choices, max_length=10)
     the_state = models.CharField(max_length=250)
@@ -199,10 +201,16 @@ class Duration(models.TextChoices):
 class Classes(models.Model):
     family = models.ForeignKey(Families, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, blank=True, null=True)
+    instructor = models.ForeignKey(
+        Instructor, on_delete=models.CASCADE, blank=True, null=True
+    )
     date = models.DateField()
-    number_class_hours = models.CharField(choices=Duration.choices, default=Duration.FORTY, max_length=50)
-    evaluation = models.CharField(choices=Evaluation.choices, default=Evaluation.LOW, max_length=50)
+    number_class_hours = models.CharField(
+        choices=Duration.choices, default=Duration.FORTY, max_length=50
+    )
+    evaluation = models.CharField(
+        choices=Evaluation.choices, default=Evaluation.LOW, max_length=50
+    )
     subject_name = models.CharField(max_length=300)
     notes = models.CharField(max_length=500)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -232,7 +240,8 @@ class Classes(models.Model):
             queryset.values("student")
             .annotate(
                 total_salary=Sum(Cast("number_class_hours", models.DecimalField()))
-                * F("student__hourly_salary") / 60
+                * F("student__hourly_salary")
+                / 60
             )
             .aggregate(total_salary_sum=Sum("total_salary"))
         )
@@ -259,7 +268,8 @@ class Classes(models.Model):
             queryset.values("student")
             .annotate(
                 total_salary=Sum(Cast("number_class_hours", models.DecimalField()))
-                * F("student__hourly_salary") / 60
+                * F("student__hourly_salary")
+                / 60
             )
             .aggregate(total_salary_sum=Sum("total_salary"))
         )
@@ -289,7 +299,8 @@ class Classes(models.Model):
             queryset.values("instructor")
             .annotate(
                 total_salary=Sum(Cast("number_class_hours", models.DecimalField()))
-                * F("instructor__hourly_salary") / 60
+                * F("instructor__hourly_salary")
+                / 60
             )
             .aggregate(total_salary_sum=Sum("total_salary"))
         )
@@ -322,8 +333,12 @@ class Classes(models.Model):
 
 # ------------------------Advances and discounts
 class Discounts(models.Model):
-    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, null=True, blank=True)
-    marketer = models.ForeignKey(Marketer, on_delete=models.CASCADE, null=True, blank=True)
+    instructor = models.ForeignKey(
+        Instructor, on_delete=models.CASCADE, null=True, blank=True
+    )
+    marketer = models.ForeignKey(
+        Marketer, on_delete=models.CASCADE, null=True, blank=True
+    )
     amount = models.IntegerField(default=0)
     comment = models.CharField(max_length=250)
     date = models.DateField(blank=True, null=True)
