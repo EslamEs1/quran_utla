@@ -37,9 +37,11 @@
             <th scope="col">النوع</th>
             <th scope="col">تاريخ الانضمام</th>
             <th scope="col">رابط الدفع</th>
+            {% if request.user.type == "Admin" %}
             <th scope="col">الفاتوره</th>
             <th scope="col">تعديل</th>
             <th scope="col">حذف</th>
+            {% endif %}
             
         </tr>
     </thead>
@@ -52,9 +54,11 @@
             <td>{{student.gender}}</td>     
             <td>{{student.created_at}}</td>     
             <td>{{student.payment_link}}</td>     
+            {% if request.user.type == "Admin" %}
             <td><a href="{% url 'dash:student_invoice_details' student.id %}"><img class="icon" src="{% static 'img/validating-ticket.png'%}"></a></td>       
             <td><a href="#" data-bs-toggle="modal" data-bs-target="#editModalstudent{{student.id}}"><img class="icon" src="{% static 'img/edit.png'%}"></a></td>
             <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModalstudent{{student.id}}"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
+            {% endif %}
         </tr>
         {% endfor %}
     </tbody>

@@ -38,10 +38,11 @@
             <th scope="col">المؤهل</th>
             <th scope="col">الراتب بالساعه</th>
             <th scope="col">رابط الحصه</th>
+            {% if request.user.type == "Admin" %}
             <th scope="col">الفاتوره</th>
             <th scope="col">تعديل</th>
             <th scope="col">حذف</th>
-            
+            {% endif %}
         </tr>
     </thead>
     <tbody>
@@ -53,9 +54,11 @@
             <td>{{instructor.qualification}}</td>     
             <td>{{instructor.hourly_salary}}</td>     
             <td>{{instructor.class_link}}</td>     
+            {% if request.user.type == "Admin" %}
             <td><a href="{% url 'dash:instructor_invoices' %}"><img class="icon" src="{% static 'img/validating-ticket.png'%}"></a></td>       
             <td><a href="#" data-bs-toggle="modal" data-bs-target="#editModalinstructor{{instructor.user.id}}"><img class="icon" src="{% static 'img/edit.png'%}"></a></td>
             <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModalinstructor{{instructor.user.id}}"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
+            {% endif %}
         </tr>
         {% endfor %}
     </tbody>
