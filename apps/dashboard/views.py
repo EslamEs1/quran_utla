@@ -9,7 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.db.models import Sum, Count, Q
+from django.db.models import Sum, Q
 from urllib.parse import quote
 from .forms import (
     BaseUserForm,

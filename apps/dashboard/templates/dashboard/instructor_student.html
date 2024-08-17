@@ -82,29 +82,37 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const familySelect = document.getElementById('id_family');
-        const studentSelect = document.getElementById('id_student');
+    const familySelect = document.getElementById('id_family');
+    const studentSelect = document.getElementById('id_student');
 
-        familySelect.addEventListener('change', function () {
-            const familyId = this.value;
-            
-            // Clear the current student options
-            studentSelect.innerHTML = '<option value="">اختر الطالب</option>';
+    familySelect.addEventListener('change', function () {
+        const familyId = this.value;
+        
+        // Clear the current student options
+        studentSelect.innerHTML = '<option value="">اختر الطالب</option>';
 
-            if (familyId) {
-                fetch(`/dashboard/get_students_by_family/${familyId}/`)
-                    .then(response => response.json())
-                    .then(data => {
-                        data.students.forEach(student => {
-                            const option = document.createElement('option');
-                            option.value = student.id;
-                            option.textContent = student['name'];
-                            studentSelect.appendChild(option);
-                        });
-                    })
-                    .catch(error => console.error('Error fetching students:', error));
-            }
-        });
+        if (familyId) {
+            fetch(`/dashboard/get_students_by_family/${familyId}/`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('لم تكن استجابة الشبكة جيدة');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    data.students.forEach(student => {
+                        const option = document.createElement('option');
+                        option.value = student.id;
+                        option.textContent = student['name'];
+                        studentSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching students:', error);
+                    alert('حدث خطأ أثناء جلب قائمة الطلاب. يرجى المحاولة مرة أخرى لاحقًا.');
+                });
+        }
     });
+});
 </script>
 {% endblock content %}

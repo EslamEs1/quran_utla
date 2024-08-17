@@ -35,9 +35,10 @@
             <th scope="col">المحافظه</th>
             <th scope="col">المرتب</th>
             <th scope="col">النسبة</th>
+            {% if request.user.type == "Admin" %}
             <th scope="col">تعديل</th>
             <th scope="col">حذف</th>
-
+            {% endif %}
         </tr>
     </thead>
     <tbody>
@@ -48,9 +49,11 @@
             <td>{{marketer.user.address}}</td>
             <td>{{marketer.salary}}</td>
             <td>{{marketer.ratio}}</td>
+            {% if request.user.type == "Admin" %}
             <td><a href="#" data-bs-toggle="modal" data-bs-target="#editModalmarkter{{marketer.user.id}}"><img class="icon"
                         src="{% static 'img/edit.png'%}"></a></td>
             <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModalmarkter{{marketer.user.id}}"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
+            {% endif %}
         </tr>            
         {% empty %}
         <h6 class="text-center">لا يوجد مسوقين الأن</h6>

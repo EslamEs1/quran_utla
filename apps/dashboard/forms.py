@@ -96,7 +96,6 @@ class BaseUserForm(forms.ModelForm):
         return user
 
 
-
 class CustomAuthenticationForm(AuthenticationForm):
     username = forms.CharField(
         label="رقم الهاتف",
@@ -311,20 +310,6 @@ class Instructor_StudentForm(forms.ModelForm):
         self.fields["student"].label = "الطالب"
         self.fields["instructor"].label = "المعلم"
 
-        if "family" in self.data:
-            try:
-                family_id = str(self.data.get("family"))
-                self.fields["student"].queryset = Student.objects.filter(
-                    family_id=family_id, is_active=True
-                ).order_by("name")
-            except (ValueError, TypeError):
-                self.fields["student"].queryset = Student.objects.none()
-        elif self.instance.pk:
-            self.fields["student"].queryset = self.instance.family.student_set.order_by(
-                "name"
-            )
-        else:
-            self.fields["student"].queryset = Student.objects.none()
 
 
 class ClassesForm(forms.ModelForm):
@@ -384,36 +369,12 @@ class ClassesForm(forms.ModelForm):
                 family_ids = Instructor_Student.objects.filter(
                     instructor=instructor_instance
                 ).values_list("family", flat=True)
-                self.fields["family"].queryset = Families.objects.filter(
-                    id__in=family_ids
-                )
+                
+                self.fields["family"].queryset = Families.objects.filter(id__in=family_ids)
 
                 # Automatically set the instructor and hide the field
                 self.fields["instructor"].widget = forms.HiddenInput()
                 self.fields["instructor"].initial = instructor_instance.pk
-
-                # Set initial queryset for students based on the selected family
-                if "family" in self.data:
-                    try:
-                        family_id = int(self.data.get("family"))
-                        self.fields["student"].queryset = Student.objects.filter(
-                            family_id=family_id,
-                            id__in=Instructor_Student.objects.filter(
-                                instructor=instructor_instance
-                            ).values_list("student", flat=True),
-                        ).order_by("name")
-                    except (ValueError, TypeError):
-                        self.fields["student"].queryset = Student.objects.none()
-                elif self.instance.pk:
-                    self.fields["student"].queryset = (
-                        self.instance.family.student_set.filter(
-                            id__in=Instructor_Student.objects.filter(
-                                instructor=instructor_instance
-                            ).values_list("student", flat=True)
-                        ).order_by("name")
-                    )
-                else:
-                    self.fields["student"].queryset = Student.objects.none()
 
             except Instructor.DoesNotExist:
                 self.fields["instructor"].widget = forms.HiddenInput()
@@ -421,8 +382,8 @@ class ClassesForm(forms.ModelForm):
                 self.fields["family"].queryset = Families.objects.none()
                 self.fields["student"].queryset = Student.objects.none()
         else:
-            self.fields["family"].queryset = Families.objects.none()
-            self.fields["student"].queryset = Student.objects.none()
+            self.fields["family"].queryset = Families.objects.all()
+            self.fields["student"].queryset = Student.objects.all()
 
         # Set labels for form fields
         self.fields["family"].label = "العائلة"
@@ -433,7 +394,7 @@ class ClassesForm(forms.ModelForm):
         self.fields["evaluation"].label = "التقييم"
         self.fields["subject_name"].label = "أسم الماده"
         self.fields["notes"].label = "ملحوظة"
-
+    
     def save(self, commit=True):
         instance = super(ClassesForm, self).save(commit=False)
 
@@ -445,12 +406,15 @@ class ClassesForm(forms.ModelForm):
 
         if instructor_student:
             instance.instructor = instructor_student.instructor
+        else:
+            # Handle the case where no instructor is found for the student
+            instance.instructor = None  # or set to a default value
 
         if commit:
             instance.save()
 
         return instance
-
+    
 
 class BootstrapPasswordChangeForm(PasswordChangeForm):
     def __init__(self, *args, **kwargs):
