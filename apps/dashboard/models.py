@@ -11,7 +11,7 @@ from django.db.models import Sum, F
 from django.db.models.functions import Cast
 import uuid
 from phonenumber_field.modelfields import PhoneNumberField
-
+from django.db.models.functions import Coalesce
 
 # ------------------------Settings
 class Tax(models.Model):
@@ -234,18 +234,14 @@ class Classes(models.Model):
 
         # Convert number_class_hours to IntegerField safely
         total_hours = queryset.aggregate(
-            total_hours=Sum(
-                Value(0, output_field=IntegerField())
-                if F("number_class_hours").isnull()
-                else Cast(F("number_class_hours"), IntegerField())
-            )
+            total_hours=Sum(Coalesce(Cast("number_class_hours", models.IntegerField()), 0))
         )
 
         total_salary = (
             queryset.values("student")
             .annotate(
                 total_salary=Sum(
-                    Cast(F("number_class_hours"), IntegerField())
+                    Coalesce(Cast(F("number_class_hours"), models.IntegerField()), 0)
                     * F("student__hourly_salary")
                     / 60
                 )
@@ -269,9 +265,7 @@ class Classes(models.Model):
 
         total_hours = queryset.aggregate(
             total_hours=Sum(
-                Value(0, output_field=IntegerField())
-                if F("number_class_hours").isnull()
-                else Cast(F("number_class_hours"), IntegerField())
+                Coalesce(Cast("number_class_hours", models.IntegerField()), 0)
             )
         )
 
@@ -279,7 +273,7 @@ class Classes(models.Model):
             queryset.values("student")
             .annotate(
                 total_salary=Sum(
-                    Cast(F("number_class_hours"), IntegerField())
+                    Coalesce(Cast(F("number_class_hours"), models.IntegerField()), 0)
                     * F("student__hourly_salary")
                     / 60
                 )
@@ -303,9 +297,7 @@ class Classes(models.Model):
         total_sections = queryset.count()
         total_hours = queryset.aggregate(
             total_hours=Sum(
-                Value(0, output_field=IntegerField())
-                if F("number_class_hours").isnull()
-                else Cast(F("number_class_hours"), IntegerField())
+                Coalesce(Cast("number_class_hours", models.IntegerField()), 0)
             )
         )
 
@@ -313,7 +305,7 @@ class Classes(models.Model):
             queryset.values("instructor")
             .annotate(
                 total_salary=Sum(
-                    Cast(F("number_class_hours"), IntegerField())
+                    Coalesce(Cast(F("number_class_hours"), models.IntegerField()), 0)
                     * F("instructor__hourly_salary")
                     / 60
                 )
