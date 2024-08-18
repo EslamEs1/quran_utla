@@ -971,22 +971,24 @@ def family_invoice_details(request, family_id):
         )
 
         if classes.exists():
+            # Convert number_class_hours to integer before aggregation
             student_hours = (
                 classes.aggregate(
                     total_hours=Sum(Cast("number_class_hours", IntegerField()))
                 )["total_hours"]
                 or 0
             )
+            student_hours = Decimal(student_hours)  # Ensure student_hours is Decimal
             student_classes = classes.count()
-            student_before_tax = Decimal(student_hours) * student.hourly_salary
+            student_before_tax = student_hours * Decimal(student.hourly_salary)
             student_after_tax = student_before_tax * (
                 Decimal(1) - tax_percentage / Decimal(100)
             )
         else:
-            student_hours = 0
+            student_hours = Decimal(0)
             student_classes = 0
-            student_before_tax = Decimal(0.0)
-            student_after_tax = Decimal(0.0)
+            student_before_tax = Decimal(0)
+            student_after_tax = Decimal(0)
 
         student.total_hours = student_hours // 60
         student.total_classes = student_classes
