@@ -951,14 +951,15 @@ def family_invoice_details(request, family_id):
     if not selected_date:
         current_date = datetime.now().date()
         selected_date = current_date.replace(day=1)
+
     try:
         latest_tax = Tax.objects.latest("date")
     except Tax.DoesNotExist:
         latest_tax = Tax(percentage=0.0)
 
-    tax_percentage = latest_tax.percentage if latest_tax else 0.0
+    tax_percentage = Decimal(latest_tax.percentage) if latest_tax else Decimal(0.0)
 
-    total_hours = 0
+    total_hours = Decimal(0)
     total_classes = 0
     total_before_tax = Decimal(0)
     total_after_tax = Decimal(0)
@@ -971,7 +972,6 @@ def family_invoice_details(request, family_id):
         )
 
         if classes.exists():
-            # Convert number_class_hours to integer before aggregation
             student_hours = (
                 classes.aggregate(
                     total_hours=Sum(Cast("number_class_hours", IntegerField()))
@@ -982,7 +982,7 @@ def family_invoice_details(request, family_id):
             student_classes = classes.count()
             student_before_tax = student_hours * Decimal(student.hourly_salary)
             student_after_tax = student_before_tax * (
-                Decimal(1) - tax_percentage / Decimal(100)
+                Decimal(1) - (tax_percentage / Decimal(100))
             )
         else:
             student_hours = Decimal(0)
@@ -990,15 +990,15 @@ def family_invoice_details(request, family_id):
             student_before_tax = Decimal(0)
             student_after_tax = Decimal(0)
 
-        student.total_hours = student_hours // 60
+        student.total_hours = student_hours // Decimal(60)
         student.total_classes = student_classes
-        student.total_before_tax = student_before_tax / 60
-        student.total_after_tax = student_after_tax / 60
+        student.total_before_tax = student_before_tax / Decimal(60)
+        student.total_after_tax = student_after_tax / Decimal(60)
 
         total_hours += student.total_hours
         total_classes += student.total_classes
-        total_before_tax += Decimal(student.total_before_tax)
-        total_after_tax += Decimal(student.total_after_tax)
+        total_before_tax += student.total_before_tax
+        total_after_tax += student.total_after_tax
 
     return render(
         request,
