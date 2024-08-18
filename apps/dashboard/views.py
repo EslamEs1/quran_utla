@@ -951,8 +951,11 @@ def family_invoice_details(request, family_id):
     if not selected_date:
         current_date = datetime.now().date()
         selected_date = current_date.replace(day=1)
-
-    latest_tax = Tax.objects.latest("date")
+    try:
+        latest_tax = Tax.objects.latest("date")
+    except Tax.DoesNotExist:
+        latest_tax = Tax(percentage=0.0)
+    
     tax_percentage = latest_tax.percentage if latest_tax else 0.0
 
     total_hours = 0
