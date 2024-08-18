@@ -21,10 +21,10 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DJANGO_DEBUG", False)
 
-# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = []
 
-# if not DEBUG:
-ALLOWED_HOSTS = ["www.quranutla.com", "quranutla.com"]
+if not DEBUG:
+    ALLOWED_HOSTS = ["www.quranutla.com", "quranutla.com"]
 
 
 # Application definition
@@ -102,17 +102,17 @@ DATABASES = {
     }
 }
 
-# if not DEBUG:
-#     DATABASES = {
-#         "default": {
-#             "ENGINE": "django.db.backends.postgresql",
-#             "NAME": env("POSTGRES_DB"),
-#             "USER": env("POSTGRES_USER"),
-#             "PASSWORD": env("POSTGRES_PASSWORD"),
-#             "HOST": env("POSTGRES_HOST"),
-#             "PORT": env("POSTGRES_PORT"),
-#         }
-#     }
+if not DEBUG:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": env("POSTGRES_DB"),
+            "USER": env("POSTGRES_USER"),
+            "PASSWORD": env("POSTGRES_PASSWORD"),
+            "HOST": env("POSTGRES_HOST"),
+            "PORT": env("POSTGRES_PORT"),
+        }
+    }
 
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.Argon2PasswordHasher",
@@ -230,10 +230,7 @@ LOGOUT_REDIRECT_URL = "/dashboard/login/"
 PHONENUMBER_DEFAULT_REGION = "US"
 
 
-# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-# DEFAULT_FROM_EMAIL = "eslamdeveloper1@example.com"
-# EMAIL_HOST = "smtp.your-email-provider.com"
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = "eslamdeveloper1@example.com"
-# EMAIL_HOST_PASSWORD = "your-email-password"
+TWILIO_ACCOUNT_SID = env("TWILIO_ACCOUNT_SID")
+TWILIO_AUTH_TOKEN = env("TWILIO_AUTH_TOKEN")
+TWILIO_WHATSAPP_NUMBER = env("TWILIO_WHATSAPP_NUMBER")
+YOUR_WHATSAPP_NUMBER = env("YOUR_WHATSAPP_NUMBER")
