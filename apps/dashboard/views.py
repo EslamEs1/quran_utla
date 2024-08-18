@@ -10,8 +10,8 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.db.models import Sum, Q
 from urllib.parse import quote
-
-
+from django.db.models import IntegerField
+from django.db.models.functions import Cast
 
 from .forms import (
     BaseUserForm,
@@ -955,7 +955,7 @@ def family_invoice_details(request, family_id):
         latest_tax = Tax.objects.latest("date")
     except Tax.DoesNotExist:
         latest_tax = Tax(percentage=0.0)
-    
+
     tax_percentage = latest_tax.percentage if latest_tax else 0.0
 
     total_hours = 0
@@ -971,8 +971,14 @@ def family_invoice_details(request, family_id):
         )
 
         if classes.exists():
+            # student_hours = (
+            #     classes.aggregate(total_hours=Sum("number_class_hours"))["total_hours"]
+            #     or 0
+            # )
             student_hours = (
-                classes.aggregate(total_hours=Sum("number_class_hours"))["total_hours"]
+                classes.aggregate(
+                    total_hours=Sum(Cast("number_class_hours", IntegerField()))
+                )["total_hours"]
                 or 0
             )
             student_classes = classes.count()
@@ -1323,5 +1329,3 @@ def teacher_contact(request):
 
     contacts = TeacherContact.objects.all()
     return render(request, "dashboard/be_a_teacher.html", {"contacts": contacts})
-
-
