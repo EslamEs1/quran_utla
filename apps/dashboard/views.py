@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.contrib.auth import update_session_auth_hash
-from django.urls import reverse
 from .forms import CustomAuthenticationForm
 from datetime import datetime, timedelta
 from django.contrib.auth import authenticate, login, logout
@@ -11,6 +10,12 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.db.models import Sum, Q
 from urllib.parse import quote
+from django.contrib.auth.signals import user_logged_in
+from django.core.mail import send_mail
+from django.conf import settings
+from django.dispatch import receiver
+
+
 from .forms import (
     BaseUserForm,
     InstructorForm,
@@ -1292,6 +1297,15 @@ def activate_user(request, user_id):
     return HttpResponseRedirect(request.headers.get("referer"))
 
 
+@login_required
+def activate_family(request, user_id):
+    user = get_object_or_404(Families, id=user_id)
+    user.is_active = True
+    user.save()
+    messages.success(request, f"تم تفعيل المستخدم {user.name} بنجاح")
+    return HttpResponseRedirect(request.headers.get("referer"))
+
+
 # ------------------------------------------------ Contact
 @login_required
 def contact(request):
@@ -1309,3 +1323,21 @@ def teacher_contact(request):
 
     contacts = TeacherContact.objects.all()
     return render(request, "dashboard/be_a_teacher.html", {"contacts": contacts})
+
+
+# # ------------------------------------------------ notify_admin_manager_login
+# @receiver(user_logged_in)
+# def notify_admin_or_manager_login(sender, request, user, **kwargs):
+#     # Check if the logged-in user is an admin or manager
+#     if user.type in [UserType.ADMIN, UserType.MANAGER]:
+#         subject = "Admin/Manager Login Notification"
+#         message = f"{user.name} with phone number {user.phone} has logged in as {user.get_type_display()}."
+
+#         # Send email notification
+#         send_mail(
+#             subject,
+#             message,
+#             settings.DEFAULT_FROM_EMAIL,
+#             ["eslamdeveloper1@example.com"],
+#             fail_silently=False,
+#         )
