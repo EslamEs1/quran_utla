@@ -233,13 +233,13 @@ class Classes(models.Model):
         total_sections = queryset.count()
 
         total_hours = queryset.aggregate(
-            total_hours=Sum(Cast("number_class_hours", models.IntegerField()))
+            total_hours=Sum(Cast("number_class_hours", models.FloatField()))
         )
 
         total_salary = (
             queryset.values("student")
             .annotate(
-                total_salary=Sum(Cast("number_class_hours", models.DecimalField()))
+                total_salary=Sum(Cast("number_class_hours", models.FloatField()))
                 * F("student__hourly_salary")
                 / 60
             )
@@ -261,13 +261,13 @@ class Classes(models.Model):
         total_sections = queryset.count()
 
         total_hours = queryset.aggregate(
-            total_hours=Sum(Cast("number_class_hours", models.IntegerField()))
+            total_hours=Sum(Cast("number_class_hours", models.FloatField()))
         )
 
         total_salary = (
             queryset.values("student")
             .annotate(
-                total_salary=Sum(Cast("number_class_hours", models.DecimalField()))
+                total_salary=Sum(Cast("number_class_hours", models.FloatField()))
                 * F("student__hourly_salary")
                 / 60
             )
@@ -291,14 +291,14 @@ class Classes(models.Model):
         # Calculate the total number of sections and hours
         total_sections = queryset.count()
         total_hours = queryset.aggregate(
-            total_hours=Sum(Cast("number_class_hours", models.IntegerField()))
+            total_hours=Sum(Cast("number_class_hours", models.FloatField()))
         )
 
         # Calculate the total salary for the instructor
         total_salary = (
             queryset.values("instructor")
             .annotate(
-                total_salary=Sum(Cast("number_class_hours", models.DecimalField()))
+                total_salary=Sum(Cast("number_class_hours", models.FloatField()))
                 * F("instructor__hourly_salary")
                 / 60
             )
