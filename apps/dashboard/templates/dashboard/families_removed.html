@@ -19,10 +19,10 @@
     <tbody>
         {% for user in families %}
             <tr>
-                <td>{{user.user.name}}</td>
-                <td>{{user.user.phone}}</td>
-                <td>{{user.user.address}}</td>
-                <td><a href="{% url 'dash:activate_user' user.user.id %}"><img class="icon" src="{% static 'img/returning-visitor.png' %}"></a></td>
+                <td>{{user.name}}</td>
+                <td>{{user.phone}}</td>
+                <td>{{user.address}}</td>
+                <td><a href="{% url 'dash:activate_family' user.id %}"><img class="icon" src="{% static 'img/returning-visitor.png' %}"></a></td>
             </tr>
         {% endfor %}
     </tbody>
