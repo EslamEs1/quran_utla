@@ -230,10 +230,7 @@ LOGOUT_REDIRECT_URL = "/dashboard/login/"
 PHONENUMBER_DEFAULT_REGION = "US"
 
 
-# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-# DEFAULT_FROM_EMAIL = "eslamdeveloper1@example.com"
-# EMAIL_HOST = "smtp.your-email-provider.com"
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = "eslamdeveloper1@example.com"
-# EMAIL_HOST_PASSWORD = "your-email-password"
+TWILIO_ACCOUNT_SID = env("TWILIO_ACCOUNT_SID")
+TWILIO_AUTH_TOKEN = env("TWILIO_AUTH_TOKEN")
+TWILIO_WHATSAPP_NUMBER = env("TWILIO_WHATSAPP_NUMBER")
+YOUR_WHATSAPP_NUMBER = env("YOUR_WHATSAPP_NUMBER")
