@@ -21,9 +21,15 @@ User = get_user_model()
 def index(request):
     sliders = Slider.objects.all()
     courses = Course.objects.all()
-    student = Student.objects.filter(is_active=True).count()
-    family = Families.objects.filter(is_active=True).count()
-    teacher = User.objects.filter(type=UserType.INSTRUCTOR, is_active=True).count()
+    try:
+        student = Student.objects.filter(is_active=True).count()
+        family = Families.objects.filter(is_active=True).count()
+        teacher = User.objects.filter(type=UserType.INSTRUCTOR, is_active=True).count()
+        
+    except:
+        student = 0
+        family = 0
+        teacher = 0
     tutors = Tutors.objects.all()
     posts = Post.objects.all()
 
