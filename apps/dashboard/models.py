@@ -232,16 +232,23 @@ class Classes(models.Model):
 
         total_sections = queryset.count()
 
+        # Convert number_class_hours to IntegerField safely
         total_hours = queryset.aggregate(
-            total_hours=Sum(Cast("number_class_hours", models.FloatField()))
+            total_hours=Sum(
+                Value(0, output_field=IntegerField())
+                if F("number_class_hours").isnull()
+                else Cast(F("number_class_hours"), IntegerField())
+            )
         )
 
         total_salary = (
             queryset.values("student")
             .annotate(
-                total_salary=Sum(Cast("number_class_hours", models.FloatField()))
-                * F("student__hourly_salary")
-                / 60
+                total_salary=Sum(
+                    Cast(F("number_class_hours"), IntegerField())
+                    * F("student__hourly_salary")
+                    / 60
+                )
             )
             .aggregate(total_salary_sum=Sum("total_salary"))
         )
@@ -261,15 +268,21 @@ class Classes(models.Model):
         total_sections = queryset.count()
 
         total_hours = queryset.aggregate(
-            total_hours=Sum(Cast("number_class_hours", models.FloatField()))
+            total_hours=Sum(
+                Value(0, output_field=IntegerField())
+                if F("number_class_hours").isnull()
+                else Cast(F("number_class_hours"), IntegerField())
+            )
         )
 
         total_salary = (
             queryset.values("student")
             .annotate(
-                total_salary=Sum(Cast("number_class_hours", models.FloatField()))
-                * F("student__hourly_salary")
-                / 60
+                total_salary=Sum(
+                    Cast(F("number_class_hours"), IntegerField())
+                    * F("student__hourly_salary")
+                    / 60
+                )
             )
             .aggregate(total_salary_sum=Sum("total_salary"))
         )
@@ -283,29 +296,31 @@ class Classes(models.Model):
 
     @staticmethod
     def get_instructor_totals(instructor, start_date=None, end_date=None):
-        # Filter classes for the instructor within the date range
         queryset = Classes.objects.filter(instructor=instructor)
         if start_date and end_date:
             queryset = queryset.filter(date__range=[start_date, end_date])
 
-        # Calculate the total number of sections and hours
         total_sections = queryset.count()
         total_hours = queryset.aggregate(
-            total_hours=Sum(Cast("number_class_hours", models.FloatField()))
+            total_hours=Sum(
+                Value(0, output_field=IntegerField())
+                if F("number_class_hours").isnull()
+                else Cast(F("number_class_hours"), IntegerField())
+            )
         )
 
-        # Calculate the total salary for the instructor
         total_salary = (
             queryset.values("instructor")
             .annotate(
-                total_salary=Sum(Cast("number_class_hours", models.FloatField()))
-                * F("instructor__hourly_salary")
-                / 60
+                total_salary=Sum(
+                    Cast(F("number_class_hours"), IntegerField())
+                    * F("instructor__hourly_salary")
+                    / 60
+                )
             )
             .aggregate(total_salary_sum=Sum("total_salary"))
         )
 
-        # Calculate the total discounts for the instructor within the date range
         discount_queryset = Discounts.objects.filter(instructor=instructor)
         if start_date and end_date:
             discount_queryset = discount_queryset.filter(
@@ -314,10 +329,8 @@ class Classes(models.Model):
 
         total_discounts = discount_queryset.aggregate(total_discounts=Sum("amount"))
 
-        # Handle None values before calculation
         total_hours_value = total_hours["total_hours"] or 0
 
-        # Subtract discounts from the total salary
         total_salary_after_discounts = (total_salary["total_salary_sum"] or 0) - (
             total_discounts["total_discounts"] or 0
         )
