@@ -232,19 +232,17 @@ class Classes(models.Model):
             queryset = queryset.filter(date__range=[start_date, end_date])
 
         total_sections = queryset.count()
-
-        # Convert number_class_hours to IntegerField safely
+        
+        # Directly aggregate total_hours
         total_hours = queryset.aggregate(
-            total_hours=Sum(Coalesce(Cast("number_class_hours", models.IntegerField()), 0))
+            total_hours=Sum("number_class_hours")
         )
-
+        
         total_salary = (
             queryset.values("student")
             .annotate(
                 total_salary=Sum(
-                    Coalesce(Cast(F("number_class_hours"), models.IntegerField()), 0)
-                    * F("student__hourly_salary")
-                    / 60
+                    F("number_class_hours") * F("student__hourly_salary") / 60
                 )
             )
             .aggregate(total_salary_sum=Sum("total_salary"))
@@ -263,20 +261,17 @@ class Classes(models.Model):
             queryset = queryset.filter(date__range=[start_date, end_date])
 
         total_sections = queryset.count()
-
+        
+        # Directly aggregate total_hours
         total_hours = queryset.aggregate(
-            total_hours=Sum(
-                Coalesce(Cast("number_class_hours", models.IntegerField()), 0)
-            )
+            total_hours=Sum("number_class_hours")
         )
 
         total_salary = (
             queryset.values("student")
             .annotate(
                 total_salary=Sum(
-                    Coalesce(Cast(F("number_class_hours"), models.IntegerField()), 0)
-                    * F("student__hourly_salary")
-                    / 60
+                    F("number_class_hours") * F("student__hourly_salary") / 60
                 )
             )
             .aggregate(total_salary_sum=Sum("total_salary"))
@@ -296,19 +291,17 @@ class Classes(models.Model):
             queryset = queryset.filter(date__range=[start_date, end_date])
 
         total_sections = queryset.count()
+        
+        # Directly aggregate total_hours
         total_hours = queryset.aggregate(
-            total_hours=Sum(
-                Coalesce(Cast("number_class_hours", models.IntegerField()), 0)
-            )
+            total_hours=Sum("number_class_hours")
         )
 
         total_salary = (
             queryset.values("instructor")
             .annotate(
                 total_salary=Sum(
-                    Coalesce(Cast(F("number_class_hours"), models.IntegerField()), 0)
-                    * F("instructor__hourly_salary")
-                    / 60
+                    F("number_class_hours") * F("instructor__hourly_salary") / 60
                 )
             )
             .aggregate(total_salary_sum=Sum("total_salary"))
