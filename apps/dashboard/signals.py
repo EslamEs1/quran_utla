@@ -39,4 +39,4 @@ def notify_family_on_class_count(sender, instance, **kwargs):
             f"has completed {class_count} classes."
         )
         # Send the WhatsApp message to the family's phone number or a predefined admin number
-        send_whatsapp_message(family.phone_number, message)
+        send_whatsapp_message(settings.YOUR_WHATSAPP_NUMBER, message)
