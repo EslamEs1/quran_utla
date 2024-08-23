@@ -28,10 +28,9 @@ urlpatterns = [
     path("invoices/student/<int:student_id>/", views.student_invoice_details, name="student_invoice_details",),
     path("invoices/instructor/advancesdisc/", views.advancesdisc, name="advancesdisc"),
     path("invoices/families/invoices-link/", views.invoices_link, name="invoices_link"),
-    path("families/removed/", views.families_removed, name="families_removed"),
-    path("instructor/removed/", views.instructor_removed, name="instructor_removed"),
-    path("users/active-family/<str:user_id>/", views.activate_family, name="activate_family"),
-    path("users/active-user/<int:user_id>/",views.activate_user,name="activate_user_inst",),
+    path("users/removed/", views.users_removed, name="users_removed"),
+    path("users/active-user/<int:user_id>/",views.delete_user,name="delete_user",),
+    path("users/delete-users-list/<int:user_id>/",views.delete_users_list,name="delete_users_list",),
     path('marketer-commissions/', views.marketer_commission_view, name='marketer_commission_view'),
     path('markete-his-students/', views.marketer_students, name='marketer_students'),
 
@@ -48,9 +47,6 @@ urlpatterns = [
     path("edit_family/<str:id>/", views.edit_family, name="edit_family"),
     path("delete_family/<str:id>/", views.delete_family, name="delete_family"),
     path("edit_instructor/<int:id>/", views.edit_instructor, name="edit_instructor"),
-    path(
-        "delete_instructor/<int:id>/", views.delete_instructor, name="delete_instructor"
-    ),
     path("edit_student/<int:id>/", views.edit_student, name="edit_student"),
     path("delete_student/<int:id>/", views.delete_student, name="delete_student"),
     path(

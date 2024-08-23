@@ -42,6 +42,7 @@ from .models import (
     Marketer_Student,
     Marketer,
     Instructor,
+    DeleteUsers,
 )
 
 CustomUser = get_user_model()
@@ -196,10 +197,9 @@ def edit_manager(request, id):
 
 @login_required
 def delete_manager(request, id):
-    manager = get_object_or_404(CustomUser, id=id)
-    manager.is_active = False
-    manager.save()
-    messages.success(request, "تم حذف المشرف بنجاح")
+    user = get_object_or_404(CustomUser, id=id)
+    user.delete()
+    messages.success(request, f"تم حذف المستخدم {user.name} بنجاح")
     return HttpResponseRedirect(request.headers.get("referer"))
 
 
@@ -311,16 +311,6 @@ def edit_instructor(request, id):
 
     return HttpResponseRedirect(request.headers.get("referer"))
 
-
-@login_required
-def delete_instructor(request, id):
-    instructor = get_object_or_404(CustomUser, id=id)
-    instructor.is_active = False
-    instructor.save()
-    messages.success(request, "تم حذف المعلم بنجاح")
-    return HttpResponseRedirect(request.headers.get("referer"))
-
-
 # ------------------------------------------------ Families
 @login_required
 def register_family(request):
@@ -406,10 +396,10 @@ def edit_family(request, id):
 
 @login_required
 def delete_family(request, id):
-    family = get_object_or_404(Families, id=id)
-    family.is_active = False
-    family.save()
-    messages.success(request, "تم حذف العائلة بنجاح")
+    user = get_object_or_404(Families, id=id)
+    DeleteUsers.objects.create(name=user.name, phone=user.number)
+    user.delete()
+    messages.success(request, f"تم حذف المستخدم {user.name} بنجاح")
     return HttpResponseRedirect(request.headers.get("referer"))
 
 
@@ -511,8 +501,7 @@ def edit_student(request, id):
 @login_required
 def delete_student(request, id):
     student = get_object_or_404(Student, id=id)
-    student.is_active = False
-    student.save()
+    student.delete()
     messages.success(request, "تم حذف الطالب بنجاح")
     return HttpResponseRedirect(request.headers.get("referer"))
 
@@ -535,7 +524,7 @@ def change_password(request):
             user = form.save()
             update_session_auth_hash(request, user)  # Important to update the session
             messages.success(request, "تم تغيير كلمة المرور بنجاح!")
-            return redirect("dash:dashboard") 
+            return redirect("dash:dashboard")
         else:
             messages.error(request, "يرجى تصحيح الأخطاء الموجودة في النموذج.")
     else:
@@ -575,9 +564,11 @@ def user_login(request):
             password = form.cleaned_data["password"]
             user = authenticate(request, username=phone, password=password)
             if user is not None:
-                login(request, user)
-                messages.success(request, "تم تسجيل الدخول بنجاح!")
-                return redirect("dash:dashboard")
+                if user.is_active:
+                    login(request, user)
+                    messages.success(request, "تم تسجيل الدخول بنجاح!")
+                    return redirect("dash:dashboard")
+                messages.success(request, "هذه الحساب معلق")
             else:
                 messages.error(request, "اسم المستخدم أو كلمة المرور غير صحيحة.")
         else:
@@ -701,8 +692,7 @@ def edit_markter(request, id):
 @login_required
 def delete_markter(request, id):
     manager = get_object_or_404(CustomUser, id=id)
-    manager.is_active = False
-    manager.save()
+    manager.delete()
     messages.success(request, "تم حذف المشرف بنجاح")
     return HttpResponseRedirect(request.headers.get("referer"))
 
@@ -820,7 +810,7 @@ def classes(request):
     families = Families.objects.all()
     students = Student.objects.all()
     instructors = Instructor.objects.all()
-    
+
     context = {
         "form": form,
         "classes": classes_list,
@@ -898,7 +888,9 @@ def invoices(request):
     ).distinct()
 
     if search_query:
-        families_with_classes = families_with_classes.filter(name__icontains=search_query)
+        families_with_classes = families_with_classes.filter(
+            name__icontains=search_query
+        )
 
     # Query invoices for the selected month
     invoices = Classes.objects.filter(date__range=[start_date, end_date])
@@ -1021,7 +1013,7 @@ def student_invoice_details(request, student_id):
     classes = Classes.objects.filter(student=student)
 
     current_date = datetime.now().date()
-    
+
     try:
         billing_month = BillingMonths.objects.get(family=student.family)
         selected_date = billing_month.date
@@ -1101,9 +1093,7 @@ def instructor_invoices(request):
     )
 
     # Calculate overall totals for the selected month (for admins only)
-    overall_totals = (
-        Classes.get_overall_totals(start_date, end_date)
-    )
+    overall_totals = Classes.get_overall_totals(start_date, end_date)
 
     total_hours = overall_totals["total_hours"] // 60
 
@@ -1223,7 +1213,9 @@ def instructor_invoices_detail(request):
     )
 
     # Calculate instructor totals for the logged-in instructor only
-    instructor_totals = Classes.get_instructor_totals(user.instructor, start_date, end_date)
+    instructor_totals = Classes.get_instructor_totals(
+        user.instructor, start_date, end_date
+    )
 
     return render(
         request,
@@ -1276,39 +1268,28 @@ def invoices_link(request):
     return render(request, "dashboard/invoices_link.html", {"families": families})
 
 
-# ------------------------------------------------ Removed User
-
-
+# ------------------------------------------------ List Removed User
 @login_required
-def families_removed(request):
-    families = Families.objects.filter(is_active=False)
-    return render(request, "dashboard/families_removed.html", {"families": families})
+def users_removed(request):
+    users = DeleteUsers.objects.all()
+    return render(request, "dashboard/users_removed.html", {"users": users})
 
 
+# ------------------------------------------------ delete User
 @login_required
-def instructor_removed(request):
-    instructor = Instructor.objects.filter(user__is_active=False)
-    return render(
-        request, "dashboard/instructor_removed.html", {"instructor": instructor}
-    )
-
-
-# ------------------------------------------------ Active User
-@login_required
-def activate_user(request, user_id):
+def delete_user(request, user_id):
     user = get_object_or_404(CustomUser, id=user_id)
-    user.is_active = True
-    user.save()
-    messages.success(request, f"تم تفعيل المستخدم {user.name} بنجاح")
+    DeleteUsers.objects.create(name=user.name, phone=user.phone)
+    user.delete()
+    messages.success(request, f"تم حذف المستخدم {user.name} بنجاح")
     return HttpResponseRedirect(request.headers.get("referer"))
 
 
 @login_required
-def activate_family(request, user_id):
-    user = get_object_or_404(Families, id=user_id)
-    user.is_active = True
-    user.save()
-    messages.success(request, f"تم تفعيل المستخدم {user.name} بنجاح")
+def delete_users_list(request, user_id):
+    user = get_object_or_404(DeleteUsers, id=user_id)
+    user.delete()
+    messages.success(request, f"تم حذف المستخدم {user.name} بنجاح")
     return HttpResponseRedirect(request.headers.get("referer"))
 
 

@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-<h3 class="text-center">العائلات المحذوفة</h3>
+<h3 class="text-center">المستخدمين المحذوفة</h3>
 {% endblock title %}
 {% block content %}
 <!-- Button trigger modals -->
@@ -11,18 +11,17 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th scope="col">أسم العائلة</th>
+            <th scope="col">أسم المستخدم</th>
             <th scope="col">رقم الهاتف</th>
-            <th scope="col">العنوان</th>
+            <th scope="col">حذف</th>
         </tr>
     </thead>
     <tbody>
-        {% for user in families %}
+        {% for user in users %}
             <tr>
                 <td>{{user.name}}</td>
-                <td>{{user.number}}</td>
-                <td>{{user.address}}</td>
-                <td><a href="{% url 'dash:activate_family' user.id %}"><img class="icon" src="{% static 'img/returning-visitor.png' %}"></a></td>
+                <td>{{user.phone}}</td>
+                <td><a href="{% url 'dash:delete_users_list' user.id %}"><img class="icon" src="{% static 'img/delete.png' %}"></a></td>
             </tr>
         {% endfor %}
     </tbody>

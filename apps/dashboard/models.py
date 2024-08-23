@@ -349,3 +349,8 @@ class Discounts(models.Model):
     comment = models.CharField(max_length=250)
     date = models.DateField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class DeleteUsers(models.Model):
+    name = models.CharField(max_length=200)
+    phone = models.CharField(max_length=15)
