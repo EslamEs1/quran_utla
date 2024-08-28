@@ -10,7 +10,7 @@ from .models import (
     Marketer_Student,
     UserType,
     Manager,
-    Marketer
+    Marketer,
 )
 from django.db.models import Q
 from django.contrib.auth.forms import PasswordChangeForm
@@ -27,7 +27,11 @@ class BaseUserForm(forms.ModelForm):
     password = forms.CharField(
         label="كلمة المرور",
         widget=forms.PasswordInput(
-            attrs={"class": "form-control", "placeholder": "كلمة المرور", "autocomplete": "new-password"}
+            attrs={
+                "class": "form-control",
+                "placeholder": "كلمة المرور",
+                "autocomplete": "new-password",
+            }
         ),
     )
     phone = forms.CharField(
@@ -226,7 +230,7 @@ class FamiliesForm(forms.ModelForm):
 class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
-        fields = ["family", "name", "gender", "age", "hourly_salary", "payment_link"]
+        fields = ["family", "name", "gender", "age", "hourly_salary", "payment_link", "count"]
         widgets = {
             "family": forms.Select(
                 attrs={"class": "form-control", "placeholder": "العائلة"}
@@ -246,6 +250,9 @@ class StudentForm(forms.ModelForm):
             "payment_link": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "رابط الدفع"}
             ),
+            "count": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "عدد الحصص"}
+            ),
         }
 
     def __init__(self, *args, **kwargs):
@@ -256,6 +263,7 @@ class StudentForm(forms.ModelForm):
         self.fields["age"].label = "العمر"
         self.fields["hourly_salary"].label = "السعر بالساعه"
         self.fields["payment_link"].label = "رابط الدفع"
+        self.fields["count"].label = "عدد الحصص"
 
 
 class MarketerForm(forms.ModelForm):
@@ -309,7 +317,6 @@ class Instructor_StudentForm(forms.ModelForm):
         self.fields["family"].label = "العائله"
         self.fields["student"].label = "الطالب"
         self.fields["instructor"].label = "المعلم"
-
 
 
 class ClassesForm(forms.ModelForm):
@@ -369,8 +376,10 @@ class ClassesForm(forms.ModelForm):
                 family_ids = Instructor_Student.objects.filter(
                     instructor=instructor_instance
                 ).values_list("family", flat=True)
-                
-                self.fields["family"].queryset = Families.objects.filter(id__in=family_ids)
+
+                self.fields["family"].queryset = Families.objects.filter(
+                    id__in=family_ids
+                )
 
                 # Automatically set the instructor and hide the field
                 self.fields["instructor"].widget = forms.HiddenInput()
@@ -394,7 +403,7 @@ class ClassesForm(forms.ModelForm):
         self.fields["evaluation"].label = "التقييم"
         self.fields["subject_name"].label = "أسم الماده"
         self.fields["notes"].label = "ملحوظة"
-    
+
     def save(self, commit=True):
         instance = super(ClassesForm, self).save(commit=False)
 
@@ -414,7 +423,7 @@ class ClassesForm(forms.ModelForm):
             instance.save()
 
         return instance
-    
+
 
 class BootstrapPasswordChangeForm(PasswordChangeForm):
     def __init__(self, *args, **kwargs):

@@ -974,7 +974,7 @@ def family_invoice_details(request, family_id):
             student_classes = classes.count()
             student_before_tax = student_hours * Decimal(student.hourly_salary)
             student_after_tax = student_before_tax * (
-                Decimal(1) - (tax_percentage / Decimal(100))
+                Decimal(1) + (tax_percentage / Decimal(100))
             )
         else:
             student_hours = Decimal(0)
@@ -1039,7 +1039,7 @@ def student_invoice_details(request, student_id):
         date__month=current_date.month, date__year=current_date.year
     ).count()
     total_before_tax = total_hours * student.hourly_salary / 60
-    total_after_tax = total_before_tax * (1 - tax_percentage / 100)
+    total_after_tax = total_before_tax * (1 + tax_percentage / 100)
 
     return render(
         request,

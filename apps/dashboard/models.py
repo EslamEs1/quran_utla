@@ -138,6 +138,7 @@ class Student(models.Model):
     age = models.IntegerField()
     hourly_salary = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     payment_link = models.CharField(max_length=1000)
+    count = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
