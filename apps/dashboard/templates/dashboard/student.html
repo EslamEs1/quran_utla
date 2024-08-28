@@ -135,6 +135,11 @@
                         <input type="text" class="form-control" name="payment_link" value="{{ student.payment_link }}">
                     </div>
 
+                    <div class="mb-3">
+                        <label class="form-label">عدد الحصص</label>
+                        <input type="number" class="form-control" name="count" value="{{ student.count }}">
+                    </div>
+
 
                     <input type="submit" class="hidden" id="hiddenSubmitBtn-{{student.id}}">
                 </form>

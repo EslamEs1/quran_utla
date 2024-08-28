@@ -478,8 +478,9 @@ def edit_student(request, id):
         family_id = request.POST.get("family")
         payment_link = request.POST.get("payment_link")
         hourly_salary = request.POST.get("hourly_salary")
+        count = request.POST.get("count")
 
-        if name and gender and age and family_id and hourly_salary and payment_link:
+        if name and gender and age and family_id and hourly_salary and payment_link and count:
             try:
                 student.name = name
                 student.gender = gender
@@ -487,6 +488,7 @@ def edit_student(request, id):
                 student.family = Families.objects.get(id=family_id)
                 student.hourly_salary = hourly_salary
                 student.payment_link = payment_link
+                student.count = count
                 student.save()
 
                 messages.success(request, "تم تعديل الطالب بنجاح")
