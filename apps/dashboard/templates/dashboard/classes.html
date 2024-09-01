@@ -128,21 +128,21 @@
                     <div class="mb-3">
                         <label class="form-label">عدد ساعات الحصة</label>
                         <select class="form-select" name="number_class_hours">
-                            <option value="30" {% if family.number_class_hours == "30" %}selected{% endif %}>30 دقيقة</option>
-                            <option value="45" {% if family.number_class_hours == "45" %}selected{% endif %}>45 دقيقة</option>
-                            <option value="60" {% if family.number_class_hours == "60" %}selected{% endif %}>60 دقيقة</option>
-                            <option value="90" {% if family.number_class_hours == "90" %}selected{% endif %}>90 دقيقة</option>
-                            <option value="120" {% if family.number_class_hours == "120" %}selected{% endif %}>120 دقيقة</option>
+                            <option value="30" {% if class.number_class_hours == "30" %}selected{% endif %}>30 دقيقة</option>
+                            <option value="45" {% if class.number_class_hours == "45" %}selected{% endif %}>45 دقيقة</option>
+                            <option value="60" {% if class.number_class_hours == "60" %}selected{% endif %}>60 دقيقة</option>
+                            <option value="90" {% if class.number_class_hours == "90" %}selected{% endif %}>90 دقيقة</option>
+                            <option value="120" {% if class.number_class_hours == "120" %}selected{% endif %}>120 دقيقة</option>
                         </select>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">التقييم</label>
                         <select class="form-select" name="evaluation">
-                            <option value="Low" {% if family.evaluation == "Low" %}selected{% endif %}>ضعيف</option>
-                            <option value="Good" {% if family.evaluation == "Good" %}selected{% endif %}>مقبول</option>
-                            <option value="Vgood" {% if family.evaluation == "Vgood" %}selected{% endif %}>جيد</option>
-                            <option value="Excellence" {% if family.evaluation == "Excellence" %}selected{% endif %}>امتياز</option>
+                            <option value="Low" {% if class.evaluation == "Low" %}selected{% endif %}>ضعيف</option>
+                            <option value="Good" {% if class.evaluation == "Good" %}selected{% endif %}>جيد</option>
+                            <option value="Vgood" {% if class.evaluation == "Vgood" %}selected{% endif %}>جيد جدا</option>
+                            <option value="Excellence" {% if class.evaluation == "Excellence" %}selected{% endif %}>امتياز</option>
                         </select>
                     </div>
 

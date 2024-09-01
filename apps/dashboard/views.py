@@ -311,6 +311,7 @@ def edit_instructor(request, id):
 
     return HttpResponseRedirect(request.headers.get("referer"))
 
+
 # ------------------------------------------------ Families
 @login_required
 def register_family(request):
@@ -480,7 +481,15 @@ def edit_student(request, id):
         hourly_salary = request.POST.get("hourly_salary")
         count = request.POST.get("count")
 
-        if name and gender and age and family_id and hourly_salary and payment_link and count:
+        if (
+            name
+            and gender
+            and age
+            and family_id
+            and hourly_salary
+            and payment_link
+            and count
+        ):
             try:
                 student.name = name
                 student.gender = gender
@@ -908,11 +917,14 @@ def invoices(request):
         for family in families_with_classes
     }
 
+    total_salary = sum(family_totals[family_id]["total_salary"] for family_id in family_totals)
+    formatted_total_salary = f"{total_salary:.2f}"
+
     message = (
         "السلام عليكم ورحمة الله وبركاته\n"
         "🌹الإدارة المالية لمركز  قران يتلى تتمنى لكم التوفيق🌹\n"
         f"تم اصدار فاتورة شهر {current_date.strftime('%B %Y')}\n"
-        f"إجمالي المستحقات  لهذا الشهر {overall_totals['total_salary']}\n"
+        f"إجمالي المستحقات  لهذا الشهر {formatted_total_salary}\n"
         "يمكنكم مراجعة الفاتورة من خلال هذا الرابط\n"
     )
     encoded_message = quote(message)  # URL encode the message
@@ -936,18 +948,24 @@ def family_invoice_details(request, family_id):
     family = get_object_or_404(Families, pk=family_id, is_active=True)
     students = Student.objects.filter(family=family)
 
-    try:
-        billing_month = BillingMonths.objects.get(family=family)
-        selected_date = billing_month.date
-    except BillingMonths.DoesNotExist:
-        selected_date = None
+    # try:
+    #     billing_month = BillingMonths.objects.get(family=family)
+    #     selected_date = billing_month.date
+    # except BillingMonths.DoesNotExist:
+    #     selected_date = None
 
-    if not selected_date:
+    # if not selected_date:
+    selected_month = request.GET.get("month")
+    selected_year = request.GET.get("year")
+
+    if selected_month and selected_year:
+        selected_date = datetime(int(selected_year), int(selected_month), 1).date()
+    else:
         current_date = datetime.now().date()
         selected_date = current_date.replace(day=1)
 
     try:
-        latest_tax = Tax.objects.latest("date")
+        latest_tax = Tax.objects.first()
     except Tax.DoesNotExist:
         latest_tax = Tax(percentage=0.0)
 
@@ -1014,31 +1032,35 @@ def student_invoice_details(request, student_id):
     student = get_object_or_404(Student, pk=student_id, is_active=True)
     classes = Classes.objects.filter(student=student)
 
-    current_date = datetime.now().date()
+    # Get the month from the query parameter or default to the current month
+    month_param = request.GET.get("month")
+    year_param = request.GET.get("year")
 
-    try:
-        billing_month = BillingMonths.objects.get(family=student.family)
-        selected_date = billing_month.date
-    except BillingMonths.DoesNotExist:
-        selected_date = None
-
-    if not selected_date:
-        current_date = datetime.now().date()
-        selected_date = current_date.replace(day=1)
+    if month_param and year_param:
+        try:
+            month = int(month_param)
+            year = int(year_param)
+            selected_date = datetime(year, month, 1).date()
+        except ValueError:
+            # Handle the case where the month or year isn't an integer
+            selected_date = datetime.now().replace(day=1).date()
+    else:
+        # Default to the current month
+        selected_date = datetime.now().replace(day=1).date()
 
     # Get the latest tax percentage
-    latest_tax = Tax.objects.latest("date")
+    latest_tax = Tax.objects.first()
     tax_percentage = latest_tax.percentage if latest_tax else 0.0
 
-    # Calculate totals for the student for the current month
+    # Calculate totals for the student for the selected month
     total_hours = (
         classes.filter(
-            date__month=current_date.month, date__year=current_date.year
+            date__month=selected_date.month, date__year=selected_date.year
         ).aggregate(total_hours=Sum("number_class_hours"))["total_hours"]
         or 0
     )
     total_classes = classes.filter(
-        date__month=current_date.month, date__year=current_date.year
+        date__month=selected_date.month, date__year=selected_date.year
     ).count()
     total_before_tax = total_hours * student.hourly_salary / 60
     total_after_tax = total_before_tax * (1 + tax_percentage / 100)

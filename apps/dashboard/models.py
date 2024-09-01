@@ -186,9 +186,9 @@ class Marketer_Student(models.Model):
 
 # ------------------------Registration of classes
 class Evaluation(models.TextChoices):
-    LOW = "Low", "ضعيف"
-    GOOD = "Good", "مقبول"
-    VGOOD = "Vgood", "جيد"
+    LOW = "Low", "مقبول"
+    GOOD = "Good", "جيد"
+    VGOOD = "Very Good", "جيد جدا"
     EXCELLENCE = "Excellence", "امتياز"
 
 

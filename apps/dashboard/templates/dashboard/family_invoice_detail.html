@@ -40,10 +40,10 @@
                 <td>${{ student.total_before_tax|floatformat:"2" }}</td>
                 <td>${{ student.total_after_tax|floatformat:"2" }}</td>
                 <td>
-                    {% if student.total_hours == 0 %}
+                    {% if student.total_hours > 1 %}
                     <p>There are no classes this month</p>
                     {% else %}
-                        <a href="{% url 'dash:student_invoice_details' student.id %}">
+                        <a href="{% url 'dash:student_invoice_details' student.id %}?month={{ selected_month.month }}&year={{ selected_month.year }}">
                             <img class="icon" src="{% static 'img/validating-ticket.png' %}">
                         </a>
                     {% endif %}

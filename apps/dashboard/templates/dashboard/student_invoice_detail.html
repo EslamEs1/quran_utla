@@ -32,6 +32,7 @@
         </tr>
     </thead>
     <tbody>
+        {% if total_classes > 0 %}
         {% for class in classes %}
         <tr>
             <td>{{ class.student.name }}</td>
@@ -43,6 +44,10 @@
             <td>{{ class.notes }}</td>
         </tr>
         {% endfor %}
+        {% else %}
+        <p class="text-danger">لا توجد حصص لهذه الشهر للطالب المحدد.</p>
+        {% endif %}
+
     </tbody>
 </table>
 

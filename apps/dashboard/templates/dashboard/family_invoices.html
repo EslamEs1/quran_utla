@@ -52,9 +52,9 @@
             <td>{{ total.total_salary|floatformat:"2" }} $</td>
             <td>{{ total.family.number}}</td>
             <td><a
-                    href="https://quranutla.com/dashboard/family_inv_de/{{ family_id }}">https://quranutla.com/dashboard/family_inv_de/{{ family_id }}</a>
+                    href="https://quranutla.com/dashboard/family_inv_de/{{ family_id }}?month={{ current_date.month }}&year={{ current_date.year }}"">https://quranutla.com/dashboard/family_inv_de/{{ family_id }}</a>
             </td>
-            <td><a href="{% url 'dash:family_invoice_details' family_id %}"><img class="icon"
+            <td><a href="{% url 'dash:family_invoice_details' family_id %}?month={{ current_date.month }}&year={{ current_date.year }}""><img class="icon"
                         src="{% static 'img/validating-ticket.png' %}"></a></td>
             <td>
                 <a href="https://wa.me/{{ total.family.number}}?text={{ encoded_message }} https://quranutla.com/dashboard/family_inv_de/{{family_id}}  🌹 وجزاكم الله خيرا 🌹"
