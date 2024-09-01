@@ -236,7 +236,7 @@ class Classes(models.Model):
 
         # Convert number_class_hours to IntegerField safely
         total_hours = queryset.aggregate(
-            total_hours=Sum(Coalesce(Cast("number_class_hours", models.IntegerField()), 0))
+            total_hours=Sum(Cast("number_class_hours", models.IntegerField()))
         )
 
         total_salary = (
@@ -267,7 +267,7 @@ class Classes(models.Model):
 
         total_hours = queryset.aggregate(
             total_hours=Sum(
-                Coalesce(Cast("number_class_hours", models.IntegerField()), 0)
+                Cast("number_class_hours", models.IntegerField())
             )
         )
 
@@ -299,7 +299,7 @@ class Classes(models.Model):
         total_sections = queryset.count()
         total_hours = queryset.aggregate(
             total_hours=Sum(
-                Coalesce(Cast("number_class_hours", models.IntegerField()), 0)
+                Cast("number_class_hours", models.IntegerField())
             )
         )
 
