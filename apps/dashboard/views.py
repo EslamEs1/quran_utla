@@ -940,6 +940,8 @@ def invoices(request):
             "invoices": invoices,
             "encoded_message": encoded_message,
             "total_hours": total_hours,
+            "month": month,
+            "year": year,
         },
     )
 
