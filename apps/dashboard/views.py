@@ -8,7 +8,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.db.models import Sum, Q, Case, When, Value
+from django.db.models import Sum, Q, Case, When, Value, IntegerField
 from django.db.models.functions import Cast
 
 from .forms import (
@@ -41,6 +41,7 @@ from .models import (
     Marketer,
     Instructor,
     DeleteUsers,
+    Duration,
 )
 
 CustomUser = get_user_model()
