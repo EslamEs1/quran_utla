@@ -875,9 +875,12 @@ def invoices(request):
     search_query = request.GET.get("search", "")
 
     families = Families.objects.filter(is_active=True)
-
     # Default to current month if not specified in GET parameters
     current_date = datetime.now()
+    
+    year = current_date.year
+    month = current_date.month
+    
     start_date = current_date.replace(day=1).date()  # First day of the current month
     end_date = start_date.replace(day=1, month=start_date.month + 1) - timedelta(
         days=1
