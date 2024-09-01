@@ -1051,7 +1051,7 @@ def student_invoice_details(request, student_id):
             total_hours=Sum(
                 Cast(
                     Case(
-                        When(number_class_hours=Duration.THIRTY, then=Value(30)),
+                        When(number_class_hours=Duration.FORTY, then=Value(30)),
                         When(number_class_hours=Duration.FORTYFIVE, then=Value(45)),
                         When(number_class_hours=Duration.SIXTY, then=Value(60)),
                         When(number_class_hours=Duration.EIGHTY, then=Value(90)),
