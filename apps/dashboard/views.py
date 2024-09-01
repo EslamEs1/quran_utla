@@ -920,13 +920,6 @@ def invoices(request):
         for family in families_with_classes
     }
 
-    message = (
-        "السلام عليكم ورحمة الله وبركاته\n"
-        "🌹الإدارة المالية لمركز  قران يتلى تتمنى لكم التوفيق🌹\n"
-        f"تم اصدار فاتورة شهر {current_date.strftime('%B %Y')}\n"
-    )
-    encoded_message = quote(message)  # URL encode the message
-
     return render(
         request,
         "dashboard/family_invoices.html",
@@ -936,7 +929,6 @@ def invoices(request):
             "current_date": current_date,
             "overall_totals": overall_totals,
             "invoices": invoices,
-            "encoded_message": encoded_message,
             "total_hours": total_hours,
             "month": month,
             "year": year,

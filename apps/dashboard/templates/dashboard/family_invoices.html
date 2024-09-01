@@ -57,10 +57,10 @@
             <td><a href="{% url 'dash:family_invoice_details' family_id %}?month={{ month }}&year={{ year }}"><img class="icon"
                         src="{% static 'img/validating-ticket.png' %}"></a></td>
             <td>
-    <a href="https://wa.me/{{ total.family.number }}?text={% urlencode encoded_message %} https://quranutla.com/dashboard/family_inv_de/{{ family_id }}?month={{ month }}&year={{ year }} إجمالي المستحقات  لهذا الشهر {{ total.total_salary }}%0Aيمكنكم مراجعة الفاتورة من خلال هذا الرابط%0A🌹 وجزاكم الله خيرا 🌹" target="_blank">
-        <img class="icon" src="{% static 'img/whatsapp.png' %}" alt="Contact via WhatsApp">
-    </a>
-</td>
+                <a href="https://wa.me/{{ total.family.number }}?text=السلام%20عليكم%20ورحمة%20الله%20وبركاته%0A🌹الإدارة%20المالية%20لمركز%20قران%20يتلى%20تتمنى%20لكم%20التوفيق🌹%0Aتم%20اصدار%20فاتورة%20شهر%20{{ current_date|date:'F%20Y' }}%0Aإجمالي%20المستحقات%20لهذا%20الشهر%20{{ total.total_salary|floatformat:'2' }}%0Aيمكنكم%20مراجعة%20الفاتورة%20من%20خلال%20هذا%20الرابط%0Ahttps%3A%2F%2Fquranutla.com%2Fdashboard%2Ffamily_inv_de%2F{{ family_id }}%3Fmonth%3D{{ month }}%26year%3D{{ year }}%0A🌹%20وجزاكم%20الله%20خيرا%20🌹" target="_blank">
+                    <img class="icon" src="{% static 'img/whatsapp.png' %}" alt="Contact via WhatsApp">
+                </a>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
