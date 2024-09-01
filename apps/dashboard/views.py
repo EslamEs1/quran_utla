@@ -877,10 +877,10 @@ def invoices(request):
     families = Families.objects.filter(is_active=True)
     # Default to current month if not specified in GET parameters
     current_date = datetime.now()
-    
+
     year = current_date.year
     month = current_date.month
-    
+
     start_date = current_date.replace(day=1).date()  # First day of the current month
     end_date = start_date.replace(day=1, month=start_date.month + 1) - timedelta(
         days=1
@@ -920,17 +920,16 @@ def invoices(request):
         for family in families_with_classes
     }
 
-    total_salary = sum(family_totals[family_id]["total_salary"] for family_id in family_totals)
-    formatted_total_salary = f"{total_salary:.2f}"
-
-    message = (
-        "السلام عليكم ورحمة الله وبركاته\n"
-        "🌹الإدارة المالية لمركز  قران يتلى تتمنى لكم التوفيق🌹\n"
-        f"تم اصدار فاتورة شهر {current_date.strftime('%B %Y')}\n"
-        f"إجمالي المستحقات  لهذا الشهر {formatted_total_salary}\n"
-        "يمكنكم مراجعة الفاتورة من خلال هذا الرابط\n"
-    )
-    encoded_message = quote(message)  # URL encode the message
+    for family_id, totals in family_totals.items():
+        formatted_total_salary = f"{totals['total_salary']:.2f}"
+        message = (
+            "السلام عليكم ورحمة الله وبركاته\n"
+            "🌹الإدارة المالية لمركز قرآن يتلى تتمنى لكم التوفيق🌹\n"
+            f"تم اصدار فاتورة شهر {current_date.strftime('%B %Y')}\n"
+            f"إجمالي المستحقات لهذا الشهر: {formatted_total_salary}\n"
+            "يمكنكم مراجعة الفاتورة من خلال هذا الرابط\n"
+        )
+        encoded_message = quote(message)  # URL encode the message
 
     return render(
         request,
