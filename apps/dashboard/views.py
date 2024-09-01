@@ -919,14 +919,12 @@ def invoices(request):
         str(family.id): Classes.get_family_totals(family, start_date, end_date)
         for family in families_with_classes
     }
-
-    for family_id, totals in family_totals.items():
-        formatted_total_salary = f"{totals['total_salary']:.2f}"
+    for family_id, total in family_totals.items():
         message = (
             "السلام عليكم ورحمة الله وبركاته\n"
-            "🌹الإدارة المالية لمركز قرآن يتلى تتمنى لكم التوفيق🌹\n"
+            "🌹الإدارة المالية لمركز  قران يتلى تتمنى لكم التوفيق🌹\n"
             f"تم اصدار فاتورة شهر {current_date.strftime('%B %Y')}\n"
-            f"إجمالي المستحقات لهذا الشهر: {formatted_total_salary}\n"
+            f"إجمالي المستحقات  لهذا الشهر {total['total_salary']}\n"
             "يمكنكم مراجعة الفاتورة من خلال هذا الرابط\n"
         )
         encoded_message = quote(message)  # URL encode the message
