@@ -8,9 +8,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.db.models import Sum, Q
-from urllib.parse import quote
-from django.db.models import IntegerField
+from django.db.models import Sum, Q, Case, When, Value
 from django.db.models.functions import Cast
 
 from .forms import (
@@ -877,10 +875,10 @@ def invoices(request):
     families = Families.objects.filter(is_active=True)
     # Default to current month if not specified in GET parameters
     current_date = datetime.now()
-    
+
     year = current_date.year
     month = current_date.month
-    
+
     start_date = current_date.replace(day=1).date()  # First day of the current month
     end_date = start_date.replace(day=1, month=start_date.month + 1) - timedelta(
         days=1
@@ -1048,7 +1046,23 @@ def student_invoice_details(request, student_id):
     total_hours = (
         classes.filter(
             date__month=selected_date.month, date__year=selected_date.year
-        ).aggregate(total_hours=Sum("number_class_hours"))["total_hours"]
+        ).aggregate(
+            total_hours=Sum(
+                Cast(
+                    Case(
+                        When(number_class_hours=Duration.THIRTY, then=Value(30)),
+                        When(number_class_hours=Duration.FORTYFIVE, then=Value(45)),
+                        When(number_class_hours=Duration.SIXTY, then=Value(60)),
+                        When(number_class_hours=Duration.EIGHTY, then=Value(90)),
+                        When(number_class_hours=Duration.NINETY, then=Value(120)),
+                        output_field=IntegerField(),
+                    ),
+                    IntegerField(),
+                )
+            )
+        )[
+            "total_hours"
+        ]
         or 0
     )
     total_classes = classes.filter(
