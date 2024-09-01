@@ -57,7 +57,9 @@
             <td><a href="{% url 'dash:family_invoice_details' family_id %}?month={{ month }}&year={{ year }}"><img class="icon"
                         src="{% static 'img/validating-ticket.png' %}"></a></td>
             <td>
-                <a href="https://wa.me/{{ total.family.number }}?text={{ encoded_message }} https://quranutla.com/dashboard/family_inv_de/{{ family_id }}?month={{ month }}&year={{ year }} 🌹 وجزاكم الله خيرا 🌹"
+                <a href="https://wa.me/{{ total.family.number }}?text={{ encoded_message }} https://quranutla.com/dashboard/family_inv_de/{{ family_id }}?month={{ month }}&year={{ year }}  إجمالي المستحقات  لهذا الشهر {{total.total_salary}}\n
+                يمكنكم مراجعة الفاتورة من خلال هذا الرابط\n
+                🌹 وجزاكم الله خيرا 🌹
                     target="_blank">
                     <img class="icon" src="{% static 'img/whatsapp.png' %}" alt="Contact via WhatsApp">
                 </a>
