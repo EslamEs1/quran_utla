@@ -28,6 +28,7 @@
         </div>
     </div>
 
+
 <table class="table table-striped" style="direction: ltr;">
     <thead>
         <tr>
@@ -49,9 +50,7 @@
             <td>{{ total.total_sections }}</td>
             <td>{{ total.total_hours }}</td>
             <td>{{ total.total_salary|floatformat:"2" }} $</td>
-            <td>{{ total.family.number }}</td>
-            {% with filter_month=request.GET.filter_month|default:current_date|date:'Y-m' %}
-            {% with month=filter_month|slice:5:7 year=filter_month|slice:0:4 %}
+            <td>{{ total.family.number}}</td>
             <td><a
                     href="https://quranutla.com/dashboard/family_inv_de/{{ family_id }}?month={{ month }}&year={{ year }}">The Invoice Link</a>
             </td>
@@ -63,8 +62,6 @@
                     <img class="icon" src="{% static 'img/whatsapp.png' %}" alt="Contact via WhatsApp">
                 </a>
             </td>
-            {% endwith %}
-            {% endwith %}
         </tr>
         {% endfor %}
     </tbody>
@@ -74,10 +71,10 @@
 </table>
 
 <div class="total-list">
-    <div class="col-md-6">
+    <div class="col-md 6">
         <img src="{% static 'img/logo.png' %}" alt="logo">
     </div>
-    <div class="col-md-6">
+    <div class="col-md 6">
 
         <div class="total">
             <hr>
@@ -88,7 +85,7 @@
                     <p>Total Sessions: <span>( {{ overall_totals.total_sections }} )</span></p>
                 </div>
                 <div class="col">
-                    <p>Total Hours: <span>( {{ total_hours }} )</span></p>
+                    <p>Total Hour: <span>( {{ total_hours }} )</span></p>
                 </div>
                 <div class="col">
                     <p>Total Salary Students: <span>( ${{ overall_totals.total_salary|floatformat:"2" }} )</span></p>
