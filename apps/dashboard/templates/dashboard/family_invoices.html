@@ -52,12 +52,12 @@
             <td>{{ total.total_salary|floatformat:"2" }} $</td>
             <td>{{ total.family.number}}</td>
             <td><a
-                    href="https://quranutla.com/dashboard/family_inv_de/{{ family_id }}?month={{ request.GET.filter_month|default:current_date|date:'m' }}&year={{ request.GET.filter_month|default:current_date|date:'Y' }}">The Invoice Link</a>
+                    href="https://quranutla.com/dashboard/family_inv_de/{{ family_id }}?month={{ month }}&year={{ year }}">The Invoice Link</a>
             </td>
-            <td><a href="{% url 'dash:family_invoice_details' family_id %}?month={{ request.GET.filter_month|default:current_date|date:'m' }}&year={{ request.GET.filter_month|default:current_date|date:'Y' }}"><img class="icon"
+            <td><a href="{% url 'dash:family_invoice_details' family_id %}?month={{ month }}&year={{ year }}"><img class="icon"
                         src="{% static 'img/validating-ticket.png' %}"></a></td>
             <td>
-                <a href="https://wa.me/{{ total.family.number }}?text={{ encoded_message }} https://quranutla.com/dashboard/family_inv_de/{{ family_id }}?month={{ request.GET.filter_month|default:current_date|date:'m' }}&year={{ request.GET.filter_month|default:current_date|date:'Y' }} 🌹 وجزاكم الله خيرا 🌹"
+                <a href="https://wa.me/{{ total.family.number }}?text={{ encoded_message }} https://quranutla.com/dashboard/family_inv_de/{{ family_id }}?month={{ month }}&year={{ year }} 🌹 وجزاكم الله خيرا 🌹"
                     target="_blank">
                     <img class="icon" src="{% static 'img/whatsapp.png' %}" alt="Contact via WhatsApp">
                 </a>
