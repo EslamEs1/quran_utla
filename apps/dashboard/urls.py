@@ -18,7 +18,6 @@ urlpatterns = [
     path("get_students_by_family/<str:family_id>/", views.get_students_by_family, name="get_students_by_family",),
     path("classes/", views.classes, name="classes"),
     path("change-password/", views.change_password, name="change_password"),
-    path("login/", views.user_login, name="login"),
     path("logout/", views.logout_view, name="logout"),
     path("admin_password_change/", views.admin_password_change, name="admin_password_change",),
     path("invoices/", views.invoices, name="invoices"),

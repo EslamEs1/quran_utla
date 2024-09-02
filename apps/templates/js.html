@@ -46,7 +46,7 @@
 
         function logout() {
             // Log out and redirect to the login page
-            window.location.href = "{% url 'dash:logout' %}?next={% url 'dash:login' %}";
+            window.location.href = "{% url 'dash:logout' %}?next={% url 'login' %}";
         }
 
         function resetTimer() {

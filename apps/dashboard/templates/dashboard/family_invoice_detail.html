@@ -13,21 +13,41 @@
         <ul>
             <li>Quran Utla Academy</li>
             <li>Phone Number: +20 1014205947</li>
-            <li>Email: admin@quran.com</li>
+            <li>Email: quranutla84@gmail.com</li>
             <li>Address: Egypt - Cairo</li>
         </ul>
 
-        <img src="{% static 'img/logo.png' %}" alt="logo">
+        <a href="https://quranutla.com/" target="_blank"><img src="{% static 'img/logo.png' %}" alt="logo"></a>
+
+        <form method="GET" action="{% url 'dash:family_invoice_details' family.id %}" class="date-filter-form">
+            <label for="monthYearSelect">Select Month and Year:</label>
+            <select name="filter_month_year" id="monthYearSelect" class="form-control" onchange="window.location.href=this.value;">
+                {% if billing_month %}
+                <option value="{% url 'dash:family_invoice_details' family.id %}"
+                        {% if month == request.GET.month and year == request.GET.year %}selected{% endif %}>
+                    Current Month
+                </option>
+                {% for date in billing_month %}
+                    {% with date.date|date:"m" as month %}
+                    {% with date.date|date:"Y" as year %}
+                    <option value="{% url 'dash:family_invoice_details' family.id %}?month={{ month }}&year={{ year }}"
+                        {% if month == request.GET.month and year == request.GET.year %}selected{% endif %}>
+                    {{ date.date|date:"F Y" }}
+                    </option>
+                    {% endwith %}
+                    {% endwith %}
+                {% endfor %}
+                {% else %}
+                <option value="">No billing months available</option>
+                {% endif %}
+            </select>
+        </form>
     </div>
     <hr>
-    <table class="table table-striped">
+    <table class="table table-bordered" >
         <thead>
             <tr>
                 <th>Student Name</th>
-                <th>Sessions</th>
-                <th>Hours</th>
-                <th>Before Tax</th>
-                <th>After Tax</th>
                 <th>Student Invoice</th>
             </tr>
         </thead>
@@ -35,10 +55,6 @@
             {% for student in students %}
             <tr>
                 <td>{{ student }}</td>
-                <td>{{ student.total_classes }}</td>
-                <td>{{ student.total_hours }}</td>
-                <td>${{ student.total_before_tax|floatformat:"2" }}</td>
-                <td>${{ student.total_after_tax|floatformat:"2" }}</td>
                 <td>
                     {% if student.total_classes > 0 %}
                     <a href="{% url 'dash:student_invoice_details' student.id %}?month={{ selected_month.month }}&year={{ selected_month.year }}">
@@ -54,7 +70,7 @@
     </table>
 
     <div class="total-list">
-        <img src="{% static 'img/logo.png' %}" alt="logo">
+        <a href="https://quranutla.com/" target="_blank"><img src="{% static 'img/logo.png' %}" alt="logo"></a>
         <div class="total">
             <h4>Family Totals</h4>
             <h6>Invoice for Month {{ selected_month|date:"m/Y" }}</h6>
@@ -65,4 +81,7 @@
             <p>Tax Percentage: {{ tax_percentage }}%</p>
         </div>
     </div>
+
+
+    
 {% endblock content %}

@@ -16,44 +16,54 @@
         <li>Address: Egypt - Cairo</li>
     </ul>
 
-    <img src="{% static 'img/logo.png' %}" alt="logo">
+    <a href="https://quranutla.com/" target="_blank"><img src="{% static 'img/logo.png' %}" alt="logo"></a>
+
+    <div class="back-to-previous">
+        <a href="javascript:history.back()">Back To First Page</a>
+    </div>
 </div>
 <hr>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Student Name</th>
-            <th>Teacher</th>
-            <th>Date</th>
-            <th>Total Hours</th>
-            <th>Subject Name</th>
-            <th>Evaluation</th>
-            <th>Comment</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% if total_classes > 0 %}
-        {% for class in classes %}
-        <tr>
-            <td>{{ class.student.name }}</td>
-            <td>{{ class.instructor.user.name }}</td>
-            <td>{{ class.date }}</td>
-            <td>{{ total_hours }}</td>
-            <td>{{ class.subject_name }}</td>
-            <td>{{ class.evaluation }}</td>
-            <td>{{ class.notes }}</td>
-        </tr>
-        {% endfor %}
-        {% else %}
-        <p class="text-danger">لا توجد حصص لهذه الشهر للطالب المحدد.</p>
-        {% endif %}
 
-    </tbody>
-</table>
+<div class="table-wrapper">
+    <h3 class="table-title">Class Details</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Teacher</th>
+                <th>Hours</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if total_classes > 0 %}
+            {% for class in classes %}
+            <tr class="clickable-row">
+                <td>{{ class.student.name }} <img style="width: 10px;" src="{% static 'img/plus.png' %}" alt="plus"></td>
+                <td>{{ class.instructor.user.name }}</td>
+                <td>{{ class.class_hours }}</td>
+            </tr>
+            <tr class="details-row">
+                <td colspan="4">
+                    <div class="details-content">
+                        <p><strong>Date:</strong> {{ class.date }}</p>
+                        <p><strong>Evaluation:</strong> {{ class.evaluation }}</p>
+                        <p><strong>Comment:</strong> {{ class.notes }}</p>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+                <td colspan="4" class="text-danger">لا توجد حصص لهذه الشهر للطالب المحدد.</td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
 
 
 <div class="total-list">
-    <img src="{% static 'img/logo.png' %}" alt="logo">
+    <a href="https://quranutla.com/" target="_blank"><img src="{% static 'img/logo.png' %}" alt="logo"></a>
     <div class="total">
         <div class="list">
             <div class="col">
@@ -69,4 +79,16 @@
     </div>
 </div>
 
+
+<script>document.addEventListener("DOMContentLoaded", function () {
+    var clickableRows = document.querySelectorAll(".clickable-row");
+    clickableRows.forEach(function (row) {
+        row.addEventListener("click", function () {
+            var nextRow = this.nextElementSibling;
+            if (nextRow && nextRow.classList.contains("details-row")) {
+                nextRow.style.display = (nextRow.style.display === "table-row") ? "none" : "table-row";
+            }
+        });
+    });
+});</script>
 {% endblock content %}

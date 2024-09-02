@@ -22,3 +22,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'css/font.css' %}" />
 <link rel="stylesheet" href="{% static 'css/dash.css' %}" />
+{% if not request.user.is_authenticated %}
+<link rel="stylesheet" href="{% static 'css/family.css' %}" />
+{% endif %}

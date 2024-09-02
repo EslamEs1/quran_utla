@@ -55,6 +55,9 @@ def dash(request):
 # ------------------------------------------------ Billing
 @login_required
 def tax(request):
+    if not request.user.type == "Admin":
+        return redirect("dash:dashboard")
+    
     if request.method == "POST":
         tax_number = request.POST.get("tax")
         if tax_number:
@@ -69,6 +72,9 @@ def tax(request):
 
 @login_required
 def billing_month(request):
+    if not request.user.type == "Admin":
+        return redirect("dash:dashboard")
+    
     billing = BillingMonths.objects.filter()
     family = Families.objects.all()
 
@@ -128,6 +134,9 @@ def delete_billing_month(request, id):
 # ------------------------------------------------ Manager
 @login_required
 def register_manager(request):
+    if not (request.user.type == "Admin" or request.user.type == "Manager"):
+        return redirect("dash:dashboard")
+    
     search_query = request.GET.get("search", "")
     if search_query:
         managers = CustomUser.objects.filter(
@@ -205,6 +214,9 @@ def delete_manager(request, id):
 # ------------------------------------------------ Instructor
 @login_required
 def register_instructor(request):
+    if not (request.user.type == "Admin" or request.user.type == "Manager"):
+        return redirect("dash:dashboard")
+
     search_query = request.GET.get("search", "")
     if search_query:
         instructor = Instructor.objects.filter(
@@ -314,6 +326,9 @@ def edit_instructor(request, id):
 # ------------------------------------------------ Families
 @login_required
 def register_family(request):
+    if not (request.user.type == "Admin" or request.user.type == "Manager"):
+        return redirect("dash:dashboard")
+    
     search_query = request.GET.get("search", "")
     if search_query:
         families = Families.objects.filter(
@@ -406,6 +421,9 @@ def delete_family(request, id):
 # ------------------------------------------------ Student
 @login_required
 def register_student(request):
+    if not (request.user.type == "Admin" or request.user.type == "Manager"):
+        return redirect("dash:dashboard")
+    
     search_query = request.GET.get("search", "")
     if search_query:
         students = Student.objects.filter(name__icontains=search_query, is_active=True)
@@ -436,6 +454,9 @@ def register_student(request):
 
 @login_required
 def instructor_student_view(request):
+    if not (request.user.type == "Admin" or request.user.type == "Manager"):
+        return redirect("dash:dashboard")
+
     inst_student = Instructor_Student.objects.all()
 
     if request.method == "POST":
@@ -527,6 +548,9 @@ def del_student_instructor(request, id):
 # ------------------------------------------------ Password
 @login_required
 def change_password(request):
+    if not (request.user.type == "Admin" or request.user.type == "Manager"):
+        return redirect("dash:dashboard")
+    
     admin_change = AdminPasswordChangeForm()
     if request.method == "POST":
         form = BootstrapPasswordChangeForm(request.user, request.POST)
@@ -590,7 +614,7 @@ def user_login(request):
 
 def logout_view(request):
     logout(request)
-    return redirect("dash:login")
+    return redirect("login")
 
 
 # ------------------------------------------------ Student By Family
@@ -617,6 +641,9 @@ def get_students_by_family(request, family_id):
 # ------------------------------------------------ Markter
 @login_required
 def register_marketer(request):
+    if not (request.user.type == "Admin" or request.user.type == "Manager"):
+        return redirect("dash:dashboard")
+    
     search_query = request.GET.get("search", "")
     if search_query:
         marketer = Marketer.objects.filter(
@@ -709,6 +736,9 @@ def delete_markter(request, id):
 
 @login_required
 def marketer_student_view(request):
+    if not (request.user.type == "Admin" or request.user.type == "Manager"):
+        return redirect("dash:dashboard")
+    
     mar_student = Marketer_Student.objects.all()
 
     if request.method == "POST":
@@ -750,6 +780,9 @@ def del_student_marketer(request, id):
 # ------------------------------------------------ Classes
 @login_required
 def classes(request):
+    if not (request.user.type == "Admin" or request.user.type == "Manager"):
+        return redirect("dash:dashboard")
+
     # Default to current month if not specified in GET parameters
     current_date = datetime.now()
     start_date = current_date.replace(day=1).date()  # First day of the current month
@@ -938,12 +971,7 @@ def invoices(request):
 def family_invoice_details(request, family_id):
     family = get_object_or_404(Families, pk=family_id, is_active=True)
     students = Student.objects.filter(family=family)
-
-    # try:
-    #     billing_month = BillingMonths.objects.get(family=family)
-    #     selected_date = billing_month.date
-    # except BillingMonths.DoesNotExist:
-    #     selected_date = None
+    billing_month = BillingMonths.objects.filter(family=family)
 
     # if not selected_date:
     selected_month = request.GET.get("month")
@@ -1015,6 +1043,7 @@ def family_invoice_details(request, family_id):
             "total_classes": total_classes,
             "total_before_tax": total_before_tax,
             "total_after_tax": total_after_tax,
+            "billing_month":billing_month,
         },
     )
 
@@ -1078,7 +1107,7 @@ def student_invoice_details(request, student_id):
         {
             "student": student,
             "classes": classes,
-            "total_hours": total_hours // 60,
+            "total_hours": total_hours / 60,
             "total_classes": total_classes,
             "total_before_tax": total_before_tax,
             "total_after_tax": total_after_tax,
@@ -1156,6 +1185,9 @@ def instructor_invoices(request):
 
 @login_required
 def marketer_commission_view(request):
+    if not (request.user.type == "Admin" or request.user.type == "Manager"):
+        return redirect("dash:dashboard")
+    
     # Default to current month if not specified in GET parameters
     current_date = datetime.now()
     start_date = current_date.replace(day=1).date()  # First day of the current month
@@ -1204,6 +1236,9 @@ def marketer_commission_view(request):
 
 
 def marketer_students(request):
+    if not (request.user.type == "Admin" or request.user.type == "Manager"):
+        return redirect("dash:dashboard")
+
     # Get the marketer object using the provided ID
     marketer_students = Marketer_Student.objects.filter(marketer=request.user)
 
@@ -1262,6 +1297,9 @@ def instructor_invoices_detail(request):
 # ------------------------------------------------ AdvancesDisc
 @login_required
 def advancesdisc(request):
+    if not (request.user.type == "Admin" or request.user.type == "Manager"):
+        return redirect("dash:dashboard")
+    
     disc = Discounts.objects.all()
     if request.method == "POST":
         form = DiscountsForm(request.POST)
@@ -1302,6 +1340,9 @@ def invoices_link(request):
 # ------------------------------------------------ List Removed User
 @login_required
 def users_removed(request):
+    if not request.user.type == "Admin":
+        return redirect("dash:dashboard")
+    
     users = DeleteUsers.objects.all()
     return render(request, "dashboard/users_removed.html", {"users": users})
 

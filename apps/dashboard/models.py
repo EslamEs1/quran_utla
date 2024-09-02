@@ -226,6 +226,17 @@ class Classes(models.Model):
         else:
             return f"Class on {self.date} for {self.family.name}'s family"
 
+    @property
+    def class_hours(self):
+        # Convert `number_class_hours` from string to integer
+        try:
+            minutes = int(self.number_class_hours)
+        except ValueError:
+            return 0  # Return 0 or handle the case when the value cannot be converted
+
+        # Convert minutes to hours
+        return minutes / 60
+
     @staticmethod
     def get_overall_totals(start_date=None, end_date=None):
         queryset = Classes.objects.all()

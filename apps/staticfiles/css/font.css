@@ -150,3 +150,48 @@ button{
     height: auto;
 }
 
+.table-wrapper{
+    direction: ltr;
+}
+
+.details-row {
+    display: none;
+}
+
+.clickable-row {
+    cursor: pointer;
+}
+
+.table-wrapper .details-content {
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-top: 1px solid #ddd;
+}
+
+@media (max-width: 575.98px) { 
+    .list-family{
+        flex-direction: column;
+        align-items: center;
+        padding: 10px 0;
+        text-align: center;
+        
+    }
+
+    .list-family img{
+        margin: 15px 0;
+        
+    }
+
+    .total-list{
+        flex-direction: column-reverse;
+        align-items: center;
+    }
+
+    .total-list img{
+        width: 250px;
+        margin-top: 20px;
+    }
+
+}
+
+
