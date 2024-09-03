@@ -780,9 +780,6 @@ def del_student_marketer(request, id):
 # ------------------------------------------------ Classes
 @login_required
 def classes(request):
-    if not (request.user.type == "Admin" or request.user.type == "Manager" or request.user.type == "Instructor"):
-        return redirect("dash:dashboard")
-
     # Default to current month if not specified in GET parameters
     current_date = datetime.now()
     start_date = current_date.replace(day=1).date()  # First day of the current month
