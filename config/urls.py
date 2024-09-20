@@ -8,11 +8,11 @@ from apps.dashboard.views import user_login
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("dashboard/", include("apps.dashboard.urls", namespace="dash")),
-    # path("", include("apps.main.urls", namespace="main")),
-    # path("course/", include("apps.course.urls", namespace="course")),
-    # path("about/", include("apps.about.urls", namespace="about")),
-    # path("blog/", include("apps.blog.urls", namespace="blog")),
-    # path("learning/", include("apps.learning.urls", namespace="learning")),
+    path("", include("apps.main.urls", namespace="main")),
+    path("course/", include("apps.course.urls", namespace="course")),
+    path("about/", include("apps.about.urls", namespace="about")),
+    path("blog/", include("apps.blog.urls", namespace="blog")),
+    path("learning/", include("apps.learning.urls", namespace="learning")),
     
     path("a1b2c3d4e5f6g7#q/", user_login, name="login"),
     path("summernote/", include("django_summernote.urls")),
