@@ -9,7 +9,7 @@
                 <h1 class="blog-title">{{course.title}}</h1>
                 <img src="{{course.image.url}}" class="img-fluid" alt="{{course.title}}">
                 <div class="blog-content mt-4">
-                    <p>{{course.description}}</p>
+                    <p>{{course.description|safe}}</p>
                     <!-- Add more content here -->
                 </div>
             </div>
