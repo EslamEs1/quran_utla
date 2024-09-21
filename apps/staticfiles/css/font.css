@@ -200,4 +200,5 @@ button {
 .bottom-info{
     display: flex;
     align-items: center;
+    justify-content: space-between;
 }
