@@ -197,3 +197,7 @@ button {
 }
 
 
+.bottom-info{
+    display: flex;
+    align-items: center;
+}
