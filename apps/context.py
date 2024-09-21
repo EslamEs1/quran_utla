@@ -12,6 +12,6 @@ def context(request):
         "settings": Settings.objects.first(),  # Assuming there's only one settings object in the database.
         "about": About.objects.first(),
         "testimonials_video": TestimonialsVideo.objects.first(),
-        "questionanswer": QuestionAnswer.objects.first(),
+        "questionanswer": QuestionAnswer.objects.all(),
         "whyus": WhyUs.objects.all(),  # Assuming there's only one whyus object in the database.
     }
