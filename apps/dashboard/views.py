@@ -10,6 +10,7 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.db.models import Sum, Q, Case, When, Value, IntegerField
 from django.db.models.functions import Cast
+from django.core.paginator import Paginator
 
 from .forms import (
     BaseUserForm,
@@ -827,6 +828,11 @@ def classes(request):
                 | Q(instructor__user__name__icontains=search_query)
             )
 
+    paginator = Paginator(classes_list, 100)  # Show 10 classes per page
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    class_count = classes_list.count()
+
     if request.method == "POST":
         form = ClassesForm(request.POST, user=request.user)
         if form.is_valid():
@@ -853,10 +859,11 @@ def classes(request):
 
     context = {
         "form": form,
-        "classes": classes_list,
+        "classes": page_obj,
         "families": families,
         "students": students,
         "instructors": instructors,
+        "class_count": class_count,
     }
     return render(request, "dashboard/classes.html", context)
 

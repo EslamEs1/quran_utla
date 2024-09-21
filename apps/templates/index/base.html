@@ -124,7 +124,7 @@
                 <div class="col-md-3 mb-4 mb-md-0">
                     <img src="{{settings.logo.url}}" alt="Logo" class="img-fluid mb-3" />
                     <p>
-                        {{settings.text}}
+                        {{settings.text|truncatewords:20}}
                     </p>
                     <a href="{% url 'main:contact' %}" class="get-start">Get Started Now</a>
                 </div>
