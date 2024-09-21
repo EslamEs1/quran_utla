@@ -185,6 +185,10 @@
                 </div>
                 {% endfor %}
             </div>
+
+            <div class="video-wrapper">
+                <iframe src="{{testimonials_video.url}}"></iframe>
+            </div>
         </div>
     </div>
 
@@ -1546,20 +1550,65 @@
         </div>
     </section>
 
-    <div class="about">
+    <div class="faq">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-4">
-                    <img src="{{settings.logo.url}}" alt="logo">
-                </div>
-                <div class="col-md-8">
-                    <div class="main-title">
-                        <h2>About us</h2>
-                    </div>
-                    <p>{{about.content}}</p>
-                    <a href="{% url 'main:contact' %}">Contact us</a>
-                </div>
+            <div class="main-title">
+                <h2>Question and Answer</h2>
             </div>
+            <div class="accordion" id="accordionPanelsStayOpenExample">
+                {% for question in questionanswer %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                        {{question.question}}
+                    </button>
+                    </h2>
+                    <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+                    <div class="accordion-body">
+                        <p>{{question.answer}}</p>
+                    </div>
+                    </div>
+                </div>          
+                {% endfor %}
+                </div>
+        </div>
+    </div>
+
+    <div class="contact">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} text-center" role="alert">
+                    <li>
+                        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+                        {{ message }}
+                    </li>
+                </div>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <div class="container mt-5">
+            <div class="main-title">
+                <h2>Contact Us</h2>
+            </div>
+            <form method="post" action="{% url 'main:contact' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="whatsapp" name="whatsapp" placeholder="Enter your phone number"
+                        required>
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control" id="message" rows="5" name="message" placeholder="Enter your message"
+                        required></textarea>
+                </div>
+                <button type="submit">Send</button>
+            </form>
         </div>
     </div>
 

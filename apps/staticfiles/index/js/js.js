@@ -5,7 +5,7 @@ $(document).ready(function () {
         margin: 30, // Margin between items
         nav: true, // Show navigation
         autoplay: true, // Enable autoplay
-        autoplayTimeout: 3000, // Autoplay interval in milliseconds
+        autoplayTimeout: 6000, // Autoplay interval in milliseconds
         responsive: {
             0: {
                 items: 1, // Number of items to display on small screens

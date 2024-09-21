@@ -830,13 +830,14 @@ a {
 
 /* footer */
 .footer {
-    background-image: url('../img/bkg.jpg');
+    background-image: url('../img/bkg1.jpeg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     color: white;
     padding: 70px 0;
     position: relative;
+    object-fit: cover;
 }
 
 .footer::before {
@@ -846,7 +847,7 @@ a {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.8); /* Near-black overlay */
+    background-color: rgba(0, 0, 0, 0.829); /* Near-black overlay */
     z-index: 1;
 }
 
@@ -1129,4 +1130,28 @@ a {
 
 .sidebar .media img {
     border-radius: 4px;
+}
+
+
+.faq{
+    margin: 70px 0;
+}
+
+
+/* WhatsApp Button Styles */
+.whatsapp-button {
+    position: fixed;
+    bottom: 20px; /* Adjust the distance from the bottom */
+    right: 20px;  /* Adjust the distance from the right */
+    z-index: 1000; /* Ensure it stays above other content */
+}
+
+.whatsapp-button img {
+    border-radius: 50%; /* Optional: Makes the image round */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional: Adds a shadow */
+    transition: transform 0.3s ease; /* Optional: Adds a smooth hover effect */
+}
+
+.whatsapp-button img:hover {
+    transform: scale(1.1); /* Optional: Zooms the icon on hover */
 }

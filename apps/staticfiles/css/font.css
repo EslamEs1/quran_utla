@@ -3,25 +3,25 @@
 }
 
 
-.main_content_iner{
+.main_content_iner {
     direction: rtl;
 }
 
 
 
 
-.icon{
-    width:30px;
+.icon {
+    width: 30px;
     transition: .2s;
 
 }
 
-.icon:hover{
+.icon:hover {
     cursor: pointer;
     transform: scale(1.1);
 }
 
-button{
+button {
     margin-top: 20px;
     width: 100% !important;
 }
@@ -32,24 +32,24 @@ button{
 }
 
 .form-control {
-        margin-bottom: 5px;
+    margin-bottom: 5px;
 
 }
 
 
-.btn-primary{
+.btn-primary {
     background-color: #2bc6ef !important;
-    border-color:#fff;
+    border-color: #fff;
 }
 
 
-.total-list{
+.total-list {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.total{
+.total {
     padding: 20px 50px;
     direction: ltr !important;
     box-shadow: 1px 1px 10px #ccc;
@@ -57,22 +57,22 @@ button{
 }
 
 
-.total p{
-    margin:10px 0;
-    color:#555;
+.total p {
+    margin: 10px 0;
+    color: #555;
     font-size: 20px;
     border-bottom: 1px solid #dfdfdf;
 }
 
-.total span{
-    color:black;
-    margin-right:10px;
+.total span {
+    color: black;
+    margin-right: 10px;
 }
 
 
-.list-family{
-    padding:0;
-    margin:0;
+.list-family {
+    padding: 0;
+    margin: 0;
     list-style: none;
     display: flex;
     justify-content: space-between;
@@ -80,28 +80,30 @@ button{
     direction: ltr;
 }
 
-.list-family img{
+.list-family img {
     width: 150px;
 }
 
-.title-invoices h3 , .title-invoices h6 {
-    color: #2bc6ef !important;;
+.title-invoices h3,
+.title-invoices h6 {
+    color: #2bc6ef !important;
+    ;
 }
 
 
-.hidden{
+.hidden {
     display: none;
 }
 
 
-.backgrounds img{
+.backgrounds img {
     width: 100%;
     height: auto;
     object-fit: contain;
 }
 
 
-.has-arrow img{
+.has-arrow img {
     width: 25px;
 }
 
@@ -113,7 +115,7 @@ button{
     position: relative;
 }
 
-.profile_info img{
+.profile_info img {
     border-radius: unset !important;
     border: none !important;
 }
@@ -126,7 +128,7 @@ button{
 
 .register-button button {
     position: absolute;
-    left: 0; 
+    left: 0;
     top: -23px;
     transform: translateY(-50%);
     cursor: pointer;
@@ -134,7 +136,7 @@ button{
 
 .search button {
     position: absolute;
-    left: 10px; 
+    left: 10px;
     top: 0;
     transform: translateY(-50%);
     background-color: transparent;
@@ -150,7 +152,7 @@ button{
     height: auto;
 }
 
-.table-wrapper{
+.table-wrapper {
     direction: ltr;
 }
 
@@ -168,26 +170,26 @@ button{
     border-top: 1px solid #ddd;
 }
 
-@media (max-width: 575.98px) { 
-    .list-family{
+@media (max-width: 575.98px) {
+    .list-family {
         flex-direction: column;
         align-items: center;
         padding: 10px 0;
         text-align: center;
-        
+
     }
 
-    .list-family img{
+    .list-family img {
         margin: 15px 0;
-        
+
     }
 
-    .total-list{
+    .total-list {
         flex-direction: column-reverse;
         align-items: center;
     }
 
-    .total-list img{
+    .total-list img {
         width: 250px;
         margin-top: 20px;
     }

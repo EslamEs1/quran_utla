@@ -39,6 +39,17 @@ class Testimonials(models.Model):
         return self.name
 
 
+class TestimonialsVideo(models.Model):
+    url = models.URLField()
+
+    # Metadata
+    class Meta:
+        verbose_name_plural = "Testimonials Video"
+
+    def __str__(self):
+        return self.url
+
+
 class How_it_works(models.Model):
     content = models.TextField()
 
@@ -59,3 +70,15 @@ class Terms(models.Model):
 
     def __str__(self):
         return self.content
+
+
+class QuestionAnswer(models.Model):
+    question = models.CharField(max_length=250)
+    answer = models.TextField()
+    
+    # Metadata
+    class Meta:
+        verbose_name_plural = "Question & Answer"
+    
+    def __str__(self):
+        return self.question

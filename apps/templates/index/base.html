@@ -10,7 +10,6 @@
 </head>
 
 <body>
-        <div id="google_translate_element"></div>
 
 
     <div class="first-nav">
@@ -20,11 +19,11 @@
                     <a href="{% url 'main:contact' %}" class="book-free">Contact us</a>
                 </div>
                 <div class="item">
-                    <a href="{{settings.facebook}}" class="facebook"><i class="fab fa-facebook"> </i></a>
-                    <a href="{{settings.twitter}}" class="twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="https://wa.me/+20{{settings.whatsapp}}" class="whatsapp"><i class="fab fa-whatsapp"></i></a>
-                    <a href="{{settings.telegram}}" class="telegram"><i class="fab fa-telegram"></i></a>
-                    <a href="{{settings.youtube}}" class="telegram"><i class="fab fa-youtube"></i></a>
+                    <a href="{{settings.facebook}}" target="_blank" class="facebook"><i class="fab fa-facebook"> </i></a>
+                    <a href="{{settings.twitter}}" target="_blank" class="twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="https://wa.me/+20{{settings.whatsapp}}" target="_blank" class="whatsapp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="{{settings.telegram}}" target="_blank" class="telegram"><i class="fab fa-telegram"></i></a>
+                    <a href="{{settings.youtube}}" target="_blank" class="telegram"><i class="fab fa-youtube"></i></a>
                 </div>
             </div>
         </div>
@@ -99,26 +98,24 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'blog:blog' %}">Blog</a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            More
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a class="dropdown-item" href="{% url 'main:teacher' %}">Be a Teacher</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{% url 'main:contact' %}">Contact us</a>
-                            </li>
-                        </ul>
+                    <li class="nav-item"></li>
+                        <a class="nav-link" href="{% url 'main:contact' %}">Contact us</a>
                     </li>
+                    <li class="nav-item"></li>
+                        <a class="nav-link" href="{% url 'main:teacher' %}">Be a Teacher</a>
+                    </li>
+                    
                 </ul>
             </div>
         </div>
     </nav>
     {% block content %}
     {% endblock content %}
+    <div class="whatsapp-button">
+        <a href="https://wa.me/{{settings.whatsapp}}" target="_blank">
+            <img src="{% static 'index/img/whatsapp-icon.png' %}" alt="WhatsApp">
+        </a>
+    </div>
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
@@ -127,10 +124,7 @@
                 <div class="col-md-3 mb-4 mb-md-0">
                     <img src="{{settings.logo.url}}" alt="Logo" class="img-fluid mb-3" />
                     <p>
-                        Quran Academy has become one of the leading online
-                        Islamic schools in the world due to its good
-                        reputation for many years in teaching Quran, Arabic
-                        & Islamic Studies.
+                        {{settings.text}}
                     </p>
                     <a href="{% url 'main:contact' %}" class="get-start">Get Started Now</a>
                 </div>
@@ -167,10 +161,10 @@
                     </ul>
                     <h5>Follow Us</h5>
                     <div class="social-icons">
-                        <a href="{{settings.facebook}}" class="text-white"><i class="fab fa-facebook fa-2x"></i></a>
-                        <a href="{{settings.twitter}}" class="text-white"><i class="fab fa-twitter fa-2x"></i></a>
-                        <a href="https://wa.me/{{settings.whatsapp}}" class="text-white"><i class="fab fa-whatsapp fa-2x"></i></a>
-                        <a href="{{settings.telegram}}" class="text-white"><i class="fab fa-telegram-plane fa-2x"></i></a>
+                        <a href="{{settings.facebook}}" target="_blank" class="text-white"><i class="fab fa-facebook fa-2x"></i></a>
+                        <a href="{{settings.twitter}}" target="_blank" class="text-white"><i class="fab fa-twitter fa-2x"></i></a>
+                        <a href="https://wa.me/{{settings.whatsapp}}" target="_blank" class="text-white"><i class="fab fa-whatsapp fa-2x"></i></a>
+                        <a href="{{settings.telegram}}" target="_blank" class="text-white"><i class="fab fa-telegram-plane fa-2x"></i></a>
                     </div>
                 </div>
             </div>
