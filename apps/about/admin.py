@@ -1,5 +1,13 @@
 from django.contrib import admin
-from .models import About, WhyUs, Testimonials, How_it_works, Terms, TestimonialsVideo
+from .models import (
+    About,
+    WhyUs,
+    Testimonials,
+    How_it_works,
+    Terms,
+    TestimonialsVideo,
+    QuestionAnswer,
+)
 from django_summernote.admin import SummernoteModelAdmin
 
 
@@ -52,3 +60,10 @@ class TestimonialsVideoAdmin(SomeModelAdmin, admin.ModelAdmin):
 
     def has_add_permission(self, request):
         return False if TestimonialsVideo.objects.count() >= 1 else True
+
+
+@admin.register(QuestionAnswer)
+class QuestionAnswerAdmin(SomeModelAdmin, admin.ModelAdmin):
+
+    def has_add_permission(self, request):
+        return False if QuestionAnswer.objects.count() >= 6 else True
