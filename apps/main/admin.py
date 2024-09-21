@@ -32,6 +32,9 @@ class SettingsAdmin(admin.ModelAdmin):
     )
     search_fields = ("title", "address", "email")
 
+    def has_add_permission(self, request):
+        return False if Settings.objects.count() >= 1 else True
+
 
 @admin.register(Pricing_Content)
 class PricingContentAdmin(admin.ModelAdmin):

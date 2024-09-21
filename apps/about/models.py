@@ -69,16 +69,16 @@ class Terms(models.Model):
         verbose_name_plural = "Terms"
 
     def __str__(self):
-        return self.content
+        return "Terms"
 
 
 class QuestionAnswer(models.Model):
     question = models.CharField(max_length=250)
     answer = models.TextField()
-    
+
     # Metadata
     class Meta:
         verbose_name_plural = "Question & Answer"
-    
+
     def __str__(self):
         return self.question
