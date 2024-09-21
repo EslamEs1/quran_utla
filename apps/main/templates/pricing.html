@@ -58,6 +58,8 @@
 
 <div class="pricing">
     <div class="container">
+        
+        {% comment %}
         <!-- Navigation Buttons -->
         <ul class="nav nav-tabs" id="pricingTab" role="tablist">
             <li class="nav-item">
@@ -73,6 +75,8 @@
                     aria-selected="false">60 Min Class</a>
             </li>
         </ul>
+        {% endcomment %}
+            
 
         <!-- Tab Content -->
         <div class="tab-content" id="pricingTabContent">
@@ -89,8 +93,7 @@
                                 <p class="frequency">Monthly</p>
                                 <p>{{price.classes}} Classes / Month</p>
                                 <p>{{price.hours}} hours / month</p>
-                                <button class="btn btn-primary">Subscribe</button>
-                                <button class="btn btn-secondary">Trial Lesson</button>
+                                <a href="{% url 'main:contact' %}"><button class="btn btn-primary">Subscribe</button></a>
                             </div>
                         </div>
                     </div>
@@ -113,8 +116,7 @@
                                 <p class="frequency">Monthly</p>
                                 <p>{{price.classes}} Classes / Month</p>
                                 <p>{{price.hours}} hours / month</p>
-                                <button class="btn btn-primary">Subscribe</button>
-                                <button class="btn btn-secondary">Trial Lesson</button>
+                                <a href="{% url 'main:contact' %}"><button class="btn btn-primary">Subscribe</button></a>
                             </div>
                         </div>
                     </div>
@@ -137,8 +139,7 @@
                                 <p class="frequency">Monthly</p>
                                 <p>{{price.classes}} Classes / Month</p>
                                 <p>{{price.hours}} hours / month</p>
-                                <button class="btn btn-primary">Subscribe</button>
-                                <button class="btn btn-secondary">Trial Lesson</button>
+                               <a href="{% url 'main:contact' %}"><button class="btn btn-primary">Subscribe</button></a>
                             </div>
                         </div>
                     </div>
