@@ -1389,11 +1389,10 @@ def teacher_contact(request):
     return render(request, "dashboard/be_a_teacher.html", {"contacts": contacts})
 
 
-
 @login_required
 def requestorder(request):
     if not request.user.type == "Admin":
         return redirect("dash:dashboard")
 
     order = PriceContact.objects.all()
-    return render(request, "dashboard/reuestorder.html", {"order": order})
+    return render(request, "dashboard/requestorder.html", {"order": order})
