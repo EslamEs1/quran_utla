@@ -1038,9 +1038,60 @@ a {
 .pricing-table {
     text-align: center;
 }
+
 .pricing-table .card {
     margin: 20px;
+    box-shadow: 1px 1px 15px #ddd;
+    position: relative;
 }
+
+.pricing-table .card.most-pupilar {
+    border: 3px solid var(--three-color); /* حدود أكثر سماكة */
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.4); /* تأثير ظل أقوى */
+    transform: scale(1.08); /* تكبير العنصر أكثر */
+    transition: transform 0.4s ease, box-shadow 0.4s ease; /* حركة سلسة أكثر */
+    position: relative;
+    background-color: rgba(255, 255, 255, 0.95); /* تغيير خلفية البطاقة لجعلها لامعة */
+    z-index: 1; /* ضمان بروزها عن البطاقات الأخرى */
+}
+
+.pricing-table .card.most-pupilar:before {
+    content: "Most Popular";
+    position: absolute;
+    width: 40px;
+    height: 200px;
+    top: 20px;
+    right: -20px;
+    font-size: 15px;
+    background-color: var(--three-color); /* استخدام لون محدد بارز */
+    color: #fff;
+    z-index: 55;
+    writing-mode: vertical-rl;
+    text-align: center;
+    padding: 5px;
+    transform: rotate(0deg); /* عرض النص بشكل طولي معتدل */
+    letter-spacing: 2px; /* مسافة بين الأحرف لجعلها أكثر وضوحاً */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* إضافة ظل للنص */
+}
+
+.pricing-table .card.most-pupilar:hover {
+    transform: scale(1.15); /* تكبير أكثر عند التمرير */
+    box-shadow: 0 0 35px rgba(0, 0, 0, 0.5); /* ظل أقوى عند التمرير */
+}
+
+.pricing-table .card.most-pupilar:after {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    border: 2px solid var(--three-color);
+    z-index: -1;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+    background-color: rgba(255, 255, 255, 0.5); /* خلفية شفافة تجعلها تبدو لامعة */
+}
+
 .pricing-table .card-header {
     font-size: 24px;
     font-weight: bold;
@@ -1154,4 +1205,18 @@ a {
 
 .whatsapp-button img:hover {
     transform: scale(1.1); /* Optional: Zooms the icon on hover */
+}
+
+.discount{
+    position: fixed;
+    bottom: 100px; /* Adjust the distance from the bottom */
+    right: 20px;  /* Adjust the distance from the right */
+    z-index: 1000; 
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.discount img{
+    width: 80px;
 }

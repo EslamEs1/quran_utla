@@ -59,7 +59,6 @@
 <div class="pricing">
     <div class="container">
         
-        {% comment %}
         <!-- Navigation Buttons -->
         <ul class="nav nav-tabs" id="pricingTab" role="tablist">
             <li class="nav-item">
@@ -75,25 +74,24 @@
                     aria-selected="false">60 Min Class</a>
             </li>
         </ul>
-        {% endcomment %}
             
-
+        <br>
         <!-- Tab Content -->
         <div class="tab-content" id="pricingTabContent">
             <!-- 30 Min Class Plans -->
             <div class="tab-pane fade show active" id="min30" role="tabpanel" aria-labelledby="min30-tab">
                 <div class="row pricing-table">
                     {% for price in pricing|slice:":4" %}
-                    <div class="col-md-3">
-                        <div class="card">
-                            <div class="card-header">{{price.char|upper}}</div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card {% if forloop.first %}most-pupilar{% endif %}">
+                            <div class="card-header ">{{price.char|upper}}</div>
                             <div class="card-body">
                                 <p>{{price.week}} day/week</p>
                                 <p class="price">${{price.price}}</p>
                                 <p class="frequency">Monthly</p>
                                 <p>{{price.classes}} Classes / Month</p>
                                 <p>{{price.hours}} hours / month</p>
-                                <a href="{% url 'main:contact' %}"><button class="btn btn-primary">Subscribe</button></a>
+                                <a href="{% url 'main:order' %}"><button class="btn btn-primary">Subscribe</button></a>
                             </div>
                         </div>
                     </div>
@@ -107,7 +105,7 @@
                     <!-- Similar structure for 45 Min Class Plans -->
                     <!-- Repeat the cards with updated pricing details -->
                     {% for price in pricing|slice:"4:8" %}
-                    <div class="col-md-3">
+                    <div class="col-md-3 col-sm-6">
                         <div class="card">
                             <div class="card-header">{{price.char|upper}}</div>
                             <div class="card-body">
@@ -116,7 +114,7 @@
                                 <p class="frequency">Monthly</p>
                                 <p>{{price.classes}} Classes / Month</p>
                                 <p>{{price.hours}} hours / month</p>
-                                <a href="{% url 'main:contact' %}"><button class="btn btn-primary">Subscribe</button></a>
+                                <a href="{% url 'main:order' %}"><button class="btn btn-primary">Subscribe</button></a>
                             </div>
                         </div>
                     </div>
@@ -130,7 +128,7 @@
                     <!-- Similar structure for 60 Min Class Plans -->
                     <!-- Repeat the cards with updated pricing details -->
                     {% for price in pricing|slice:"8:12" %}
-                   <div class="col-md-3">
+                    <div class="col-md-3 col-sm-6">
                         <div class="card">
                             <div class="card-header">{{price.char|upper}}</div>
                             <div class="card-body">
@@ -139,7 +137,7 @@
                                 <p class="frequency">Monthly</p>
                                 <p>{{price.classes}} Classes / Month</p>
                                 <p>{{price.hours}} hours / month</p>
-                               <a href="{% url 'main:contact' %}"><button class="btn btn-primary">Subscribe</button></a>
+                                <a href="{% url 'main:order' %}"><button class="btn btn-primary">Subscribe</button></a>
                             </div>
                         </div>
                     </div>

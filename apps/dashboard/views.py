@@ -26,7 +26,7 @@ from .forms import (
     MarketerForm,
 )
 from decimal import Decimal
-from apps.main.models import ContactUs, TeacherContact
+from apps.main.models import ContactUs, TeacherContact, PriceContact
 from .models import (
     UserType,
     Tax,
@@ -43,6 +43,7 @@ from .models import (
     Instructor,
     DeleteUsers,
     Duration,
+    
 )
 
 CustomUser = get_user_model()
@@ -1386,3 +1387,13 @@ def teacher_contact(request):
 
     contacts = TeacherContact.objects.all()
     return render(request, "dashboard/be_a_teacher.html", {"contacts": contacts})
+
+
+
+@login_required
+def requestorder(request):
+    if not request.user.type == "Admin":
+        return redirect("dash:dashboard")
+
+    order = PriceContact.objects.all()
+    return render(request, "dashboard/reuestorder.html", {"order": order})

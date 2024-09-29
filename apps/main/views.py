@@ -7,6 +7,7 @@ from apps.main.models import (
     TeacherContact,
     Slider,
     Tutors,
+    PriceContact
 )
 from django.contrib.auth import get_user_model
 from apps.course.models import Course
@@ -97,3 +98,25 @@ def teacher(request):
         return HttpResponseRedirect(request.headers.get("referer"))
 
     return render(request, "teacher.html", {})
+
+
+def order(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        whatsapp = request.POST.get("whatsapp")
+        min_plan = request.POST.get("min")
+        plan = request.POST.get("plan")
+        message = request.POST.get("message")
+        PriceContact.objects.create(
+            name=name,
+            email=email,
+            phone_number=whatsapp,
+            min_class=min_plan,
+            plan=plan,
+            message=message,
+        )
+        messages.success(request, "The Request Have Been Sent")
+        return HttpResponseRedirect(request.headers.get("referer"))
+
+    return render(request, "order.html", {})

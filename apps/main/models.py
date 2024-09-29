@@ -110,3 +110,29 @@ class Tutors(models.Model):
 
     def __str__(self):
         return self.full_name
+
+
+class MinClass(models.TextChoices):
+    MIN30 = "min30", "30 Min"
+    MIN45 = "min45", "45 Min"
+    MIN60 = "min60", "60 Min"
+
+
+class Plan(models.TextChoices):
+    A = "A", "A"
+    B = "B", "B"
+    C = "C", "C"
+    D = "D", "D"
+
+
+class PriceContact(models.Model):
+    name = models.CharField(max_length=150)
+    email = models.EmailField()
+    phone_number = models.CharField(max_length=15, unique=True)
+
+    # Use the full choices from the MinClass and Plan enums
+    min_class = models.CharField(choices=MinClass.choices, max_length=15)
+    plan = models.CharField(choices=Plan.choices, max_length=2)
+
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
