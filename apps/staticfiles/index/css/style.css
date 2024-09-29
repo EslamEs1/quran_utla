@@ -345,16 +345,16 @@ a {
 
 @media (max-width: 576px) {
     .landing .carousel-caption {
-        width: 60%;
+        width: 100%;
         /* Adjust width for smaller screens */
-        left: 10%;
+        left: 5px;
         /* Adjust left positioning */
-        transform: translateY(-100%);
+        transform: translateY(-110%);
         /* Keep vertical centering */
     }
 
     .landing .carousel-item h5 {
-        font-size: 14px;
+        font-size: 15px;
         /* Adjust font size */
     }
 
