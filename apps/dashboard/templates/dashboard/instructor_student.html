@@ -7,11 +7,24 @@
 {% block content %}
 <!-- Button trigger modals -->
 <!-- Button trigger modals -->
-<div class="row">
-    <div class="col-md-3">
+<div class="row justify-content-center align-items-center">
+    <!-- Button to trigger modal -->
+    <div class="col-md-4 text-center addclass">
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdropinststudent">
             التسجيل
         </button>
+    </div>
+
+    <!-- Search form -->
+    <div class="col-md-8">
+        <div class="search">
+            <form method="get" role="search">
+                <input class="form-control me-2" type="search" placeholder="بحث..." aria-label="Search" name="search" value="{{ query }}">
+                <button class="btn btn-outline-secondary" type="submit">
+                    <img src="{% static 'img/search.png' %}" alt="Search" style="width: 20px;">
+                </button>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -30,6 +43,8 @@
                 <td>{{user.student}}</td>
                 <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteModalstudent_insta{{user.id}}"><img class="icon" src="{% static 'img/delete.png'%}"></a></td>
             </tr>
+        {% empty%}
+        <h6 class="text-danger text-center">لا يوجد طلاب</h>
         {% endfor %}
     </tbody>
 </table>

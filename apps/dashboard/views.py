@@ -425,7 +425,7 @@ def delete_family(request, id):
 def register_student(request):
     if not (request.user.type == "Admin" or request.user.type == "Manager"):
         return redirect("dash:dashboard")
-    
+
     search_query = request.GET.get("search", "")
     if search_query:
         students = Student.objects.filter(name__icontains=search_query, is_active=True)
@@ -459,17 +459,26 @@ def instructor_student_view(request):
     if not (request.user.type == "Admin" or request.user.type == "Manager"):
         return redirect("dash:dashboard")
 
+    # Fetch all instructor-student relationships
     inst_student = Instructor_Student.objects.all()
+
+    # Handle search query
+    query = request.GET.get("search")
+    if query:
+        inst_student = inst_student.filter(
+            Q(instructor__user__name__icontains=query)
+            | Q(family__name__icontains=query)
+            | Q(student__name__icontains=query)
+        )
 
     if request.method == "POST":
         form = Instructor_StudentForm(request.POST)
-
         if form.is_valid():
             # Extract student and instructor from form data
             student_id = form.cleaned_data["student"].id
             instructor_id = form.cleaned_data["instructor"].id
 
-            # Check if relationship already exists
+            # Check if the relationship already exists
             if inst_student.filter(
                 student_id=student_id, instructor_id=instructor_id
             ).exists():
@@ -486,6 +495,7 @@ def instructor_student_view(request):
     context = {
         "form": form,
         "inst_student": inst_student,
+        "query": query,
     }
     return render(request, "dashboard/instructor_student.html", context)
 

@@ -202,3 +202,7 @@ button {
     align-items: center;
     justify-content: space-between;
 }
+
+.addclass button{
+    margin-top: 0;
+}
