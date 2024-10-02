@@ -10,6 +10,8 @@
     <div class="col-md-6">
         <div class="search">
             <form method="get" role="search">
+                <!-- Retain the selected month while searching -->
+                <input type="hidden" name="filter_month" value="{{ request.GET.filter_month }}">
                 <input class="form-control" type="search" placeholder="بحث..." aria-label="Search" name="search" value="{{ search_query }}">
                 <button type="submit">
                     <img src="{% static 'img/search.png'%}" alt="">
