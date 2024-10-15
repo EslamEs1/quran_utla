@@ -463,7 +463,7 @@ def instructor_student_view(request):
     inst_student = Instructor_Student.objects.all()
 
     # Handle search query
-    query = request.GET.get("search")
+    query = request.GET.get("search").strip()
     if query:
         inst_student = inst_student.filter(
             Q(instructor__user__name__icontains=query)
@@ -804,6 +804,8 @@ def classes(request):
     # Handle form submission for month filter
     if request.method == "GET" and "filter_month" in request.GET:
         selected_month = request.GET.get("filter_month")
+        if not selected_month:
+            selected_month = current_date.strftime("%Y-%m")
         year, month = selected_month.split("-")
         start_date = datetime(
             int(year), int(month), 1
@@ -875,6 +877,7 @@ def classes(request):
         "students": students,
         "instructors": instructors,
         "class_count": class_count,
+        "current_date": current_date,
     }
     return render(request, "dashboard/classes.html", context)
 
