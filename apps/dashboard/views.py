@@ -139,7 +139,7 @@ def register_manager(request):
     if not (request.user.type == "Admin" or request.user.type == "Manager"):
         return redirect("dash:dashboard")
     
-    search_query = request.GET.get("search", "")
+    search_query = request.GET.get("search", "").strip()
     if search_query:
         managers = CustomUser.objects.filter(
             (
@@ -219,7 +219,7 @@ def register_instructor(request):
     if not (request.user.type == "Admin" or request.user.type == "Manager"):
         return redirect("dash:dashboard")
 
-    search_query = request.GET.get("search", "")
+    search_query = request.GET.get("search", "").strip()
     if search_query:
         instructor = Instructor.objects.filter(
             (
@@ -331,7 +331,7 @@ def register_family(request):
     if not (request.user.type == "Admin" or request.user.type == "Manager"):
         return redirect("dash:dashboard")
     
-    search_query = request.GET.get("search", "")
+    search_query = request.GET.get("search", "").strip()
     if search_query:
         families = Families.objects.filter(
             (
@@ -426,7 +426,7 @@ def register_student(request):
     if not (request.user.type == "Admin" or request.user.type == "Manager"):
         return redirect("dash:dashboard")
 
-    search_query = request.GET.get("search", "")
+    search_query = request.GET.get("search", "").strip()
     if search_query:
         students = Student.objects.filter(name__icontains=search_query, is_active=True)
     else:
@@ -656,7 +656,7 @@ def register_marketer(request):
     if not (request.user.type == "Admin" or request.user.type == "Manager"):
         return redirect("dash:dashboard")
     
-    search_query = request.GET.get("search", "")
+    search_query = request.GET.get("search", "").strip()
     if search_query:
         marketer = Marketer.objects.filter(
             (
@@ -814,7 +814,7 @@ def classes(request):
             days=1
         )  # Last day of selected month
 
-    search_query = request.GET.get("search", "")
+    search_query = request.GET.get("search", "").strip()
 
     if request.user.type == UserType.INSTRUCTOR:
         # Filter classes only for the instructor, including search if provided
@@ -919,7 +919,7 @@ def invoices(request):
     if not request.user.type == "Admin":
         return redirect("dash:dashboard")
 
-    search_query = request.GET.get("search", "")
+    search_query = request.GET.get("search", "").strip()
 
     families = Families.objects.filter(is_active=True)
     # Default to current month if not specified in GET parameters

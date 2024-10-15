@@ -17,8 +17,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.validators import RegexValidator
 from django.contrib.auth.password_validation import validate_password
-from phonenumber_field.formfields import PhoneNumberField
-from phonenumber_field.widgets import PhoneNumberPrefixWidget
+
 
 CustomUser = get_user_model()
 
