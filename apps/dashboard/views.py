@@ -463,7 +463,7 @@ def instructor_student_view(request):
     inst_student = Instructor_Student.objects.all()
 
     # Handle search query
-    query = request.GET.get("search").strip()
+    query = request.GET.get("search", "").strip()
     if query:
         inst_student = inst_student.filter(
             Q(instructor__user__name__icontains=query)
