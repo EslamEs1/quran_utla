@@ -34,7 +34,7 @@
 
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container">
-            <a class="navbar-brand" href="/"><img src="{{settings.logo.url}}" alt="logo" /></a>
+            <a class="navbar-brand" href="/"> <img loading="lazy" src="{{settings.logo.url}}" alt="logo" /></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
                 aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -116,11 +116,11 @@
     {% endblock content %}
 
     <div class="discount">
-        <img src="{% static 'index/img/20-percent.png' %}" alt="WhatsApp">
+         <img loading="lazy" src="{% static 'index/img/20-percent.webp' %}" alt="WhatsApp">
     </div>
     <div class="whatsapp-button">
         <a href="https://wa.me/{{settings.whatsapp}}" target="_blank">
-            <img src="{% static 'index/img/whatsapp-icon.png' %}" alt="WhatsApp">
+             <img loading="lazy" src="{% static 'index/img/whatsapp-icon.webp' %}" alt="WhatsApp">
         </a>
     </div>
     <!-- Footer -->
@@ -129,7 +129,7 @@
             <div class="row">
                 <!-- Logo and Description -->
                 <div class="col-md-3 mb-4 mb-md-0">
-                    <img src="{{settings.logo.url}}" alt="Logo" class="img-fluid mb-3" />
+                     <img loading="lazy" src="{{settings.logo.url}}" alt="Logo" class="img-fluid mb-3" />
                     <p>
                         {{settings.text|truncatewords:20}}
                     </p>

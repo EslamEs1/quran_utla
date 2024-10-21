@@ -16,7 +16,7 @@
             <div class="carousel-inner">
                 {% for slider in sliders %}
                 <div class="carousel-item {% if forloop.first %} active {% endif %}">
-                    <img src="{{slider.img.url}}" class="d-block w-100" alt="{{slider.title}}">
+                    <img loading="lazy" src="{{slider.img.url}}" class="d-block w-100" alt="{{slider.title}}">
                     <div class="carousel-caption  d-md-block">
                         <h5>{{slider.title}}</h5>
                         <p>{{slider.content}}</p>
@@ -42,7 +42,7 @@
         <div class="container">
             <div class="list">
                 <div class="item">
-                    <iframe src="{{settings.video}}"></iframe>
+                    <iframe loading="lazy" src="{{settings.video}}"></iframe>
                 </div>
                 <div class="item">
                     <h2>Learn Quran Online | Online Quran Classes</h2>
@@ -62,7 +62,7 @@
                 {% for why in whyus %}
                 <div class="col-md-4">
                     <div class="why-us-item">
-                        <img src="{{why.img.url}}" alt={{why.name}}">
+                        <img loading="lazy" src="{{why.img.url}}" alt={{why.name}}">
                         <h3>{{why.name}}</h3>
                         <p>{{why.content}}</p>
                     </div>
@@ -76,7 +76,7 @@
         <div class="container">
             <div class="list">
                 <div class="item">
-                    <img src="{% static 'index/img/steps/steps.svg' %}" alt="Simple" />
+                    <img loading="lazy" src="{% static 'index/img/steps/steps.svg' %}" alt="Simple" />
                 </div>
                 <div class="item">
                     <div class="main-title">
@@ -102,7 +102,7 @@
         <div class="container">
             <div class="list">
                 <div class="item">
-                    <img src="{% static 'index/img/steps/study-plan.svg' %}" alt="" />
+                    <img loading="lazy" src="{% static 'index/img/steps/study-plan.svg' %}" alt="" />
                 </div>
                 <div class="item">
                     <div class="main-title">
@@ -134,7 +134,7 @@
                 
                 {% for course in courses %}
                 <div>
-                    <img src="{{course.image.url}}" alt="{{course.title}}">
+                    <img loading="lazy" src="{{course.image.url}}" alt="{{course.title}}">
                     <a href="{% url 'course:course_detail' course.slug %}"> Enroll Now!</a>
                 </div>
                 {% endfor %}
@@ -187,7 +187,7 @@
             </div>
             
             <div class="video-wrapper" style="text-align: center; margin-top:20px;">
-                <iframe src="{{testimonials_video.url}}"></iframe>
+                <iframe loading="lazy" src="{{testimonials_video.url}}"></iframe>
             </div>
         </div>
     </div>
@@ -201,7 +201,7 @@
                 
                 {% for tutor in tutors %}
                 <div class="items">
-                    <img src="{{tutor.image.url}}" alt="{{tutor.full_name}}">
+                    <img loading="lazy" src="{{tutor.image.url}}" alt="{{tutor.full_name}}">
                     <h3>{{tutor.full_name}}</h3>
                     <p>{{tutor.qualifications}}</p>
                 </div>
@@ -219,7 +219,7 @@
             <div class="owl-carousel">
                 {% for post in posts %}
                 <div class="items">
-                    <img src="{{post.image.url}}" alt="{{post.title}}">
+                    <img loading="lazy" src="{{post.image.url}}" alt="{{post.title}}">
                     <h6>{{post.title}}</h6>
                     <a href="{% url 'blog:blog_detail' post.slug %}">Read More</a>
                 </div>
