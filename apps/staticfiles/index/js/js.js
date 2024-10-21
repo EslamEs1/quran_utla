@@ -1,11 +1,1 @@
-$(document).ready(function () {
-    $(".owl-carousel").owlCarousel({
-        items: 3,
-        loop: !0,
-        margin: 30,
-        nav: !0,
-        autoplay: !0,
-        autoplayTimeout: 6e3,
-        responsive: { 0: { items: 1 }, 600: { items: 3 }, 1e3: { items: 3 } },
-    });
-});
+$(document).ready(function(){$(".owl-carousel").owlCarousel({items:3,loop:!0,margin:30,nav:!0,autoplay:!0,autoplayTimeout:6e3,responsive:{0:{items:1},600:{items:3},1e3:{items:3}}})});
