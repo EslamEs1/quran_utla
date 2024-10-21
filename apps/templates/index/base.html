@@ -11,8 +11,8 @@
 
 <body>
     <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PZ4PDCB6"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PZ4PDCB6" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
 
     <div class="first-nav">
@@ -22,9 +22,11 @@
                     <a href="{% url 'main:contact' %}" class="book-free">Contact us</a>
                 </div>
                 <div class="item">
-                    <a href="{{settings.facebook}}" target="_blank" class="facebook"><i class="fab fa-facebook"> </i></a>
+                    <a href="{{settings.facebook}}" target="_blank" class="facebook"><i class="fab fa-facebook">
+                        </i></a>
                     <a href="{{settings.twitter}}" target="_blank" class="twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="https://wa.me/+20{{settings.whatsapp}}" target="_blank" class="whatsapp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://wa.me/+20{{settings.whatsapp}}" target="_blank" class="whatsapp"><i
+                            class="fab fa-whatsapp"></i></a>
                     <a href="{{settings.telegram}}" target="_blank" class="telegram"><i class="fab fa-telegram"></i></a>
                     <a href="{{settings.youtube}}" target="_blank" class="telegram"><i class="fab fa-youtube"></i></a>
                 </div>
@@ -71,7 +73,8 @@
                                 <a class="dropdown-item" href="{% url 'learning:curriculum' %}">Curriculum</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="{% url 'learning:methodology' %}">Teaching Methodology</a>
+                                <a class="dropdown-item" href="{% url 'learning:methodology' %}">Teaching
+                                    Methodology</a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="{% url 'learning:testimonials' %}">Testimonials</a>
@@ -102,12 +105,12 @@
                         <a class="nav-link" href="{% url 'blog:blog' %}">Blog</a>
                     </li>
                     <li class="nav-item"></li>
-                        <a class="nav-link" href="{% url 'main:contact' %}">Contact us</a>
+                    <a class="nav-link" href="{% url 'main:contact' %}">Contact us</a>
                     </li>
                     <li class="nav-item"></li>
-                        <a class="nav-link" href="{% url 'main:teacher' %}">Be a Teacher</a>
+                    <a class="nav-link" href="{% url 'main:teacher' %}">Be a Teacher</a>
                     </li>
-                    
+
                 </ul>
             </div>
         </div>
@@ -116,11 +119,11 @@
     {% endblock content %}
 
     <div class="discount">
-         <img loading="lazy" src="{% static 'index/img/20-percent.webp' %}" alt="WhatsApp">
+        <img loading="lazy" src="{% static 'index/img/20-percent.webp' %}" alt="WhatsApp">
     </div>
     <div class="whatsapp-button">
         <a href="https://wa.me/{{settings.whatsapp}}" target="_blank">
-             <img loading="lazy" src="{% static 'index/img/whatsapp-icon.webp' %}" alt="WhatsApp">
+            <img loading="lazy" src="{% static 'index/img/whatsapp-icon.webp' %}" alt="WhatsApp">
         </a>
     </div>
     <!-- Footer -->
@@ -129,7 +132,7 @@
             <div class="row">
                 <!-- Logo and Description -->
                 <div class="col-md-3 mb-4 mb-md-0">
-                     <img loading="lazy" src="{{settings.logo.url}}" alt="Logo" class="img-fluid mb-3" />
+                    <img loading="lazy" src="{{settings.logo.url}}" alt="Logo" class="img-fluid mb-3" />
                     <p>
                         {{settings.text|truncatewords:20}}
                     </p>
@@ -168,10 +171,14 @@
                     </ul>
                     <h5>Follow Us</h5>
                     <div class="social-icons">
-                        <a href="{{settings.facebook}}" target="_blank" class="text-white"><i class="fab fa-facebook fa-2x"></i></a>
-                        <a href="{{settings.twitter}}" target="_blank" class="text-white"><i class="fab fa-twitter fa-2x"></i></a>
-                        <a href="https://wa.me/{{settings.whatsapp}}" target="_blank" class="text-white"><i class="fab fa-whatsapp fa-2x"></i></a>
-                        <a href="{{settings.telegram}}" target="_blank" class="text-white"><i class="fab fa-telegram-plane fa-2x"></i></a>
+                        <a href="{{settings.facebook}}" target="_blank" class="text-white"><i
+                                class="fab fa-facebook fa-2x"></i></a>
+                        <a href="{{settings.twitter}}" target="_blank" class="text-white"><i
+                                class="fab fa-twitter fa-2x"></i></a>
+                        <a href="https://wa.me/{{settings.whatsapp}}" target="_blank" class="text-white"><i
+                                class="fab fa-whatsapp fa-2x"></i></a>
+                        <a href="{{settings.telegram}}" target="_blank" class="text-white"><i
+                                class="fab fa-telegram-plane fa-2x"></i></a>
                     </div>
                 </div>
             </div>
