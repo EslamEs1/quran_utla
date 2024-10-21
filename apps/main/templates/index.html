@@ -16,7 +16,7 @@
             <div class="carousel-inner">
                 {% for slider in sliders %}
                 <div class="carousel-item {% if forloop.first %} active {% endif %}">
-                    <img loading="lazy" src="{{slider.img.url}}" class="d-block w-100" alt="{{slider.title}}">
+                    <img src="{{slider.img.url}}" class="d-block w-100" alt="{{slider.title}}">
                     <div class="carousel-caption  d-md-block">
                         <h5>{{slider.title}}</h5>
                         <p>{{slider.content}}</p>
@@ -41,9 +41,12 @@
     <div class="index-learn">
         <div class="container">
             <div class="list">
+                {% comment %}
                 <div class="item">
-                    <iframe loading="lazy" src="{{settings.video}}"></iframe>
+                    <iframe src="{{settings.video}}"></iframe>
                 </div>
+                {% endcomment %}
+                    
                 <div class="item">
                     <h2>Learn Quran Online | Online Quran Classes</h2>
                     <p>{{settings.text}}</p>
@@ -62,7 +65,7 @@
                 {% for why in whyus %}
                 <div class="col-md-4">
                     <div class="why-us-item">
-                        <img loading="lazy" src="{{why.img.url}}" alt={{why.name}}">
+                        <img src="{{why.img.url}}" alt={{why.name}}">
                         <h3>{{why.name}}</h3>
                         <p>{{why.content}}</p>
                     </div>
@@ -76,7 +79,7 @@
         <div class="container">
             <div class="list">
                 <div class="item">
-                    <img loading="lazy" src="{% static 'index/img/steps/steps.svg' %}" alt="Simple" />
+                    <img src="{% static 'index/img/steps/steps.svg' %}" alt="Simple" />
                 </div>
                 <div class="item">
                     <div class="main-title">
@@ -102,7 +105,7 @@
         <div class="container">
             <div class="list">
                 <div class="item">
-                    <img loading="lazy" src="{% static 'index/img/steps/study-plan.svg' %}" alt="" />
+                    <img src="{% static 'index/img/steps/study-plan.svg' %}" alt="" />
                 </div>
                 <div class="item">
                     <div class="main-title">
@@ -134,7 +137,7 @@
                 
                 {% for course in courses %}
                 <div>
-                    <img loading="lazy" src="{{course.image.url}}" alt="{{course.title}}">
+                    <img src="{{course.image.url}}" alt="{{course.title}}">
                     <a href="{% url 'course:course_detail' course.slug %}"> Enroll Now!</a>
                 </div>
                 {% endfor %}
@@ -186,9 +189,12 @@
                 {% endfor %}
             </div>
             
+            {% comment %}
             <div class="video-wrapper" style="text-align: center; margin-top:20px;">
-                <iframe loading="lazy" src="{{testimonials_video.url}}"></iframe>
+                <iframe src="{{testimonials_video.url}}"></iframe>
             </div>
+            {% endcomment %}
+                
         </div>
     </div>
 
@@ -201,7 +207,7 @@
                 
                 {% for tutor in tutors %}
                 <div class="items">
-                    <img loading="lazy" src="{{tutor.image.url}}" alt="{{tutor.full_name}}">
+                    <img src="{{tutor.image.url}}" alt="{{tutor.full_name}}">
                     <h3>{{tutor.full_name}}</h3>
                     <p>{{tutor.qualifications}}</p>
                 </div>
@@ -219,7 +225,7 @@
             <div class="owl-carousel">
                 {% for post in posts %}
                 <div class="items">
-                    <img loading="lazy" src="{{post.image.url}}" alt="{{post.title}}">
+                    <img src="{{post.image.url}}" alt="{{post.title}}">
                     <h6>{{post.title}}</h6>
                     <a href="{% url 'blog:blog_detail' post.slug %}">Read More</a>
                 </div>
@@ -243,7 +249,9 @@
                             data-widget_type="icon-box.default">
                             <div class="elementor-widget-container">
                                 <div class="elementor-icon-box-wrapper">
-
+                                    
+                                    {% comment %}
+                                        
                                     <div class="elementor-icon-box-icon">
                                         <a href="quran-and-tajweed-courses/index.html"
                                             class="elementor-icon elementor-animation-" tabindex="-1">
@@ -516,6 +524,8 @@
                                                 </path>
                                             </svg> </a>
                                     </div>
+                                    {% endcomment %}
+                                        
 
                                     <div class="elementor-icon-box-content">
 
@@ -559,7 +569,8 @@
                             data-id="597c5fa9" data-element_type="widget" data-widget_type="icon-box.default">
                             <div class="elementor-widget-container">
                                 <div class="elementor-icon-box-wrapper">
-
+                                    
+                                    {% comment %}
                                     <div class="elementor-icon-box-icon">
                                         <a href="arabic-courses/index.html" class="elementor-icon elementor-animation-"
                                             tabindex="-1">
@@ -1120,6 +1131,9 @@
                                                 </path>
                                             </svg> </a>
                                     </div>
+                                        
+                                    {% endcomment %}
+                                        
 
                                     <div class="elementor-icon-box-content">
 
@@ -1163,7 +1177,8 @@
                             data-id="720de01c" data-element_type="widget" data-widget_type="icon-box.default">
                             <div class="elementor-widget-container">
                                 <div class="elementor-icon-box-wrapper">
-
+                                    
+                                    {% comment %}
                                     <div class="elementor-icon-box-icon">
                                         <a href="islamic-studies-courses/index.html"
                                             class="elementor-icon elementor-animation-" tabindex="-1">
@@ -1511,6 +1526,9 @@
                                                 </g>
                                             </svg> </a>
                                     </div>
+                                        
+                                    {% endcomment %}
+                                        
 
                                     <div class="elementor-icon-box-content">
 
@@ -1572,7 +1590,7 @@
             {% endfor %}
         </div>
     </div>
-</div>
+    </div>
 
     <div class="contact">
         {% if messages %}
