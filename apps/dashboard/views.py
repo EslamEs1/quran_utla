@@ -1068,7 +1068,6 @@ def family_invoice_details(request, family_id):
 
 def student_invoice_details(request, student_id):
     student = get_object_or_404(Student, pk=student_id, is_active=True)
-    classes = Classes.objects.filter(student=student)
 
     # Get the month from the query parameter or default to the current month
     month_param = request.GET.get("month")
@@ -1090,11 +1089,13 @@ def student_invoice_details(request, student_id):
     latest_tax = Tax.objects.first()
     tax_percentage = latest_tax.percentage if latest_tax else 0.0
 
+    classes = Classes.objects.filter(
+        student=student, date__month=selected_date.month, date__year=selected_date.year
+    )
+
     # Calculate totals for the student for the selected month
     total_hours = (
-        classes.filter(
-            date__month=selected_date.month, date__year=selected_date.year
-        ).aggregate(
+        classes.aggregate(
             total_hours=Sum(
                 Cast(
                     Case(
@@ -1108,9 +1109,7 @@ def student_invoice_details(request, student_id):
                     IntegerField(),
                 )
             )
-        )[
-            "total_hours"
-        ]
+        )["total_hours"]
         or 0
     )
     total_classes = classes.filter(
