@@ -808,7 +808,7 @@ def classes(request):
         if not selected_month:
             selected_month = current_date.strftime("%Y-%m")
         year, month = selected_month.split("-")
-        start_date = timezone.timezone.datetime(
+        start_date = timezone.datetime(
             int(year), int(month), 1
         ).date()  # First day of selected month
         end_date = (start_date.replace(day=28) + timedelta(days=4)).replace(
