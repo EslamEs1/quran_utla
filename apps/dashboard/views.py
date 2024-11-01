@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.contrib.auth import update_session_auth_hash
 from .forms import CustomAuthenticationForm
-from datetime import datetime, timedelta
+from datetime import timedelta
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.contrib import messages
@@ -11,6 +11,7 @@ from django.http import HttpResponseRedirect
 from django.db.models import Sum, Q, Case, When, Value, IntegerField
 from django.db.models.functions import Cast
 from django.core.paginator import Paginator
+from django.utils import timezone
 
 from .forms import (
     BaseUserForm,
@@ -84,8 +85,8 @@ def billing_month(request):
         date = request.POST.get("date")
         fam_id = request.POST.get("family")
 
-        # Convert date string to datetime object
-        selected_date = datetime.strptime(date, "%Y-%m-%d").date()
+        # Convert date string to timezone.datetime object
+        selected_date = timezone.datetime.strptime(date, "%Y-%m-%d").date()
 
         # Check if a billing entry already exists for the selected date and family
         existing_billing = billing.filter(date=selected_date, family_id=fam_id).exists()
@@ -117,7 +118,7 @@ def edit_billing_month(request):
         fam = request.POST.get("family")
         if date and fam:
             BillingMonths.objects.filter(family=Families.objects.get(id=fam)).update(
-                date=datetime.strptime(date, "%Y-%m-%d"),
+                date=timezone.datetime.strptime(date, "%Y-%m-%d"),
             )
             messages.success(request, "تم تعديل فترة الفوترة بنجاح")
         else:
@@ -793,7 +794,7 @@ def del_student_marketer(request, id):
 @login_required
 def classes(request):
     # Default to current month if not specified in GET parameters
-    current_date = datetime.now()
+    current_date = timezone.now()
     start_date = current_date.replace(day=1).date()  # First day of the current month
     end_date = (start_date.replace(day=28) + timedelta(days=4)).replace(
         day=1
@@ -807,7 +808,7 @@ def classes(request):
         if not selected_month:
             selected_month = current_date.strftime("%Y-%m")
         year, month = selected_month.split("-")
-        start_date = datetime(
+        start_date = timezone.timezone.datetime(
             int(year), int(month), 1
         ).date()  # First day of selected month
         end_date = (start_date.replace(day=28) + timedelta(days=4)).replace(
@@ -821,7 +822,9 @@ def classes(request):
     if request.user.type == UserType.INSTRUCTOR:
         # Filter classes only for the instructor, including search if provided
         classes_list = Classes.objects.filter(
-            instructor__user=request.user, created_at__range=[start_date, end_date]
+            instructor__user=request.user,
+            created_at__gte=start_date,
+            created_at__lt=end_date + timedelta(days=1),
         )
 
         if search_query:
@@ -832,7 +835,10 @@ def classes(request):
             )
     else:
         # For non-instructors, filter classes based on the search query if provided
-        classes_list = Classes.objects.filter(created_at__range=[start_date, end_date])
+        classes_list = Classes.objects.filter(
+            created_at__gte=start_date,
+            created_at__lt=end_date + timedelta(days=1),
+        )
 
         if search_query:
             classes_list = classes_list.filter(
@@ -926,7 +932,7 @@ def invoices(request):
 
     families = Families.objects.filter(is_active=True)
     # Default to current month if not specified in GET parameters
-    current_date = datetime.now()
+    current_date = timezone.now()
 
     year = current_date.year
     month = current_date.month
@@ -940,7 +946,7 @@ def invoices(request):
     if request.method == "GET" and "filter_month" in request.GET:
         selected_month = request.GET.get("filter_month")
         year, month = selected_month.split("-")
-        start_date = datetime(
+        start_date = timezone.datetime(
             int(year), int(month), 1
         ).date()  # First day of selected month
         end_date = start_date.replace(day=1, month=int(month) + 1) - timedelta(
@@ -948,7 +954,9 @@ def invoices(request):
         )  # Last day of selected month
 
     families_with_classes = Families.objects.filter(
-        is_active=True, student__classes__date__range=[start_date, end_date]
+        is_active=True,
+        student__classes__date__gte=start_date,
+        student__classes__date__lt=end_date + timedelta(days=1),
     ).distinct()
 
     if search_query:
@@ -957,7 +965,9 @@ def invoices(request):
         )
 
     # Query invoices for the selected month
-    invoices = Classes.objects.filter(date__range=[start_date, end_date])
+    invoices = Classes.objects.filter(
+        date__gte=start_date, date__lt=end_date + timedelta(days=1)
+    )
 
     # Calculate overall totals for the selected month
     overall_totals = Classes.get_overall_totals(start_date, end_date)
@@ -996,9 +1006,9 @@ def family_invoice_details(request, family_id):
     selected_year = request.GET.get("year")
 
     if selected_month and selected_year:
-        selected_date = datetime(int(selected_year), int(selected_month), 1).date()
+        selected_date = timezone.datetime(int(selected_year), int(selected_month), 1).date()
     else:
-        current_date = datetime.now().date()
+        current_date = timezone.now().date()
         selected_date = current_date.replace(day=1)
 
     try:
@@ -1077,13 +1087,13 @@ def student_invoice_details(request, student_id):
         try:
             month = int(month_param)
             year = int(year_param)
-            selected_date = datetime(year, month, 1).date()
+            selected_date = timezone.datetime(year, month, 1).date()
         except ValueError:
             # Handle the case where the month or year isn't an integer
-            selected_date = datetime.now().replace(day=1).date()
+            selected_date = timezone.now().replace(day=1).date()
     else:
         # Default to the current month
-        selected_date = datetime.now().replace(day=1).date()
+        selected_date = timezone.now().replace(day=1).date()
 
     # Get the latest tax percentage
     latest_tax = Tax.objects.first()
@@ -1140,7 +1150,7 @@ def instructor_invoices(request):
         return redirect("dash:dashboard")
 
     # Default to current month if not specified in GET parameters
-    current_date = datetime.now()
+    current_date = timezone.now()
     start_date = current_date.replace(day=1).date()  # First day of the current month
     end_date = start_date.replace(day=1, month=start_date.month + 1) - timedelta(
         days=1
@@ -1150,7 +1160,7 @@ def instructor_invoices(request):
     if request.method == "GET" and "filter_month" in request.GET:
         selected_month = request.GET.get("filter_month")
         year, month = selected_month.split("-")
-        start_date = datetime(
+        start_date = timezone.datetime(
             int(year), int(month), 1
         ).date()  # First day of selected month
         end_date = start_date.replace(day=1, month=int(month) + 1) - timedelta(
@@ -1158,10 +1168,10 @@ def instructor_invoices(request):
         )  # Last day of selected month
 
     # Query invoices for the selected month
-    invoices = Classes.objects.filter(date__range=[start_date, end_date])
+    invoices = Classes.objects.filter(date__gte=start_date, date__lt=end_date + timedelta(days=1))
 
     instructor_ids_with_classes = (
-        Classes.objects.filter(date__range=[start_date, end_date])
+        Classes.objects.filter(date__gte=start_date, date__lt=end_date + timedelta(days=1))
         .values_list("instructor_id", flat=True)
         .distinct()
     )
@@ -1206,7 +1216,7 @@ def marketer_commission_view(request):
         return redirect("dash:dashboard")
     
     # Default to current month if not specified in GET parameters
-    current_date = datetime.now()
+    current_date = timezone.now()
     start_date = current_date.replace(day=1).date()  # First day of the current month
     end_date = start_date.replace(day=1, month=start_date.month + 1) - timedelta(
         days=1
@@ -1216,7 +1226,7 @@ def marketer_commission_view(request):
     if request.method == "GET" and "filter_month" in request.GET:
         selected_month = request.GET.get("filter_month")
         year, month = selected_month.split("-")
-        start_date = datetime(
+        start_date = timezone.datetime(
             int(year), int(month), 1
         ).date()  # First day of selected month
         end_date = start_date.replace(day=1, month=int(month) + 1) - timedelta(
@@ -1273,7 +1283,7 @@ def instructor_invoices_detail(request):
     user = request.user
 
     # Default to current month if not specified in GET parameters
-    current_date = datetime.now()
+    current_date = timezone.now()
     start_date = current_date.replace(day=1).date()  # First day of the current month
     end_date = start_date.replace(day=1, month=start_date.month + 1) - timedelta(
         days=1
@@ -1283,7 +1293,7 @@ def instructor_invoices_detail(request):
     if request.method == "GET" and "filter_month" in request.GET:
         selected_month = request.GET.get("filter_month")
         year, month = selected_month.split("-")
-        start_date = datetime(
+        start_date = timezone.datetime(
             int(year), int(month), 1
         ).date()  # First day of selected month
         end_date = start_date.replace(day=1, month=int(month) + 1) - timedelta(
@@ -1292,7 +1302,7 @@ def instructor_invoices_detail(request):
 
     # Filter invoices for the logged-in instructor
     invoices = Classes.objects.filter(
-        instructor__user=user, date__range=[start_date, end_date]
+        instructor__user=user, date__gte=start_date, date__lt=end_date + timedelta(days=1)
     )
 
     # Calculate instructor totals for the logged-in instructor only
