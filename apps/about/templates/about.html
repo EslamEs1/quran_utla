@@ -14,8 +14,8 @@
                         <h2>About us</h2>
                     </div>
                     <div class="links-about-section">
-                        <a href="#">Contact</a>
-                        <a href="#">Our Courses</a>
+                        <a href="{% url 'main:contact' %}">Contact</a>
+                        <a href="{% url 'course:quran' %}">Our Courses</a>
                     </div>
                     <p>{{about_content.content}}</p>
                 </div>
