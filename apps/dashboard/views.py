@@ -12,6 +12,7 @@ from django.db.models import Sum, Q, Case, When, Value, IntegerField
 from django.db.models.functions import Cast
 from django.core.paginator import Paginator
 from django.utils import timezone
+from calendar import monthrange
 
 from .forms import (
     BaseUserForm,
@@ -938,20 +939,19 @@ def invoices(request):
     month = current_date.month
 
     start_date = current_date.replace(day=1).date()  # First day of the current month
-    end_date = start_date.replace(day=1, month=start_date.month + 1) - timedelta(
-        days=1
-    )  # Last day of the current month
+    days_in_month = monthrange(start_date.year, start_date.month)[1]
+    end_date = start_date.replace(day=days_in_month)
 
     # Handle form submission for month filter
     if request.method == "GET" and "filter_month" in request.GET:
         selected_month = request.GET.get("filter_month")
-        year, month = selected_month.split("-")
+        year, month = map(int, selected_month.split("-"))
+        
         start_date = timezone.datetime(
             int(year), int(month), 1
         ).date()  # First day of selected month
-        end_date = start_date.replace(day=1, month=int(month) + 1) - timedelta(
-            days=1
-        )  # Last day of selected month
+        days_in_month = monthrange(year, month)[1]
+        end_date = start_date.replace(day=days_in_month)
 
     families_with_classes = Families.objects.filter(
         is_active=True,
@@ -1152,20 +1152,18 @@ def instructor_invoices(request):
     # Default to current month if not specified in GET parameters
     current_date = timezone.now()
     start_date = current_date.replace(day=1).date()  # First day of the current month
-    end_date = start_date.replace(day=1, month=start_date.month + 1) - timedelta(
-        days=1
-    )  # Last day of the current month
+    days_in_month = monthrange(start_date.year, start_date.month)[1]
+    end_date = start_date.replace(day=days_in_month)  # Last day of the current month
 
     # Handle form submission for month filter
     if request.method == "GET" and "filter_month" in request.GET:
         selected_month = request.GET.get("filter_month")
-        year, month = selected_month.split("-")
+        year, month = map(int, selected_month.split("-"))
         start_date = timezone.datetime(
             int(year), int(month), 1
         ).date()  # First day of selected month
-        end_date = start_date.replace(day=1, month=int(month) + 1) - timedelta(
-            days=1
-        )  # Last day of selected month
+        days_in_month = monthrange(year, month)[1]  # Number of days in the month
+        end_date = start_date.replace(day=days_in_month)  # Last day of the month
 
     # Query invoices for the selected month
     invoices = Classes.objects.filter(date__gte=start_date, date__lt=end_date + timedelta(days=1))
@@ -1218,20 +1216,18 @@ def marketer_commission_view(request):
     # Default to current month if not specified in GET parameters
     current_date = timezone.now()
     start_date = current_date.replace(day=1).date()  # First day of the current month
-    end_date = start_date.replace(day=1, month=start_date.month + 1) - timedelta(
-        days=1
-    )  # Last day of the current month
+    days_in_month = monthrange(start_date.year, start_date.month)[1]
+    end_date = start_date.replace(day=days_in_month)  # Last day of the current month
 
     # Handle form submission for month filter
     if request.method == "GET" and "filter_month" in request.GET:
         selected_month = request.GET.get("filter_month")
-        year, month = selected_month.split("-")
+        year, month = map(int, selected_month.split("-"))
         start_date = timezone.datetime(
             int(year), int(month), 1
         ).date()  # First day of selected month
-        end_date = start_date.replace(day=1, month=int(month) + 1) - timedelta(
-            days=1
-        )  # Last day of selected month
+        days_in_month = monthrange(year, month)[1]  # Number of days in the month
+        end_date = start_date.replace(day=days_in_month)  # Last day of the month
 
     marketers = CustomUser.objects.filter(type=UserType.MARKETER, is_active=True)
 
