@@ -14,7 +14,7 @@ urlpatterns = [
     path("blog/", include("apps.blog.urls", namespace="blog")),
     path("learning/", include("apps.learning.urls", namespace="learning")),
     
-    path("a1b2c3d4e5f6g7#q/", user_login, name="login"),
+    path("a1b2c3deslam7essam9/", user_login, name="login"),
     path("summernote/", include("django_summernote.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
